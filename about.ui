@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>About</class>
+ <widget class="QDialog" name="About">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>320</width>
+    <height>240</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>320</width>
+    <height>240</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>320</width>
+    <height>240</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>CluVis - O programie</string>
+  </property>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>321</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:16pt; font-weight:600;&quot;&gt;CluVis - Wizualizator Skupień&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>30</y>
+     <width>301</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Niniejszy program służy do generowania oraz interaktywnego wizualizowania skupień reguł. Aplikacja operuje na regułach wygenerowanych przez system RSES, przy pomocy algorytmu LEM2. Utworzona w ten sposób reguła może być określona atrybutami ciągłymi oraz jakościowymi.&lt;br/&gt;&lt;br/&gt;Powstał on jako projekt realizowany w ramach pracy inżynierkiej autora zatytułowanej &amp;quot;Wizualizacja struktur hierarchicznych dla regułowych baz wiedzy&amp;quot;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>180</y>
+     <width>291</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Autor:&lt;/span&gt; Tomasz Rybotycki (rybotyckitomasz@gmail.com)&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Promotor: &lt;/span&gt;Dr Agnieszka Nowak-Brzezińska&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Opiekun pracy: &lt;/span&gt;Dr Tomasz Xięski&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
