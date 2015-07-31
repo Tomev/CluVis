@@ -60,7 +60,6 @@ MainWindow::~MainWindow()
     delete clusteredRules;
     delete cInfo;
     delete tim;
-
 }
 
 //GUI
@@ -232,22 +231,24 @@ void MainWindow::on_actionGenerateReport_triggered()
 
 void MainWindow::generateReport()
 {
-    QString logText;
     QString filePath = getFilePath();
     QString reportContent = createReportContent();
 
     QFile report(filePath);
     QDir reportDir(getReportDirPath());
 
+    gotLogText("Rozpoczęto generowanie raportu.");
+
     if (!reportDir.exists())
-        createDir(getReportDirPath());
+    {
+        createPath(getReportDirPath());
+
+        gotLogText("Wybrana ścieżka nie istnieje. Utworzono ścieżkę.");
+    }
 
     if(!report.open(QFile::WriteOnly | QFile::Text) && report.exists())
     {
-        logText = "[" + tim->currentTime().toString() + "] ";
-        logText += "Nie można otworzyć pliku do zapisu. Przerwano operację.";
-
-        ui->textBrowserLog->append(logText);
+        gotLogText("Nie można otworzyć pliku do zapisu. Przerwano operację.");
 
         return ;
     }
@@ -257,6 +258,8 @@ void MainWindow::generateReport()
 
     report.flush();
     report.close();
+
+    gotLogText("Zakończono generowanie raportu.");
 }
 
 QString MainWindow::getFilePath()
@@ -268,14 +271,14 @@ QString MainWindow::getFilePath()
 
 QString MainWindow::getReportDirPath()
 {
-    QString path = "C:\\CluVis_Reports";
+    QString path = "C:\\CluVis_Reports\\";
 
     return path;
 }
 
-void MainWindow::createDir(QString path)
+void MainWindow::createPath(QString path)
 {
-    QDir().mkdir(path);
+    QDir().mkpath(path);
 }
 
 QString MainWindow::createReportContent()
@@ -642,8 +645,6 @@ void MainWindow::visualize()
         ui->graphicsView->fitInView(scene->itemsBoundingRect());
     if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
         ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-
-    //ui->graphicsView->centerOn(0, 0);
 
     logText = "[" + tim->currentTime().toString() + "] ";
     logText += "Wizualizacja wycentrowana.";

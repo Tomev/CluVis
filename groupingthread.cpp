@@ -82,11 +82,7 @@ void groupingThread::groupRSESRules()
     QString logText = "Zbieram dane dotyczące atrybutów reguł...";
     emit passLogMsg(logText);
 
-    qDebug() << "Atr;";
-
     fillAttributesData();
-
-    qDebug() << "SimMatrix;";
 
     qreal** simMatrix;
     int simMatrixSize = settings->objectsNumber;
@@ -96,25 +92,17 @@ void groupingThread::groupRSESRules()
     logText = "Rozmieszczam reguły do skupień...";
     emit passLogMsg(logText);
 
-    qDebug() << "Cluster;";
-
     clusterRules();
 
     logText = "Rozpoczynam proces grupowania...";
 
     emit passLogMsg(logText);
 
-    qDebug() << "Okna;";
-
     groupingProgress->show();
     creatingSimMatrixProgress->show();
 
-    qDebug() << "Grupowanie;";
-
     while(i != 0)
     {
-        qDebug() << i << endl;
-
         QApplication::processEvents();
 
         simMatrix = createSimMatrix(simMatrixSize);
@@ -322,8 +310,6 @@ qreal **groupingThread::createSimMatrix(int simMatrixSize)
 {
     qreal **simMatrix = new qreal*[simMatrixSize];
 
-    qDebug() << "Matrix size:" << simMatrixSize;
-
     for(int i = 0; i < simMatrixSize; i++)
         simMatrix[i] = new qreal[simMatrixSize];
 
@@ -343,18 +329,13 @@ qreal **groupingThread::createSimMatrix(int simMatrixSize)
                 simMatrix[i][j] = 0;
             else
             {
-                qDebug() << "i = " << i << " j = " << j << endl;
                 qreal simValue = (double) countRSESClustersSimilarityValue(clusteredRules[i],clusteredRules[j]);
                 simMatrix[i][j] = simMatrix[j][i] = simValue;
             }
         }
     }
 
-    qDebug() << "Wychodzę";
-
     creatingSimMatrixProgress->setMaximum(simMatrixSize);
-
-    qDebug() << "Zwracam";
 
     return simMatrix;
 }
@@ -566,18 +547,12 @@ qreal groupingThread::countRSESRulesWeightedSimilarityValue(QString r1, QString 
 
 QStringList groupingThread::getRuleGroupedPart(QString r)
 {
-    qDebug() << "Tu";
-
     QStringList ruleParts = r.split("=>");
-
-    qDebug() << r;
 
     if(RSESSettings->groupingPartID == RSESSettings->CONCLUSION_ID)
     {
         QStringList conclusion;
-        qDebug() << "Problem?";
         conclusion.append(ruleParts.at(1));
-        qDebug() << "Tam";
         return conclusion;
     }
 
@@ -597,16 +572,11 @@ QString groupingThread::removeBraces(QString a)
 {
     QString attribute = a;
 
-    //qDebug() << "Atr: " + a;
-
     if(a.at(0) == " ")
         attribute.remove(0,1);
 
-
     attribute.remove(0,1);
     attribute.remove(attribute.length()-1,1);
-
-    //qDebug() << "Remove:" + attribute;
 
     return attribute;
 }
@@ -746,9 +716,6 @@ QString groupingThread::createAverageRule(ruleCluster *c)
     symbolicAtrValues = new QStringList[symbolicAtrNumber];
     mostCommonSymbolicAtrValue = new QString[symbolicAtrNumber];
 
-    qDebug() << symbolicAtrNumber;
-
-
     for(int i = 0; i < numericAtrNumber; i++)
         averageNumericAtrValues[i] = 0;
 
@@ -791,15 +758,11 @@ QString groupingThread::createAverageRule(ruleCluster *c)
         }
     }
 
-    qDebug() << "Badam listy.";
-
     for(int i = 0; i < numericAtrNumber; i++)
         averageNumericAtrValues[i] /= clusterSize;
 
     for(int i = 0; i < symbolicAtrNumber; i++)
     {
-        qDebug() << i;
-
         symbolicAtrValuesSet = symbolicAtrValues[i].toSet().toList();
 
 

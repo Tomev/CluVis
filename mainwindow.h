@@ -97,7 +97,9 @@ private:
 
     void generateReport();
         QString getFilePath();
+        QString getReportDirPath();
         QString createReportContent();
+        void createPath(QString path);
 
     //Rest
     //Functions
@@ -113,9 +115,6 @@ private:
     void visualize();
 
     void resizeEvent(QResizeEvent *);
-
-    QString getReportDirPath();
-    void createDir(QString path);
 };
 
 #endif // MAINWINDOW_H
