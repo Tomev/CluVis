@@ -13,13 +13,11 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
                                groupingSettings_General *groupingSettings,
                                generalSettings* settings)
 {
-
     this->settings = settings;
     this->groupingSettings = groupingSettings;
     this->RSESSettings = RSESSettings;
 
     wasGroupingCanceled = false;
-
 
     groupingProgress = new QProgressDialog("Grupowanie reguł...","Anuluj",1,
                                            settings->objectsNumber,0,0);

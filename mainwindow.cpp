@@ -55,9 +55,25 @@ MainWindow::~MainWindow()
     delete gSettings_RSES;
     delete vSettings;
     delete vSettings_RSES;
-    delete rules;
-    delete joinedRules;
-    delete clusteredRules;
+
+    for(int i = settings->objectsNumber; i >= 0; i--)
+    {
+        delete clusteredRules[i];
+    }
+
+    for(int i = settings->objectsNumber; i >= 0; i--)
+    {
+        delete &joinedRules[i];
+    }
+
+    for(int i = settings->objectsNumber; i >= 0; i--)
+    {
+        delete &rules[i];
+    }
+
+    delete[] rules;
+    delete[] joinedRules;
+    delete[] clusteredRules;
     delete cInfo;
     delete tim;
 }
