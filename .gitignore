@@ -1,0 +1,4 @@
+#Katalogi do ignorowania
+Logs/
+#Ignoruj plik usera
+DaVis.pro.user
