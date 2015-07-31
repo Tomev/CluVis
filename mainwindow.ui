@@ -534,6 +534,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionLoadObjectBase"/>
     <addaction name="separator"/>
     <addaction name="actionSaveVisualization"/>
+    <addaction name="actionGenerateReport"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -567,6 +568,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionSaveVisualization">
    <property name="text">
     <string>Zapisz wizualizację</string>
+   </property>
+  </action>
+  <action name="actionGenerateReport">
+   <property name="text">
+    <string>Generuj raport</string>
    </property>
   </action>
  </widget>

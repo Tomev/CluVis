@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->actionSaveVisualization->setEnabled(false);
+    ui->actionGenerateReport->setEnabled(false);
 
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint |
                    Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
@@ -46,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+
 }
 
 //GUI
@@ -95,6 +97,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
 
     scene->clear();
     ui->actionSaveVisualization->setEnabled(false);
+    ui->actionGenerateReport->setEnabled(false);
     ui->labelIsBaseGrouped->setText("<b>(Niepogrupowana)</b>");
     areObjectsClustered = false;
 
@@ -207,6 +210,68 @@ void MainWindow::on_actionSaveVisualization_triggered()
     logText+= "Wizualizację zapisano pod nazwą " + fileName +".";
 
     ui->textBrowserLog->append(logText);
+}
+
+void MainWindow::on_actionGenerateReport_triggered()
+{
+    generateReport();
+}
+
+void MainWindow::generateReport()
+{
+    QString logText;
+    QString filePath = getFilePath();
+    QString reportContent = createReportContent();
+
+    QFile report(filePath);
+    QDir reportDir(getReportDirPath());
+
+    if (!reportDir.exists())
+        createDir(getReportDirPath());
+
+    if(!report.open(QFile::WriteOnly | QFile::Text) && report.exists())
+    {
+        logText = "[" + tim->currentTime().toString() + "] ";
+        logText += "Nie można otworzyć pliku do zapisu. Przerwano operację.";
+
+        ui->textBrowserLog->append(logText);
+
+        return ;
+    }
+
+    QTextStream outStream(&report);
+    outStream << reportContent;
+
+    report.flush();
+    report.close();
+}
+
+QString MainWindow::getFilePath()
+{
+    QString path = "C:\\CluVis_Reports\\test.txt";
+
+    return path;
+}
+
+QString MainWindow::getReportDirPath()
+{
+    QString path = "C:\\CluVis_Reports";
+
+    return path;
+}
+
+void MainWindow::createDir(QString path)
+{
+    QDir().mkdir(path);
+}
+
+QString MainWindow::createReportContent()
+{
+    QString content = "";
+
+    content += "Test Content";
+
+    return content;
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -588,6 +653,7 @@ void MainWindow::visualize()
                             QMessageBox::Ok);
 
     ui->actionSaveVisualization->setEnabled(true);
+    ui->actionGenerateReport->setEnabled(true);
 }
 
 /* GENERAL I DETAILS SETTINGS

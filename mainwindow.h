@@ -27,8 +27,9 @@ public:
 
 private slots:
     //File
-    void on_actionLoadObjectBase_triggered();\
+    void on_actionLoadObjectBase_triggered();
     void on_actionSaveVisualization_triggered();
+    void on_actionGenerateReport_triggered();
     void on_actionExit_triggered();
 
     //Help
@@ -58,8 +59,12 @@ private slots:
 
     void gotLogText(QString);
 
+
+
 private:
     Ui::MainWindow *ui;
+
+    QString raportMessage;
 
     bool areObjectsClustered = false;
 
@@ -90,6 +95,10 @@ private:
     QFileInfo selectObjectBase();
     bool isRuleSet(QFileInfo base);
 
+    void generateReport();
+        QString getFilePath();
+        QString createReportContent();
+
     //Rest
     //Functions
 
@@ -104,6 +113,9 @@ private:
     void visualize();
 
     void resizeEvent(QResizeEvent *);
+
+    QString getReportDirPath();
+    void createDir(QString path);
 };
 
 #endif // MAINWINDOW_H
