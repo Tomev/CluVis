@@ -47,6 +47,19 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete scene;
+    delete gThread;
+    delete vThread;
+    delete settings;
+    delete gSettings;
+    delete gSettings_RSES;
+    delete vSettings;
+    delete vSettings_RSES;
+    delete rules;
+    delete joinedRules;
+    delete clusteredRules;
+    delete cInfo;
+    delete tim;
 
 }
 
