@@ -99,7 +99,13 @@ private:
         QString getFilePath();
         QString getReportDirPath();
         QString createReportContent();
+            QString formatThickString(QString s);
         void createPath(QString path);
+        int countCoverageSum();
+        ruleCluster* findBiggestCluster();
+        ruleCluster* findSmallestCluster();
+        QString getRuleClusterName(ruleCluster* c);
+        int countClusterCoverage(ruleCluster* c);
 
     //Rest
     //Functions
