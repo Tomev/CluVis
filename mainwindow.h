@@ -59,8 +59,6 @@ private slots:
 
     void gotLogText(QString);
 
-
-
 private:
     Ui::MainWindow *ui;
 

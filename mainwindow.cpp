@@ -248,19 +248,19 @@ void MainWindow::on_actionGenerateReport_triggered()
 void MainWindow::generateReport()
 {
     QString filePath = getFilePath();
+
+    if(filePath == "")
+    {
+        gotLogText("Przerwano operację.");
+
+        return ;
+    }
+
     QString reportContent = createReportContent();
 
     QFile report(filePath);
-    QDir reportDir(getReportDirPath());
 
     gotLogText("Rozpoczęto generowanie raportu.");
-
-    if (!reportDir.exists())
-    {
-        createPath(getReportDirPath());
-
-        gotLogText("Wybrana ścieżka nie istnieje. Utworzono ścieżkę.");
-    }
 
     if(!report.open(QFile::WriteOnly | QFile::Text) && report.exists())
     {
@@ -281,9 +281,30 @@ void MainWindow::generateReport()
 
 QString MainWindow::getFilePath()
 {
-    QString path = "C:\\CluVis_Reports\\test.txt";
+    QFileDialog FD;
 
-    return path;
+    QString filePath = FD.getSaveFileName(this,"Zapisz raport","C:\\","*.txt");
+
+    if(filePath == "")
+    {
+        QString msgBoxText = "Nie wybrano nazwy pliku.\n";
+        msgBoxText += "Raport nie został zapisany.";
+
+        QString logText = "Nieudana próba zapisu raportu. ";
+        logText+= "Nie wybrano nazwy pliku.";
+
+        gotLogText(logText);
+
+        QMessageBox::information(this,
+                                "Nie wybrano pliku",
+                                msgBoxText,
+                                QMessageBox::Ok);
+        return "";
+    }
+
+    filePath += ".txt";
+
+    return filePath;
 }
 
 QString MainWindow::getReportDirPath()
