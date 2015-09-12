@@ -27,8 +27,9 @@ public:
 
 private slots:
     //File
-    void on_actionLoadObjectBase_triggered();\
+    void on_actionLoadObjectBase_triggered();
     void on_actionSaveVisualization_triggered();
+    void on_actionGenerateReport_triggered();
     void on_actionExit_triggered();
 
     //Help
@@ -61,6 +62,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
+    QString raportMessage;
+
     bool areObjectsClustered = false;
 
     QGraphicsScene* scene;
@@ -89,6 +92,18 @@ private:
     //File
     QFileInfo selectObjectBase();
     bool isRuleSet(QFileInfo base);
+
+    void generateReport();
+        QString getFilePath();
+        QString getReportDirPath();
+        QString createReportContent();
+            QString formatThickString(QString s);
+        void createPath(QString path);
+        int countCoverageSum();
+        ruleCluster* findBiggestCluster();
+        ruleCluster* findSmallestCluster();
+        QString getRuleClusterName(ruleCluster* c);
+        int countClusterCoverage(ruleCluster* c);
 
     //Rest
     //Functions

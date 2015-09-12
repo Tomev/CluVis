@@ -29,7 +29,7 @@ void customGraphicsRectObject::paint(QPainter* painter, const QStyleOptionGraphi
     else
         text+= "J";
 
-    text += QString::number(c.clusterID);
+    text += QString::number(c.clusterID+1);
 
     if(isHoverOn)
         rectBrush.setColor(Qt::red);

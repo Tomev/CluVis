@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     ui->actionSaveVisualization->setEnabled(false);
+    ui->actionGenerateReport->setEnabled(false);
 
     setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint |
                    Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
@@ -46,6 +47,35 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete scene;
+    delete gThread;
+    delete vThread;
+    delete settings;
+    delete gSettings;
+    delete gSettings_RSES;
+    delete vSettings;
+    delete vSettings_RSES;
+
+    for(int i = settings->objectsNumber; i >= 0; i--)
+    {
+        delete clusteredRules[i];
+    }
+
+    for(int i = settings->objectsNumber; i >= 0; i--)
+    {
+        delete &joinedRules[i];
+    }
+
+    for(int i = settings->objectsNumber; i >= 0; i--)
+    {
+        delete &rules[i];
+    }
+
+    delete[] rules;
+    delete[] joinedRules;
+    delete[] clusteredRules;
+    delete cInfo;
+    delete tim;
 }
 
 //GUI
@@ -95,6 +125,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
 
     scene->clear();
     ui->actionSaveVisualization->setEnabled(false);
+    ui->actionGenerateReport->setEnabled(false);
     ui->labelIsBaseGrouped->setText("<b>(Niepogrupowana)</b>");
     areObjectsClustered = false;
 
@@ -103,7 +134,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     OBName += "."+gSettings->objectBaseInfo.suffix();
     settings->objectsNumber = getObjectsNumber();
 
-    ui->labelObjectBaseName->setText("<b>"+OBName+".</b>");
+    ui->labelObjectBaseName->setText("<b>"+OBName+"</b>");
     ui->labelObjectsNumberValue->setText("<b>"+QString::number(settings->objectsNumber)+".</b>");
     ui->spinBoxStopConditionValue->setMaximum(settings->objectsNumber);
     ui->spinBoxStopConditionValue->setValue(1);
@@ -209,6 +240,189 @@ void MainWindow::on_actionSaveVisualization_triggered()
     ui->textBrowserLog->append(logText);
 }
 
+void MainWindow::on_actionGenerateReport_triggered()
+{
+    generateReport();
+}
+
+void MainWindow::generateReport()
+{
+    QString filePath = getFilePath();
+
+    if(filePath == "")
+    {
+        gotLogText("Przerwano operację.");
+
+        return ;
+    }
+
+    QString reportContent = createReportContent();
+
+    QFile report(filePath);
+
+    gotLogText("Rozpoczęto generowanie raportu.");
+
+    if(!report.open(QFile::WriteOnly | QFile::Text) && report.exists())
+    {
+        gotLogText("Nie można otworzyć pliku do zapisu. Przerwano operację.");
+
+        return ;
+    }
+
+    QTextStream outStream(&report);
+    outStream.setCodec("UTF-8");
+    outStream << reportContent;
+
+    report.flush();
+    report.close();
+
+    gotLogText("Zakończono generowanie raportu.");
+}
+
+QString MainWindow::getFilePath()
+{
+    QFileDialog FD;
+
+    QString filePath = FD.getSaveFileName(this,"Zapisz raport","C:\\","*.txt");
+
+    if(filePath == "")
+    {
+        QString msgBoxText = "Nie wybrano nazwy pliku.\n";
+        msgBoxText += "Raport nie został zapisany.";
+
+        QString logText = "Nieudana próba zapisu raportu. ";
+        logText+= "Nie wybrano nazwy pliku.";
+
+        gotLogText(logText);
+
+        QMessageBox::information(this,
+                                "Nie wybrano pliku",
+                                msgBoxText,
+                                QMessageBox::Ok);
+        return "";
+    }
+
+    filePath += ".txt";
+
+    return filePath;
+}
+
+QString MainWindow::getReportDirPath()
+{
+    QString path = "C:\\CluVis_Reports\\";
+
+    return path;
+}
+
+void MainWindow::createPath(QString path)
+{
+    QDir().mkpath(path);
+}
+
+QString MainWindow::createReportContent()
+{
+    QString content = "===Raport===";
+
+    content += "\n==Dane bazy==\n";
+    content += "\nNazwa bazy: " + formatThickString(ui->labelObjectBaseName->text());
+    content += "\nLiczba atrybutów: " + QString::number(gSettings->attributesNumber);
+    content += "\nLiczba obiektów: " + QString::number(getObjectsNumber());
+    content += "\nLiczba skupień: " + QString::number(settings->stopCondition);
+    content += "\nSuma pokryciowa: " + QString::number(countCoverageSum());
+    content += "\n\n==Ustawienia==\n";
+    content += "\nWykorzystany algorytm grupowania: " + formatThickString(ui->labelAlgorithmGroupingValue->text());
+    content += "\nWybrana miara podobieństwa obiektów: " + ui->comboBoxInterobjectDistanceMeasure->currentText();
+    content += "\nWybrana miara podobieństwa skupień: " + ui->comboBoxInterclusterDistanceMeasure->currentText();
+    content += "\nWybrany algorytm wizualizacji: " + ui->comboBoxAlgorithmVisualization->currentText();
+    content += "\nGrupowana część reguły: " + ui->comboBoxRuleGroupedPart->currentText();
+    content += "\n\n==Dane skupień==\n";
+    content += "\nNajliczniejsza grupa: " + getRuleClusterName(findBiggestCluster());
+    content += "\nNajmniej liczna grupa: " + getRuleClusterName(findSmallestCluster());
+    content += "\n\n==Szczegóły skupień==\n";
+
+    for(int i = 0; i < settings->stopCondition; i++)
+    {
+        content += "\n=Nazwa skupienia: " + getRuleClusterName(vSettings_RSES->clusteredRules[i]) + "=";
+        content += "\n\tLiczba reguł w grupie: " + QString::number(vSettings_RSES->clusteredRules[i]->size());
+        content += "\n\tPokrycie skupienia: "
+                + QString::number((float)((countClusterCoverage(vSettings_RSES->clusteredRules[i])*100)/countCoverageSum())) + "%";
+        content += "\n\tReprezentant skupienia: " + vSettings_RSES->clusteredRules[i]->representative;
+    }
+
+    content += "\n\n===Koniec===";
+
+    return content;
+}
+
+QString MainWindow::formatThickString(QString s)
+{
+    s.resize(s.length()-4);
+    s.remove(0,3);
+
+    return s;
+}
+
+int MainWindow::countCoverageSum()
+{
+    int coverageSum = 0;
+
+    for(int i = 0; i < getObjectsNumber(); i++)
+        coverageSum += rules[i].support;
+
+    return coverageSum;
+}
+
+ruleCluster* MainWindow::findSmallestCluster()
+{
+    ruleCluster* smallest = clusteredRules[0];
+
+    for(int i = 1; i < settings->stopCondition; i++)
+    {
+        if(smallest->size() > clusteredRules[i]->size())
+            smallest = clusteredRules[i];
+    }
+
+    return smallest;
+}
+
+ruleCluster* MainWindow::findBiggestCluster()
+{
+    ruleCluster* biggest = clusteredRules[0];
+
+    for(int i = 1; i < this->settings->stopCondition; i++)
+    {
+        if(biggest->size() < clusteredRules[i]->size())
+            biggest = clusteredRules[i];
+    }
+
+    return biggest;
+}
+
+QString MainWindow::getRuleClusterName(ruleCluster* c)
+{
+    QString name;
+
+    if(c->rule == "")
+        name = "J";
+    else
+        name = "R";
+
+    name += QString::number(c->clusterID + 1);
+
+    return name;
+}
+
+int MainWindow::countClusterCoverage(ruleCluster* c)
+{
+    if(c==NULL)
+        return 0;
+
+    if(c->rule != "")
+        return c->support;
+
+    return countClusterCoverage(c->leftNode) + countClusterCoverage(c->rightNode);
+}
+
 void MainWindow::on_actionExit_triggered()
 {
     QApplication::quit();
@@ -221,10 +435,7 @@ void MainWindow::on_actionAbout_triggered()
     About a;
     a.exec();
 
-    QString logText = "[" +tim->currentTime().toString() + "] ";
-    logText+= "Włączono informacje o programie.";
-
-    ui->textBrowserLog->append(logText);
+    gotLogText("Włączono informacje o programie.");
 }
 
 //Rest
@@ -565,8 +776,6 @@ void MainWindow::visualize()
     if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
         ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
-    //ui->graphicsView->centerOn(0, 0);
-
     logText = "[" + tim->currentTime().toString() + "] ";
     logText += "Wizualizacja wycentrowana.";
 
@@ -588,6 +797,7 @@ void MainWindow::visualize()
                             QMessageBox::Ok);
 
     ui->actionSaveVisualization->setEnabled(true);
+    ui->actionGenerateReport->setEnabled(true);
 }
 
 /* GENERAL I DETAILS SETTINGS
@@ -679,10 +889,7 @@ void MainWindow::gotRuleClusterToVisualize(ruleCluster *c)
 
 void MainWindow::showRuleInfo(ruleCluster *c)
 {
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wyświetlam informacje dotyczące wybranego skupienia.";
-
-    ui->textBrowserLog->append(logText);
+    gotLogText("Wyświetlam informacje dotyczące wybranego skupienia.");
 
     cInfo = new clusterInfo_RSESRules(c);
 
