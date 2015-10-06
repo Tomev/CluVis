@@ -49,6 +49,7 @@ private slots:
     void getJoinedRules(ruleCluster* c);
     void getClusteredRules(ruleCluster** c);
     void gotMDI(qreal MDI);
+    void gotMDBI(qreal MDBI);
 
     void getGraphicsRectObject(customGraphicsRectObject *object);
     void getGraphicsEllipseObject(customGraphicEllipseObject *object);
@@ -60,6 +61,13 @@ private slots:
     void gotLogText(QString);
 
 private:
+
+    enum Constants
+    {
+        REPORT_TYPE_XML = 0,
+        REPORT_TYPE_TXT = 1
+    };
+
     Ui::MainWindow *ui;
 
     QString raportMessage;
@@ -84,6 +92,7 @@ private:
     clusterInfo_RSESRules* cInfo;
 
     qreal MDI = 0;
+    qreal MDBI = 0;
 
     QTime* tim = new QTime();
 
@@ -96,8 +105,24 @@ private:
     void generateReport();
         QString getFilePath();
         QString getReportDirPath();
-        QString createReportContent();
-            QString formatThickString(QString s);
+        int MainWindow::getFileType(QChar t);
+        QString createReportContent(int type);
+            QString createTXTReportContent();
+                QString formatThickString(QString s);
+            QString createXMLReportContent();
+                QString createXMLFileHeader();
+                QString createXMLFileWorkbook();
+                QString createXMLFileDocumentProperties();
+                QString createXMLFileExcelWorkbook();
+                QString createXMLFileStyles();
+                QString createXMLFileFooter();
+                QString createXMLFileTable();
+                QString createXMLFileTableHeader();
+                QString createXMLFileTableCell(QString data, bool isHeader);
+                QString createXMLFileTableContent();
+                QString createXMLFileClustersData();
+                QString createXMLFileClustersDataHeader();
+                QString createXMLFileClustersDataContent();
         void createPath(QString path);
         int countCoverageSum();
         ruleCluster* findBiggestCluster();
@@ -113,7 +138,6 @@ private:
         bool isBaseLoaded();
         bool isStopConditionCorrect();
     void setVisualizationSettings();
-
 
     void groupObjects();
     void visualize();

@@ -158,7 +158,7 @@ QFileInfo MainWindow::selectObjectBase()
     else
         openPath = defaultOpenPath;
 
-    QString OBPath = FD.getOpenFileName(this, tr("Wybierz bazę"),openPath,tr("Files(*.txt *.rul)"));
+    QString OBPath = FD.getOpenFileName(this, tr("Wybierz bazę"),openPath,tr("Pliki tekstowe (*.txt);; Pliki reguł(*.rul)"));
 
     return QFileInfo(OBPath);
 }
@@ -256,7 +256,11 @@ void MainWindow::generateReport()
         return ;
     }
 
-    QString reportContent = createReportContent();
+    int fileType = getFileType(filePath.at(filePath.length()-1));
+
+    QString reportContent = createReportContent(fileType);
+
+    qDebug() << filePath;
 
     QFile report(filePath);
 
@@ -283,7 +287,8 @@ QString MainWindow::getFilePath()
 {
     QFileDialog FD;
 
-    QString filePath = FD.getSaveFileName(this,"Zapisz raport","C:\\","*.txt");
+    QString filePath = FD.getSaveFileName(this,"Zapisz raport","C:\\",
+                                          "Pliki xml (*.xml);; Pliki tekstowe (*.txt)");
 
     if(filePath == "")
     {
@@ -302,8 +307,6 @@ QString MainWindow::getFilePath()
         return "";
     }
 
-    filePath += ".txt";
-
     return filePath;
 }
 
@@ -319,7 +322,36 @@ void MainWindow::createPath(QString path)
     QDir().mkpath(path);
 }
 
-QString MainWindow::createReportContent()
+int MainWindow::getFileType(QChar t)
+{
+    if(t=='l')
+        return REPORT_TYPE_XML;
+    if(t=='t')
+        return REPORT_TYPE_TXT;
+
+    return -1;
+}
+
+QString MainWindow::createReportContent(int type)
+{
+    QString content;
+
+    switch(type)
+    {
+    case REPORT_TYPE_TXT:
+        content = createTXTReportContent();
+        break;
+    case REPORT_TYPE_XML:
+        content = createXMLReportContent();
+        break;
+    default:
+        break;
+    }
+
+    return content;
+}
+
+QString MainWindow::createTXTReportContent()
 {
     QString content = "===Raport===";
 
@@ -421,6 +453,206 @@ int MainWindow::countClusterCoverage(ruleCluster* c)
         return c->support;
 
     return countClusterCoverage(c->leftNode) + countClusterCoverage(c->rightNode);
+}
+
+QString MainWindow::createXMLReportContent()
+{
+    QString content = "";
+
+    content += createXMLFileHeader();
+    content += createXMLFileWorkbook();
+    content += createXMLFileDocumentProperties();
+    content += createXMLFileExcelWorkbook();
+    content += createXMLFileStyles();
+    content += createXMLFileTable();
+    content += createXMLFileFooter();
+
+    return content;
+}
+
+QString MainWindow::createXMLFileHeader()
+{
+    QString result = "<?xml version=\"1.0\"?>\n";
+    result += "<?mso-application progid=\"Excel.Sheet\"?>\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileWorkbook()
+{
+    QString result = "<Workbook\n";
+    result += "\txmlns=\"urn:schemas-microsoft-com:office:spreadsheet\"\n";
+    result += "\txmlns:o=\"urn:schemas-microsoft-com:office:office\"\n";
+    result += "\txmlns:x=\"urn:schemas-microsoft-com:office:excel\"\n";
+    result += "\txmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"\n";
+    result += "\txmlns:html=\"http://www.w3.org/TR/REC-html40\">\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileDocumentProperties()
+{
+    QString name = getenv("USERNAME");
+
+    QString date = QDate::currentDate().toString("dd-MM-yyyy");
+    date += "T";
+    date += QTime::currentTime().toString("hh:mm:ss");
+    date += "Z";
+
+    QString result = "\t<DocumentProperties xmlns=\"urn:schemas-microsoft-com:office:office\">\n";
+    result += "\t\t<Author>"+ name +"</Author>\n";
+    result += "\t\t<Created>"+ date +"</Created>\n";
+    result += "\t\t<Application>CluVis</Application>\n";
+    result += "\t</DocumentProperties>\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileExcelWorkbook()
+{
+    QString result = "\t<ExcelWorkbook xmlns=\"urn:schemas-microsoft-com:office:excel\">\n";
+    result += "\t\t<ProtectStructure>False</ProtectStructure>\n";
+    result += "\t\t<ProtectWindows>False</ProtectWindows>\n";
+    result += "\t</ExcelWorkbook>\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileStyles()
+{
+    QString result = "\t<Styles>\n";
+    result += "\t\t<Style ss:ID=\"Header\">\n";
+    result += "\t\t\t<Font ss:Bold=\"1\"/>\n";
+    result += "\t\t</Style>\n";
+    result += "\t</Styles>\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileTable()
+{
+    QString result = "\t<Worksheet ss:Name=\"Raport\">\n";
+    result += "\t\t<Table ss:ExpandedColumnCount=\"2\" ss:ExpandedRowCount=\"5\"\n";
+    result += "\t\t\t x:FullColumns=\"1\" x:FullRows=\"1\">\n";
+    result += "\t\t\t<Row>\n";
+    result += createXMLFileTableHeader();
+    result += "\t\t\t</Row>\n";
+    result += "\t\t\t<Row ss:Index=\"1\">\n";
+    result += createXMLFileTableContent();
+    result += "\t\t\t</Row>\n";
+    result += "\t\t\t<Row>\n";
+    result += createXMLFileTableCell("==Dane skupień==",false);
+    result += "\t\t\t</Row>\n";
+    result += createXMLFileClustersData();
+
+    result += "\t\t</Table>\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileFooter()
+{
+    QString result = "\t\t<WorksheetOptions xmlns=\"urn:schemas-microsoft-com:office:excel\">\n";
+    result += "\t\t</WorksheetOptions>\n";
+    result += "\t</Worksheet>\n";
+    result += "</Workbook>";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileTableHeader()
+{
+    QString result = createXMLFileTableCell("Index", true);
+    result += createXMLFileTableCell("Nazwa bazy", true);
+    result += createXMLFileTableCell("Liczba atrybutów", true);
+    result += createXMLFileTableCell("Liczba obiektów", true);
+    result += createXMLFileTableCell("Liczba skupień", true);
+    result += createXMLFileTableCell("Suma pokryciowa", true);
+    result += createXMLFileTableCell("Wykorzystany algorytm grupowania", true);
+    result += createXMLFileTableCell("Wybrana miara podobieństwa obiektów", true);
+    result += createXMLFileTableCell("Wybrana miara podobieństwa skupień", true);
+    result += createXMLFileTableCell("Wybrany algorytm wizualizacji", true);
+    result += createXMLFileTableCell("Grupowana część reguły", true);
+    result += createXMLFileTableCell("Najliczniejsza grupa", true);
+    result += createXMLFileTableCell("Najmniej liczna grupa", true);
+
+    return result;
+}
+
+QString MainWindow::createXMLFileTableCell(QString data, bool isHeader)
+{
+    int width =  data.length();
+    QString result = "\t\t\t\t<Cell ss:Width=\"";
+    result += QString::number(width) + "\"";
+
+    if(isHeader)
+        result += " StyleID=\"Header\"";
+
+    result += ">\n\t\t\t\t\t<Data ss:Type=\"String\">";
+    result += data;
+    result += "</Data>\n";
+    result += "\t\t\t\t</Cell>\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileTableContent()
+{
+    QString result = createXMLFileTableCell("1", true);
+    result += createXMLFileTableCell(formatThickString(ui->labelObjectBaseName->text()), false);
+    result += createXMLFileTableCell(QString::number(gSettings->attributesNumber), false);
+    result += createXMLFileTableCell(QString::number(getObjectsNumber()), false);
+    result += createXMLFileTableCell(QString::number(settings->stopCondition), false);
+    result += createXMLFileTableCell(QString::number(countCoverageSum()), false);
+    result += createXMLFileTableCell(formatThickString(ui->labelAlgorithmGroupingValue->text()), false);
+    result += createXMLFileTableCell(ui->comboBoxInterobjectDistanceMeasure->currentText(), false);
+    result += createXMLFileTableCell(ui->comboBoxInterclusterDistanceMeasure->currentText(), false);
+    result += createXMLFileTableCell(ui->comboBoxAlgorithmVisualization->currentText(), false);
+    result += createXMLFileTableCell(ui->comboBoxRuleGroupedPart->currentText(), false);
+    result += createXMLFileTableCell(getRuleClusterName(findBiggestCluster()), false);
+    result += createXMLFileTableCell(getRuleClusterName(findSmallestCluster()), false);
+
+    return result;
+}
+
+QString MainWindow::createXMLFileClustersData()
+{
+    QString result = createXMLFileClustersDataHeader();
+    result += createXMLFileClustersDataContent();
+
+    return result;
+}
+
+QString MainWindow::createXMLFileClustersDataHeader()
+{
+    QString result = "\t\t\t<Row>\n";
+    result += createXMLFileTableCell("Index", true);
+    result += createXMLFileTableCell("Nazwa skupienia", true);
+    result += createXMLFileTableCell("Liczba reguł w grupie", true);
+    result += createXMLFileTableCell("Pokrycie skupienia", true);
+    result += createXMLFileTableCell("Reprezentant skupienia", true);
+    result += "\t\t\t</Row>\n";
+
+    return result;
+}
+
+QString MainWindow::createXMLFileClustersDataContent()
+{
+    QString result = "";
+
+    for(int i = 0; i < settings->stopCondition; i++)
+    {
+        result += "\t\t\t<Row>\n";
+        result += createXMLFileTableCell(QString::number(i), false);
+        result += createXMLFileTableCell(getRuleClusterName(vSettings_RSES->clusteredRules[i]), false);
+        result += createXMLFileTableCell(QString::number(vSettings_RSES->clusteredRules[i]->size()), false);
+        result += createXMLFileTableCell(
+                    QString::number((float)((countClusterCoverage(vSettings_RSES->clusteredRules[i])*100)/countCoverageSum())) + "%", false);
+     //   result += createXMLFileTableCell(vSettings_RSES->clusteredRules[i]->representative, false);
+        result += "\t\t\t</Row>\n";
+    }
+
+    return result;
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -547,6 +779,9 @@ void MainWindow::setGroupingSettings()
                 this,SLOT(gotLogText(QString)));
         connect(gThread,SIGNAL(passMDI(qreal)),
                 this,SLOT(gotMDI(qreal)));
+        connect(gThread,SIGNAL(passMDBI(qreal)),
+                this,SLOT(gotMDBI(qreal)));
+
 
         logText = "[" + tim->currentTime().toString() + "] ";
         logText += "Wczytano ustawienia szczególne dla RSES Rules.";
@@ -727,6 +962,7 @@ void MainWindow::groupObjects()
 
         infoText = "Liczba otrzymanych skupień: " + QString::number(settings->stopCondition) + ".\n";
         infoText += "MDI otrzymanych skupień: " + QString::number(MDI) + ".\n";
+        infoText += "MDBI otrzymanych skupień: " + QString::number(MDBI) + ".\n";
         infoText += "Czy chcesz wygenerować wizualizację struktury grup?";
 
         mb.setWindowTitle("Grupowanie zakończone");
@@ -848,6 +1084,11 @@ void MainWindow::getClusteredRules(ruleCluster **c)
 void MainWindow::gotMDI(qreal MDI)
 {
     this->MDI = MDI;
+}
+
+void MainWindow::gotMDBI(qreal MDBI)
+{
+    this->MDBI = MDBI;
 }
 
 void MainWindow::getGraphicsRectObject(customGraphicsRectObject *object)

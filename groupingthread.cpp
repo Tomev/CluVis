@@ -130,14 +130,17 @@ void groupingThread::groupRSESRules()
     creatingSimMatrixProgress->close();
 
     countMDI();
+    countMDBI();
 
-    logText = "Liczba skupień: " + QString::number(settings->stopCondition) + ". Wskaźnik MDI grupowania: " + QString::number(MDI) +".";
+    logText = "Liczba skupień: " + QString::number(settings->stopCondition) + ". Wskaźnik MDI grupowania: "
+            + QString::number(MDI) +". Wskaźnik MDBI grupowania: " + QString::number(MDBI);
     emit passLogMsg(logText);
 
     logText = "Grupowanie zakończone. Przesyłam otrzymane struktury...";
     emit passLogMsg(logText);
 
     emit passMDI(MDI);
+    emit passMDBI(MDBI);
     emit passRules(rules);
     emit passJoinedRules(joinedRules);
     emit passClusteredRules(clusteredRules);
@@ -919,4 +922,9 @@ qreal groupingThread::countLowestRSESClusterRuleSimilarityValue(QString r, ruleC
                 countLowestRSESClusterRuleSimilarityValue(r,c->rightNode));
 
     return -1;
+}
+
+void groupingThread::countMDBI()
+{
+
 }
