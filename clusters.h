@@ -10,6 +10,7 @@ struct cluster
     //Members
 
     int clusterID = 0;
+    qreal dispersion = 0;
 
     //Methods
 

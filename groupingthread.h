@@ -27,6 +27,7 @@ signals:
     void passJoinedRules(ruleCluster*);
     void passClusteredRules(ruleCluster**);
     void passMDI(qreal MDI);
+    void passMDBI(qreal MDBI);
 
     void passLogMsg(QString);
 
@@ -38,6 +39,7 @@ private:
     bool wasAverageRuleDenumeratorSet = false;
 
     qreal MDI;
+    qreal MDBI;
 
     ruleCluster* rules;
     ruleCluster* joinedRules;
@@ -81,6 +83,9 @@ private:
         qreal countLowestRSESInterclusterSimilarity(ruleCluster* c1, ruleCluster* c2);
             qreal countLowestRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
 
+            qreal countClusterDispersion(ruleCluster *c, QString aRule, bool recursion);
+            void countMDBI();
+            qreal countSimilaritySum();
 };
 
 #endif // GROUPINGTHREAD_H

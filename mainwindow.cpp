@@ -336,6 +336,8 @@ void MainWindow::setGroupingSettings()
                 this,SLOT(gotLogText(QString)));
         connect(gThread,SIGNAL(passMDI(qreal)),
                 this,SLOT(gotMDI(qreal)));
+        connect(gThread,SIGNAL(passMDBI(qreal)),
+                this,SLOT(gotMDBI(qreal)));
 
         logText = "[" + tim->currentTime().toString() + "] ";
         logText += "Wczytano ustawienia szczególne dla RSES Rules.";
@@ -516,6 +518,7 @@ void MainWindow::groupObjects()
 
         infoText = "Liczba otrzymanych skupień: " + QString::number(settings->stopCondition) + ".\n";
         infoText += "MDI otrzymanych skupień: " + QString::number(MDI) + ".\n";
+        infoText += "MDBI otrzymanych skupień: " + QString::number(MDBI) + ".\n";
         infoText += "Czy chcesz wygenerować wizualizację struktury grup?";
 
         mb.setWindowTitle("Grupowanie zakończone");
@@ -638,6 +641,11 @@ void MainWindow::getClusteredRules(ruleCluster **c)
 void MainWindow::gotMDI(qreal MDI)
 {
     this->MDI = MDI;
+}
+
+void MainWindow::gotMDBI(qreal MDBI)
+{
+    this->MDBI = MDBI;
 }
 
 void MainWindow::getGraphicsRectObject(customGraphicsRectObject *object)

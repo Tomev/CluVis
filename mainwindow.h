@@ -48,6 +48,7 @@ private slots:
     void getJoinedRules(ruleCluster* c);
     void getClusteredRules(ruleCluster** c);
     void gotMDI(qreal MDI);
+    void gotMDBI(qreal MDBI);
 
     void getGraphicsRectObject(customGraphicsRectObject *object);
     void getGraphicsEllipseObject(customGraphicEllipseObject *object);
@@ -81,6 +82,7 @@ private:
     clusterInfo_RSESRules* cInfo;
 
     qreal MDI = 0;
+    qreal MDBI = 0;
 
     QTime* tim = new QTime();
 
