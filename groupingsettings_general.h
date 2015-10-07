@@ -29,12 +29,13 @@ public:
 
         //Variables
 
-    QFileInfo objectBaseInfo = "   ";
+    QFileInfo objectBaseInfo = "";
 
     int groupingAlgorithmID = 0;
     int interobjectDistanceMeasureID = 0;
     int interclusterDistanceMeasureID = 0;
     int attributesNumber = 0;
+    int coverSum = 0;
 
     //Methods
 

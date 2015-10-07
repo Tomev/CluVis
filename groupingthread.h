@@ -83,9 +83,13 @@ private:
         qreal countLowestRSESInterclusterSimilarity(ruleCluster* c1, ruleCluster* c2);
             qreal countLowestRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
 
+<<<<<<< HEAD
             qreal countClusterDispersion(ruleCluster *c, QString aRule, bool recursion);
             void countMDBI();
             qreal countSimilaritySum();
+=======
+     void countMDBI();
+>>>>>>> 7caeee63a2ec3a635ede44b9ec9925aa704fe39e
 };
 
 #endif // GROUPINGTHREAD_H

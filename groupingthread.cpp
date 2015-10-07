@@ -13,13 +13,11 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
                                groupingSettings_General *groupingSettings,
                                generalSettings* settings)
 {
-
     this->settings = settings;
     this->groupingSettings = groupingSettings;
     this->RSESSettings = RSESSettings;
 
     wasGroupingCanceled = false;
-
 
     groupingProgress = new QProgressDialog("Grupowanie reguł...","Anuluj",1,
                                            settings->objectsNumber,0,0);
@@ -82,11 +80,7 @@ void groupingThread::groupRSESRules()
     QString logText = "Zbieram dane dotyczące atrybutów reguł...";
     emit passLogMsg(logText);
 
-    //qDebug() << "Atr;";
-
     fillAttributesData();
-
-    //qDebug() << "SimMatrix;";
 
     qreal** simMatrix;
     int simMatrixSize = settings->objectsNumber;
@@ -96,25 +90,17 @@ void groupingThread::groupRSESRules()
     logText = "Rozmieszczam reguły do skupień...";
     emit passLogMsg(logText);
 
-    //qDebug() << "Cluster;";
-
     clusterRules();
 
     logText = "Rozpoczynam proces grupowania...";
 
     emit passLogMsg(logText);
 
-    //qDebug() << "Okna;";
-
     groupingProgress->show();
     creatingSimMatrixProgress->show();
 
-    //qDebug() << "Grupowanie;";
-
     while(i != 0)
     {
-        //qDebug() << i << endl;
-
         QApplication::processEvents();
 
         simMatrix = createSimMatrix(simMatrixSize);
@@ -146,7 +132,8 @@ void groupingThread::groupRSESRules()
     countMDI();
     countMDBI();
 
-    logText = "Liczba skupień: " + QString::number(settings->stopCondition) + ". Wskaźnik MDI grupowania: " + QString::number(MDI) +".";
+    logText = "Liczba skupień: " + QString::number(settings->stopCondition) + ". Wskaźnik MDI grupowania: "
+            + QString::number(MDI) +". Wskaźnik MDBI grupowania: " + QString::number(MDBI);
     emit passLogMsg(logText);
 
     logText = "Grupowanie zakończone. Przesyłam otrzymane struktury...";
@@ -161,6 +148,8 @@ void groupingThread::groupRSESRules()
 
 void groupingThread::fillAttributesData()
 {
+    //qDebug() << "Atrybuty";
+
     groupingSettings->attributesNumber =
             RSESSettings->getRSESRulesAttributeNumber(groupingSettings->objectBaseInfo);
 
@@ -259,10 +248,15 @@ void groupingThread::fillAttributesData()
             }
         }
     }
+
+    //qDebug() << "Koniec atrybutów.";
 }
 
 void groupingThread::clusterRules()
 {
+    //qDebug() << "Dodaję reguły do atrybutów.";
+    //qDebug() << settings->objectsNumber;
+
     rules = new ruleCluster[settings->objectsNumber];
     clusteredRules = new ruleCluster*[settings->objectsNumber];
     joinedRules = new ruleCluster[settings->objectsNumber];
@@ -285,11 +279,16 @@ void groupingThread::clusterRules()
 
             if(startClustering)
             {
+                //qDebug() << i;
+                //qDebug() << line;
+
                 rules[i].rule = line.split("[")[0];
                 rules[i].rule += ")";
                 rules[i].clusterID = i;
                 rules[i].longestRule = rules[i].rule;
                 rules[i].shortestRule = rules[i].rule;
+
+
 
                 QStringList splitedRule = line.split("=>");
 
@@ -306,7 +305,6 @@ void groupingThread::clusterRules()
                 }
 
                 rules[i].representative = rules[i].rule;
-                        //createAverageRule(&rules[i]);
 
                 clusteredRules[i] = &rules[i];
 
@@ -318,13 +316,13 @@ void groupingThread::clusterRules()
                 startClustering = true;
         }
     }
+
+    //qDebug() << "Koniec dodawania reguł do atrybutów.";
 }
 
 qreal **groupingThread::createSimMatrix(int simMatrixSize)
 {
     qreal **simMatrix = new qreal*[simMatrixSize];
-
-    //qDebug() << "Matrix size:" << simMatrixSize;
 
     for(int i = 0; i < simMatrixSize; i++)
         simMatrix[i] = new qreal[simMatrixSize];
@@ -345,18 +343,13 @@ qreal **groupingThread::createSimMatrix(int simMatrixSize)
                 simMatrix[i][j] = 0;
             else
             {
-                //qDebug() << "i = " << i << " j = " << j << endl;
                 qreal simValue = (double) countRSESClustersSimilarityValue(clusteredRules[i],clusteredRules[j]);
                 simMatrix[i][j] = simMatrix[j][i] = simValue;
             }
         }
     }
 
-    //qDebug() << "Wychodzę";
-
     creatingSimMatrixProgress->setMaximum(simMatrixSize);
-
-    //qDebug() << "Zwracam";
 
     return simMatrix;
 }
@@ -568,18 +561,12 @@ qreal groupingThread::countRSESRulesWeightedSimilarityValue(QString r1, QString 
 
 QStringList groupingThread::getRuleGroupedPart(QString r)
 {
-    //qDebug() << "Tu";
-
     QStringList ruleParts = r.split("=>");
-
-    //qDebug() << r;
 
     if(RSESSettings->groupingPartID == RSESSettings->CONCLUSION_ID)
     {
         QStringList conclusion;
-        //qDebug() << "Problem?";
         conclusion.append(ruleParts.at(1));
-        //qDebug() << "Tam";
         return conclusion;
     }
 
@@ -599,16 +586,11 @@ QString groupingThread::removeBraces(QString a)
 {
     QString attribute = a;
 
-    //qDebug() << "Atr: " + a;
-
     if(a.at(0) == " ")
         attribute.remove(0,1);
 
-
     attribute.remove(0,1);
     attribute.remove(attribute.length()-1,1);
-
-    //qDebug() << "Remove:" + attribute;
 
     return attribute;
 }
@@ -751,9 +733,6 @@ QString groupingThread::createAverageRule(ruleCluster *c)
     symbolicAtrValues = new QStringList[symbolicAtrNumber];
     mostCommonSymbolicAtrValue = new QString[symbolicAtrNumber];
 
-    //qDebug() << symbolicAtrNumber;
-
-
     for(int i = 0; i < numericAtrNumber; i++)
         averageNumericAtrValues[i] = 0;
 
@@ -796,15 +775,11 @@ QString groupingThread::createAverageRule(ruleCluster *c)
         }
     }
 
-    //qDebug() << "Badam listy.";
-
     for(int i = 0; i < numericAtrNumber; i++)
         averageNumericAtrValues[i] /= clusterSize;
 
     for(int i = 0; i < symbolicAtrNumber; i++)
     {
-        //qDebug() << i;
-
         symbolicAtrValuesSet = symbolicAtrValues[i].toSet().toList();
 
 

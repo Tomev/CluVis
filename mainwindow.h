@@ -27,8 +27,9 @@ public:
 
 private slots:
     //File
-    void on_actionLoadObjectBase_triggered();\
+    void on_actionLoadObjectBase_triggered();
     void on_actionSaveVisualization_triggered();
+    void on_actionGenerateReport_triggered();
     void on_actionExit_triggered();
 
     //Help
@@ -60,7 +61,16 @@ private slots:
     void gotLogText(QString);
 
 private:
+
+    enum Constants
+    {
+        REPORT_TYPE_XML = 0,
+        REPORT_TYPE_TXT = 1
+    };
+
     Ui::MainWindow *ui;
+
+    QString raportMessage;
 
     bool areObjectsClustered = false;
 
@@ -92,6 +102,34 @@ private:
     QFileInfo selectObjectBase();
     bool isRuleSet(QFileInfo base);
 
+    void generateReport();
+        QString getFilePath();
+        QString getReportDirPath();
+        int MainWindow::getFileType(QChar t);
+        QString createReportContent(int type);
+            QString createTXTReportContent();
+                QString formatThickString(QString s);
+            QString createXMLReportContent();
+                QString createXMLFileHeader();
+                QString createXMLFileWorkbook();
+                QString createXMLFileDocumentProperties();
+                QString createXMLFileExcelWorkbook();
+                QString createXMLFileStyles();
+                QString createXMLFileFooter();
+                QString createXMLFileTable();
+                QString createXMLFileTableHeader();
+                QString createXMLFileTableCell(QString data, bool isHeader);
+                QString createXMLFileTableContent();
+                QString createXMLFileClustersData();
+                QString createXMLFileClustersDataHeader();
+                QString createXMLFileClustersDataContent();
+        void createPath(QString path);
+        int countCoverageSum();
+        ruleCluster* findBiggestCluster();
+        ruleCluster* findSmallestCluster();
+        QString getRuleClusterName(ruleCluster* c);
+        int countClusterCoverage(ruleCluster* c);
+
     //Rest
     //Functions
 
@@ -100,7 +138,6 @@ private:
         bool isBaseLoaded();
         bool isStopConditionCorrect();
     void setVisualizationSettings();
-
 
     void groupObjects();
     void visualize();
