@@ -279,16 +279,11 @@ void groupingThread::clusterRules()
 
             if(startClustering)
             {
-                //qDebug() << i;
-                //qDebug() << line;
-
                 rules[i].rule = line.split("[")[0];
                 rules[i].rule += ")";
                 rules[i].clusterID = i;
                 rules[i].longestRule = rules[i].rule;
                 rules[i].shortestRule = rules[i].rule;
-
-
 
                 QStringList splitedRule = line.split("=>");
 
@@ -308,6 +303,8 @@ void groupingThread::clusterRules()
 
                 clusteredRules[i] = &rules[i];
 
+                clusters.append(rules[i]);
+
                 i++;
                 continue;
             }
@@ -323,9 +320,21 @@ void groupingThread::clusterRules()
 qreal **groupingThread::createSimMatrix(int simMatrixSize)
 {
     qreal **simMatrix = new qreal*[simMatrixSize];
+    qreal **simMatrix2 = new qreal*[simMatrixSize];
 
     for(int i = 0; i < simMatrixSize; i++)
         simMatrix[i] = new qreal[simMatrixSize];
+
+    for(int i = 0; i < simMatrixSize; i++)
+        simMatrix2[i] = new qreal[simMatrixSize];
+
+    for(int i = 0; i < clusters.length(); i++)
+    {
+        for(int j = 0; j <= clusters.length(); j++)
+        {
+            simMatrix2[i][j] = simMatrix2[j][i] = (qreal) countRSESClustersSimilarityValue(clusteredRules[i],clusteredRules[j]);
+        }
+    }
 
     for(int i =0 ; i < simMatrixSize; i++)
     {
@@ -351,7 +360,7 @@ qreal **groupingThread::createSimMatrix(int simMatrixSize)
 
     creatingSimMatrixProgress->setMaximum(simMatrixSize);
 
-    return simMatrix;
+    return simMatrix2;
 }
 
 qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2)
@@ -436,6 +445,8 @@ qreal groupingThread::countRSESRulesSimilarityValue(QString r1, QString r2)
         default:
             break;
     }
+
+    return 0;
 }
 
 qreal groupingThread::countRSESRulesGowersMeasureValue(QString r1, QString r2)
@@ -613,6 +624,8 @@ qreal groupingThread::findHighestSimilarity(qreal **simMatrix, int simMatrixSize
 
 void groupingThread::joinMostSimilarClusters(qreal **simMatrix, int simMatrixSize, qreal highestSim)
 {
+
+
     for(int i = 0; i < simMatrixSize; i++)
     {
         for(int j = 0; j < i; j++)
@@ -620,8 +633,32 @@ void groupingThread::joinMostSimilarClusters(qreal **simMatrix, int simMatrixSiz
 
             if(simMatrix[i][j] == highestSim)
             {
-
                 int k = 0;
+
+                while(joinedRules[k].leftNode != NULL)
+                    k++;
+
+                ruleCluster c;
+                c.clusterID = k;
+                c.leftNode = static_cast<ruleCluster>(clusters[i]);
+                c.rightNode = clusters[j];
+
+                c.longestRule = getLongerRule((ruleCluster)clusters[i],(ruleCluster)clusters[j]);
+                c.longestRule = getShorterRule((ruleCluster)clusters[i],(ruleCluster)clusters[j]);
+
+                c.decisionAttributes.unite(dynamic_cast<ruleCluster>(clusters[i]).decisionAttributes);
+                c.decisionAttributes.unite(dynamic_cast<ruleCluster>(clusters[j]).decisionAttributes);
+
+                c.conclusionAttributes.unite(dynamic_cast<ruleCluster>(clusters[i]).conclusionAttributes);
+                c.conclusionAttributes.unite(dynamic_cast<ruleCluster>(clusters[j]).conclusionAttributes);
+
+                c.representative = createAverageRule(&c);
+
+                c.dispersion = countClusterDispersion(&c, c.representative, false);
+
+                clusters.append(c);
+
+                k = 0;
 
                 while(joinedRules[k].leftNode != NULL)
                     k++;
@@ -948,7 +985,7 @@ void groupingThread::countMDBI()
 
 qreal groupingThread::countSimilaritySum()
 {
-    qreal sum;
+    qreal sum = 0;
 
     for(int i = 0; i < settings->stopCondition; i++)
     {

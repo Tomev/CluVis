@@ -41,6 +41,8 @@ private:
     qreal MDI;
     qreal MDBI;
 
+    QList<cluster> clusters;
+
     ruleCluster* rules;
     ruleCluster* joinedRules;
     ruleCluster** clusteredRules;

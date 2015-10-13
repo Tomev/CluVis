@@ -14,9 +14,10 @@ struct cluster
 
     //Methods
 
-    virtual int size() = 0;
-    virtual bool hasBothNodes() = 0;
-    virtual QString getClusterRepresentativeString() = 0;
+    int size(){return 0;}
+    bool hasBothNodes(){return false;}
+    QString getId() {return "";}
+    QString getClusterRepresentativeString() {return "";}
 };
 
 struct ruleCluster : cluster
@@ -88,6 +89,20 @@ struct ruleCluster : cluster
             return false;
 
         return true;
+    }
+
+    QString getId()
+    {
+        QString result = "";
+
+        if(this->size()==1)
+            result += "R";
+        else
+            result += "J";
+
+        result += this->clusterID+1;
+
+        return result;
     }
 
     QString getMostCommonDecision()

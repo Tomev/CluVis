@@ -648,7 +648,7 @@ QString MainWindow::createXMLFileClustersDataContent()
         result += createXMLFileTableCell(QString::number(vSettings_RSES->clusteredRules[i]->size()), false);
         result += createXMLFileTableCell(
                     QString::number((float)((countClusterCoverage(vSettings_RSES->clusteredRules[i])*100)/countCoverageSum())) + "%", false);
-     //   result += createXMLFileTableCell(vSettings_RSES->clusteredRules[i]->representative, false);
+        result += createXMLFileTableCell((vSettings_RSES->clusteredRules[i]->representative).replace("&","AND"), false);
         result += "\t\t\t</Row>\n";
     }
 
@@ -962,6 +962,9 @@ void MainWindow::groupObjects()
         infoText = "Liczba otrzymanych skupień: " + QString::number(settings->stopCondition) + ".\n";
         infoText += "MDI otrzymanych skupień: " + QString::number(MDI) + ".\n";
         infoText += "MDBI otrzymanych skupień: " + QString::number(MDBI) + ".\n";
+
+
+
         infoText += "Czy chcesz wygenerować wizualizację struktury grup?";
 
         mb.setWindowTitle("Grupowanie zakończone");

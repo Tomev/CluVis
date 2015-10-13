@@ -25,7 +25,6 @@ public:
 
     visualizationSettings_general();
     ~visualizationSettings_general();
-
 };
 
 #endif // VISUALIZATIONSETTINGS_GENERAL_H

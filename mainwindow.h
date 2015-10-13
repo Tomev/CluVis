@@ -85,6 +85,8 @@ private:
     visualizationSettings_general* vSettings = new visualizationSettings_general();
     visualizationSettings_RSESRules* vSettings_RSES = new visualizationSettings_RSESRules();
 
+    QList<ruleCluster> clusters;
+
     ruleCluster* rules;
     ruleCluster* joinedRules;
     ruleCluster** clusteredRules;
