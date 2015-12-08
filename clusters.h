@@ -7,50 +7,67 @@
 
 struct cluster
 {
+    cluster(int id = 0)
+    {
+        clusterID = id;
+    }
+
     //Members
 
     int clusterID = 0;
     qreal dispersion = 0;
 
+    cluster* leftNode = NULL;
+    cluster* rightNode = NULL;
+
     //Methods
 
-    int size(){return 0;}
-    bool hasBothNodes(){return false;}
+    int size()
+    {
+        if(hasBothNodes())
+            return leftNode->size() + rightNode->size();
+
+        return 1;
+    }
+
+    bool hasBothNodes()
+    {
+        if(leftNode == NULL || rightNode == NULL)
+            return false;
+
+        return true;
+    }
+
     QString getId() {return "";}
     QString getClusterRepresentativeString() {return "";}
+    QString toString(){return "To string.";}
 };
 
 struct ruleCluster : cluster
 {
     //Members
 
-    QString rule = "";
-    QString longestRule = "";
-    QString shortestRule = "";
-    QString representative = "Cluster Representative";
+    QString rule, longestRule, shortestRule, representative;
 
     int support = 0;
 
     QSet<QString> decisionAttributes;
     QSet<QString> conclusionAttributes;
 
-    ruleCluster* leftNode = NULL;
-    ruleCluster* rightNode = NULL;
-
     //Methods
         //Constructors
 
-    ruleCluster()
-    {    }
-
-    ruleCluster(QString rule)
+    ruleCluster(int id = 0, QString r = "")
     {
-        this->rule = rule;
+        clusterID = id;
+
+        rule =  longestRule = shortestRule =
+                representative = r;
     }
 
-        //Operator
+        //Operators
 
-    inline ruleCluster operator=(ruleCluster c)
+    inline ruleCluster operator = (ruleCluster c)
     {
         clusterID = c.clusterID;
 
@@ -72,24 +89,6 @@ struct ruleCluster : cluster
     }
 
         //Other
-
-    int size()
-    {
-        if(rule!="")
-            return 1;
-        else
-            return this->leftNode->size() + this->rightNode->size();
-    }
-
-    bool hasBothNodes()
-    {
-        if(leftNode == NULL)
-            return false;
-        if(rightNode == NULL)
-            return false;
-
-        return true;
-    }
 
     QString getId()
     {
@@ -193,9 +192,9 @@ struct ruleCluster : cluster
     QStringList getRules()
     {
         if(rule=="")
-            return leftNode->getRules() + rightNode->getRules();
-        else
-            return QStringList(rule);
+            return ((ruleCluster*) leftNode)->getRules() + ((ruleCluster*) rightNode)->getRules();
+
+        return QStringList(rule);
     }
 
 };

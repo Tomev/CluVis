@@ -48,6 +48,7 @@ private slots:
     void getRules(ruleCluster* c);
     void getJoinedRules(ruleCluster* c);
     void getClusteredRules(ruleCluster** c);
+    void getNewClusters(cluster** c);
     void gotMDI(qreal MDI);
     void gotMDBI(qreal MDBI);
 
@@ -90,6 +91,7 @@ private:
     ruleCluster* rules;
     ruleCluster* joinedRules;
     ruleCluster** clusteredRules;
+    cluster** newClusters;
 
     clusterInfo_RSESRules* cInfo;
 
@@ -107,7 +109,7 @@ private:
     void generateReport();
         QString getFilePath();
         QString getReportDirPath();
-        int MainWindow::getFileType(QChar t);
+        int getFileType(QChar t);
         QString createReportContent(int type);
             QString createTXTReportContent();
                 QString formatThickString(QString s);

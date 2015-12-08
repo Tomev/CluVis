@@ -29,7 +29,7 @@ public:
 
         //Variables
 
-    QFileInfo objectBaseInfo = "";
+    QFileInfo objectBaseInfo;
 
     int groupingAlgorithmID = 0;
     int interobjectDistanceMeasureID = 0;

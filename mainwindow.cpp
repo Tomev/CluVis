@@ -187,7 +187,7 @@ int MainWindow::getObjectsNumber()
 {
     switch(settings->dataTypeID)
     {
-        case settings->RSES_RULES_ID:
+        case 0://settings->RSES_RULES_ID:
             return gSettings_RSES->getRSESRulesNumber(
                         gSettings->objectBaseInfo);
             break;
@@ -452,7 +452,7 @@ int MainWindow::countClusterCoverage(ruleCluster* c)
     if(c->rule != "")
         return c->support;
 
-    return countClusterCoverage(c->leftNode) + countClusterCoverage(c->rightNode);
+    return countClusterCoverage(((ruleCluster*)c->leftNode)) + countClusterCoverage(((ruleCluster*)c->rightNode));
 }
 
 QString MainWindow::createXMLReportContent()
@@ -762,7 +762,7 @@ void MainWindow::setGroupingSettings()
 
     switch(settings->dataTypeID)
     {
-    case settings->RSES_RULES_ID:
+    case 0://settings->RSES_RULES_ID:
 
         gSettings_RSES->groupingPartID =
                 ui->comboBoxRuleGroupedPart->currentIndex();
@@ -813,9 +813,9 @@ void MainWindow::setVisualizationSettings()
 
     switch(settings->dataTypeID)
     {
-    case settings->RSES_RULES_ID:
+    case 0://settings->RSES_RULES_ID:
 
-        vSettings_RSES->clusteredRules = clusteredRules;
+        vSettings_RSES->clusteredRules = (ruleCluster**) newClusters;
 
         vThread = new visualizationThread(settings, vSettings, vSettings_RSES);
 
@@ -1078,6 +1078,19 @@ void MainWindow::getClusteredRules(ruleCluster **c)
     ui->textBrowserLog->append(logText);
 
     clusteredRules = c;
+
+    areObjectsClustered = true;
+    ui->labelIsBaseGrouped->setText("<b>(Pogrupowana)</b>");
+}
+
+void MainWindow::getNewClusters(cluster** c)
+{
+    QString logText = "[" + tim->currentTime().toString() + "] ";
+    logText += "Otrzymano pogrupowane reguły. Można przystąpić do wizualizacji.";
+
+    ui->textBrowserLog->append(logText);
+
+    newClusters = c;
 
     areObjectsClustered = true;
     ui->labelIsBaseGrouped->setText("<b>(Pogrupowana)</b>");

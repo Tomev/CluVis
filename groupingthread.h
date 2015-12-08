@@ -26,6 +26,7 @@ signals:
     void passRules(ruleCluster*);
     void passJoinedRules(ruleCluster*);
     void passClusteredRules(ruleCluster**);
+    void passNewClusters(cluster**);
     void passMDI(qreal MDI);
     void passMDBI(qreal MDBI);
 
@@ -42,6 +43,9 @@ private:
     qreal MDBI;
 
     QList<cluster> clusters;
+
+    cluster** newClusters;
+    int nextClusterID = 0;
 
     ruleCluster* rules;
     ruleCluster* joinedRules;
@@ -73,7 +77,8 @@ private:
                             QStringList getRuleGroupedPart(QString r);
                                 QStringList prepareAttribute(QString a);
                                     QString removeBraces(QString a);
-            qreal findHighestSimilarity(qreal **simMatrix, int simMatrixSize);            
+            qreal findHighestSimilarity(qreal **simMatrix, int simMatrixSize);
+            cluster* joinClusters(cluster* c1, cluster* c2);
             void joinMostSimilarClusters(qreal **simMatrix, int simMatrixSize, qreal highestSim);
                 QString getLongerRule(QString r1, QString r2);
                     int getRuleAttributesNumber(QString r);

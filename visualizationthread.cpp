@@ -32,7 +32,7 @@ void visualizationThread::visualize(ruleCluster *c)
 
     switch(settings->dataTypeID)
     {
-    case settings->RSES_RULES_ID:
+    case 0://settings->RSES_RULES_ID:
 
         logText = "Rozpoczynam wizualizację dla RSES Rules...";
         emit passLogMsg(logText);
@@ -51,10 +51,10 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
 {
     switch(vSettings->visualizationAlgorithmID)
     {
-    case vSettings->RT_SLICE_AND_DICE_ID:
+    case 0://vSettings->RT_SLICE_AND_DICE_ID:
         RSES_RTSAD(vSettings->sceneRect,c);
         break;
-    case vSettings->CIRCULAR_TREEMAP_ID:
+    case 1://vSettings->CIRCULAR_TREEMAP_ID:
         RSES_CircularTreemap(vSettings->sceneRect,c);
         break;
     default:
@@ -120,8 +120,8 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
         if(c->hasBothNodes())
         {
             clusters = new ruleCluster*[2];
-            clusters[0] = c->leftNode;
-            clusters[1] = c->rightNode;
+            clusters[0] = (ruleCluster*)c->leftNode;
+            clusters[1] = (ruleCluster*)c->rightNode;
             clustersNumber = 2;
         }
         else
@@ -217,8 +217,8 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
         if(c->hasBothNodes())
         {
             clusters = new ruleCluster*[2];
-            clusters[0] = c->leftNode;
-            clusters[1] = c->rightNode;
+            clusters[0] = (ruleCluster*)c->leftNode;
+            clusters[1] = (ruleCluster*)c->rightNode;
             clustersNumber = 2;
         }
         else
@@ -321,8 +321,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                 QRect* c2BRect =
                     new QRect(left,top,d2,d2);
 
-                RSES_CircularTreemap(c1BRect,newC->leftNode);
-                RSES_CircularTreemap(c2BRect,newC->rightNode);
+                RSES_CircularTreemap(c1BRect,(ruleCluster*)newC->leftNode);
+                RSES_CircularTreemap(c2BRect,(ruleCluster*)newC->rightNode);
             }
         }
 
@@ -638,8 +638,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                     QRect* c2BRect =
                         new QRect(left,top,d2,d2);
 
-                    RSES_CircularTreemap(c1BRect,sortedRuleClusters[i]->leftNode);
-                    RSES_CircularTreemap(c2BRect,sortedRuleClusters[i]->rightNode);
+                    RSES_CircularTreemap(c1BRect,(ruleCluster*)sortedRuleClusters[i]->leftNode);
+                    RSES_CircularTreemap(c2BRect,(ruleCluster*)sortedRuleClusters[i]->rightNode);
                 }
             }
 
@@ -680,8 +680,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                 new QRect(left,top+1,d2,d2);
 
             if(vSettings->visualizeAllHierarchyLevels){
-                RSES_CircularTreemap(c1BRect,newC->leftNode);
-                RSES_CircularTreemap(c2BRect,newC->rightNode);
+                RSES_CircularTreemap(c1BRect,(ruleCluster*)newC->leftNode);
+                RSES_CircularTreemap(c2BRect,(ruleCluster*)newC->rightNode);
             }
             else
             {
@@ -689,14 +689,14 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                 shadeOfGray = QColor(sV,sV,sV);
 
                 customGraphicEllipseObject* object =
-                   new customGraphicEllipseObject(*c1BRect,shadeOfGray,newC->leftNode);
+                   new customGraphicEllipseObject(*c1BRect,shadeOfGray,(ruleCluster*)newC->leftNode);
 
                 emit passGraphicsEllipseObject(object);
 
                 sV = countShadeValue(newC->rightNode->size());
                 shadeOfGray = QColor(sV,sV,sV);
 
-                object = new customGraphicEllipseObject(*c2BRect,shadeOfGray,newC->rightNode);
+                object = new customGraphicEllipseObject(*c2BRect,shadeOfGray,(ruleCluster*)newC->rightNode);
 
                 emit passGraphicsEllipseObject(object);
             }
