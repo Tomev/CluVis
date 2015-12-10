@@ -44,10 +44,6 @@ private slots:
     void on_pushButtonVisualize_clicked();
 
     //Rest
-
-    void getRules(ruleCluster* c);
-    void getJoinedRules(ruleCluster* c);
-    void getClusteredRules(ruleCluster** c);
     void getNewClusters(cluster** c);
     void gotMDI(qreal MDI);
     void gotMDBI(qreal MDBI);
@@ -73,32 +69,27 @@ private:
 
     QString raportMessage;
 
-    bool areObjectsClustered = false;
+    bool areObjectsClustered;
 
     QGraphicsScene* scene;
 
     groupingThread* gThread;
     visualizationThread* vThread;
 
-    generalSettings* settings = new generalSettings();
-    groupingSettings_General* gSettings = new groupingSettings_General();
-    groupingSettings_RSESRules* gSettings_RSES = new groupingSettings_RSESRules();
-    visualizationSettings_general* vSettings = new visualizationSettings_general();
-    visualizationSettings_RSESRules* vSettings_RSES = new visualizationSettings_RSESRules();
+    generalSettings* settings;
+    groupingSettings_General* gSettings;
+    groupingSettings_RSESRules* gSettings_RSES;
+    visualizationSettings_general* vSettings;
+    visualizationSettings_RSESRules* vSettings_RSES;
 
-    QList<ruleCluster> clusters;
-
-    ruleCluster* rules;
-    ruleCluster* joinedRules;
-    ruleCluster** clusteredRules;
     cluster** newClusters;
 
     clusterInfo_RSESRules* cInfo;
 
-    qreal MDI = 0;
-    qreal MDBI = 0;
+    qreal MDI;
+    qreal MDBI;
 
-    QTime* tim = new QTime();
+    QTime* tim;
 
     int getObjectsNumber();
 

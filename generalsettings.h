@@ -14,9 +14,9 @@ public:
 
         //Variables
 
-    int dataTypeID = 0;
-    int objectsNumber = 0;
-    int stopCondition = 1;
+    int dataTypeID;
+    int objectsNumber;
+    int stopCondition;
 
     //Methods
 

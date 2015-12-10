@@ -19,6 +19,13 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    settings = new generalSettings();
+    gSettings = new groupingSettings_General();
+    gSettings_RSES = new groupingSettings_RSESRules();
+    vSettings = new visualizationSettings_general();
+    vSettings_RSES = new visualizationSettings_RSESRules();
+    tim = new QTime();
+
     ui->setupUi(this);
 
     setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint);
@@ -57,23 +64,9 @@ MainWindow::~MainWindow()
     delete vSettings_RSES;
 
     for(int i = settings->objectsNumber; i >= 0; i--)
-    {
-        delete clusteredRules[i];
-    }
+        delete newClusters[i];
 
-    for(int i = settings->objectsNumber; i >= 0; i--)
-    {
-        delete &joinedRules[i];
-    }
-
-    for(int i = settings->objectsNumber; i >= 0; i--)
-    {
-        delete &rules[i];
-    }
-
-    delete[] rules;
-    delete[] joinedRules;
-    delete[] clusteredRules;
+    delete[] newClusters;
     delete cInfo;
     delete tim;
 }
@@ -158,7 +151,7 @@ QFileInfo MainWindow::selectObjectBase()
     else
         openPath = defaultOpenPath;
 
-    QString OBPath = FD.getOpenFileName(this, tr("Wybierz bazę"),openPath,tr("Pliki tekstowe (*.txt);; Pliki reguł(*.rul)"));
+    QString OBPath = FD.getOpenFileName(this, tr("Wybierz bazę"),openPath,tr("Pliki reguł(*.rul);; Pliki tekstowe (*.txt)"));
 
     return QFileInfo(OBPath);
 }
@@ -187,7 +180,7 @@ int MainWindow::getObjectsNumber()
 {
     switch(settings->dataTypeID)
     {
-        case 0://settings->RSES_RULES_ID:
+        case generalSettings::RSES_RULES_ID:
             return gSettings_RSES->getRSESRulesNumber(
                         gSettings->objectBaseInfo);
             break;
@@ -195,7 +188,7 @@ int MainWindow::getObjectsNumber()
             ;
     }
 
-    return 0;
+    return -1;
 }
 
 void MainWindow::on_actionSaveVisualization_triggered()
@@ -260,7 +253,7 @@ void MainWindow::generateReport()
 
     QString reportContent = createReportContent(fileType);
 
-    qDebug() << filePath;
+    //qDebug() << filePath;
 
     QFile report(filePath);
 
@@ -399,19 +392,19 @@ int MainWindow::countCoverageSum()
     int coverageSum = 0;
 
     for(int i = 0; i < getObjectsNumber(); i++)
-        coverageSum += rules[i].support;
+        coverageSum += ((ruleCluster*)newClusters[i])->support;
 
     return coverageSum;
 }
 
 ruleCluster* MainWindow::findSmallestCluster()
 {
-    ruleCluster* smallest = clusteredRules[0];
+    ruleCluster* smallest = ((ruleCluster*)newClusters[0]);
 
     for(int i = 1; i < settings->stopCondition; i++)
     {
-        if(smallest->size() > clusteredRules[i]->size())
-            smallest = clusteredRules[i];
+        if(smallest->size() > newClusters[i]->size())
+            smallest = ((ruleCluster*)newClusters[i]);
     }
 
     return smallest;
@@ -419,12 +412,12 @@ ruleCluster* MainWindow::findSmallestCluster()
 
 ruleCluster* MainWindow::findBiggestCluster()
 {
-    ruleCluster* biggest = clusteredRules[0];
+    ruleCluster* biggest = ((ruleCluster*)newClusters[0]);
 
     for(int i = 1; i < this->settings->stopCondition; i++)
     {
-        if(biggest->size() < clusteredRules[i]->size())
-            biggest = clusteredRules[i];
+        if(biggest->size() < newClusters[i]->size())
+            biggest = ((ruleCluster*)newClusters[i]);
     }
 
     return biggest;
@@ -762,19 +755,15 @@ void MainWindow::setGroupingSettings()
 
     switch(settings->dataTypeID)
     {
-    case 0://settings->RSES_RULES_ID:
+    case generalSettings::RSES_RULES_ID:
 
         gSettings_RSES->groupingPartID =
-                ui->comboBoxRuleGroupedPart->currentIndex();
+            ui->comboBoxRuleGroupedPart->currentIndex();
 
         gThread = new groupingThread(gSettings_RSES, gSettings, settings);
 
-        connect(gThread,SIGNAL(passRules(ruleCluster*)),
-                this,SLOT(getRules(ruleCluster*)));
-        connect(gThread,SIGNAL(passJoinedRules(ruleCluster*)),
-                this,SLOT(getJoinedRules(ruleCluster*)));
-        connect(gThread,SIGNAL(passClusteredRules(ruleCluster**)),
-                this,SLOT(getClusteredRules(ruleCluster**)));
+        connect(gThread,SIGNAL(passNewClusters(cluster**)),
+                this,SLOT(getNewClusters(cluster**)));
         connect(gThread,SIGNAL(passLogMsg(QString)),
                 this,SLOT(gotLogText(QString)));
         connect(gThread,SIGNAL(passMDI(qreal)),
@@ -813,9 +802,9 @@ void MainWindow::setVisualizationSettings()
 
     switch(settings->dataTypeID)
     {
-    case 0://settings->RSES_RULES_ID:
+    case generalSettings::RSES_RULES_ID:
 
-        vSettings_RSES->clusteredRules = (ruleCluster**) newClusters;
+        vSettings_RSES->clusteredRules = ((ruleCluster**)newClusters);
 
         vThread = new visualizationThread(settings, vSettings, vSettings_RSES);
 
@@ -1059,29 +1048,6 @@ void MainWindow::on_pushButtonGeneral_clicked()
     ui->stackedWidgetSettings->setCurrentIndex(0);
 }
 */
-
-void MainWindow::getRules(ruleCluster *c)
-{   
-    rules = c;
-}
-
-void MainWindow::getJoinedRules(ruleCluster *c)
-{
-    joinedRules = c;
-}
-
-void MainWindow::getClusteredRules(ruleCluster **c)
-{
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Otrzymano pogrupowane reguły. Można przystąpić do wizualizacji.";
-
-    ui->textBrowserLog->append(logText);
-
-    clusteredRules = c;
-
-    areObjectsClustered = true;
-    ui->labelIsBaseGrouped->setText("<b>(Pogrupowana)</b>");
-}
 
 void MainWindow::getNewClusters(cluster** c)
 {

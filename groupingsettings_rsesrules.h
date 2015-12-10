@@ -24,7 +24,7 @@ public:
     static const int CONCLUSION_ID = 1;
         //Variables
 
-    int groupingPartID = 0;
+    int groupingPartID;
 
     //Methods
 

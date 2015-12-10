@@ -14,8 +14,8 @@ struct cluster
 
     //Members
 
-    int clusterID = 0;
-    qreal dispersion = 0;
+    int clusterID;
+    qreal dispersion;
 
     cluster* leftNode = NULL;
     cluster* rightNode = NULL;
@@ -49,7 +49,7 @@ struct ruleCluster : cluster
 
     QString rule, longestRule, shortestRule, representative;
 
-    int support = 0;
+    int support;
 
     QSet<QString> decisionAttributes;
     QSet<QString> conclusionAttributes;

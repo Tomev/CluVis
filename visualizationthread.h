@@ -32,7 +32,7 @@ private:
     visualizationSettings_general* vSettings;
     visualizationSettings_RSESRules* vSettings_RSES;
 
-    int rectPadding = 5;
+    int rectPadding;
 
     void visualize(ruleCluster *c);
         void visualizeRSESRules(ruleCluster *c);

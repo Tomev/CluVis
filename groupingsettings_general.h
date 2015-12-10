@@ -31,11 +31,11 @@ public:
 
     QFileInfo objectBaseInfo;
 
-    int groupingAlgorithmID = 0;
-    int interobjectDistanceMeasureID = 0;
-    int interclusterDistanceMeasureID = 0;
-    int attributesNumber = 0;
-    int coverSum = 0;
+    int groupingAlgorithmID;
+    int interobjectDistanceMeasureID;
+    int interclusterDistanceMeasureID;
+    int attributesNumber;
+    int coverSum;
 
     //Methods
 

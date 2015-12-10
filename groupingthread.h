@@ -37,19 +37,13 @@ private:
         //Constans
         //Variables
     bool wasGroupingCanceled;
-    bool wasAverageRuleDenumeratorSet = false;
+    bool wasAverageRuleDenumeratorSet;
 
     qreal MDI;
     qreal MDBI;
 
-    QList<cluster> clusters;
-
     cluster** newClusters;
-    int nextClusterID = 0;
-
-    ruleCluster* rules;
-    ruleCluster* joinedRules;
-    ruleCluster** clusteredRules;
+    int nextClusterID;
 
     generalSettings* settings;
     groupingSettings_General* groupingSettings;
@@ -57,8 +51,8 @@ private:
 
     RSESAttribute* attributes;
 
-    QProgressDialog* groupingProgress = new QProgressDialog();
-    QProgressDialog* creatingSimMatrixProgress = new QProgressDialog();
+    QProgressDialog* groupingProgress;
+    QProgressDialog* creatingSimMatrixProgress;
 
     //Methods
 

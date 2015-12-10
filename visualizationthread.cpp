@@ -4,7 +4,7 @@
 
 visualizationThread::visualizationThread()
 {
-
+    rectPadding = 5;
 }
 
 visualizationThread::visualizationThread(generalSettings *settings,
@@ -51,10 +51,10 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
 {
     switch(vSettings->visualizationAlgorithmID)
     {
-    case 0://vSettings->RT_SLICE_AND_DICE_ID:
+    case visualizationSettings_general::RT_SLICE_AND_DICE_ID:
         RSES_RTSAD(vSettings->sceneRect,c);
         break;
-    case 1://vSettings->CIRCULAR_TREEMAP_ID:
+    case visualizationSettings_general::CIRCULAR_TREEMAP_ID:
         RSES_CircularTreemap(vSettings->sceneRect,c);
         break;
     default:
@@ -64,6 +64,7 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
 
 void visualizationThread::RSES_RTSAD(QRect* rect, ruleCluster* c)
 {
+
     QRect paintAreaRect = *rect;
 
     if(paintAreaRect.width() >= paintAreaRect.height())
@@ -376,34 +377,21 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                         QPoint* hTouchPoint;
                         QPoint kCenter;
 
-                        //qDebug() << "i = " << i << "j = " << j;
-
                         circleICenterX = circlesBRects[i]->center().x();
                         circleJCenterX = circlesBRects[j]->center().x();
                         circleICenterY = circlesBRects[i]->center().y();
                         circleJCenterY = circlesBRects[j]->center().y();
-
-                        //qDebug() << "cix = " << circleICenterX;
-                        //qDebug() << "ciy = " << circleICenterY;
-                        //qDebug() << "cjx = " << circleJCenterX;
-                        //qDebug() << "cjy = " << circleJCenterY;
 
                         distFromCIToh = qPow((diameters[i]+diameters[j])/2,2);
                         distFromCIToh += qPow((diameters[i]+diameters[k])/2,2);
                         distFromCIToh -= qPow((diameters[j]+diameters[k])/2,2);
                         distFromCIToh /= 2/2*diameters[i]+diameters[j];
 
-                        //qDebug() << "Distance to H from I: " << distFromCIToh;
-
                         directionCoefficient = (circleICenterY - circleJCenterY);
                         directionCoefficient /= (circleICenterX - circleJCenterX);
 
-                        //qDebug() << "a = " << directionCoefficient;
-
                         qreal x1 = qCeil(qSqrt(qPow(directionCoefficient,2) + 1) * distFromCIToh);
                         qreal y1 = qCeil(directionCoefficient * x1);
-
-                        //qDebug() << "Przesinięcie x = " << x1 << "Przesunięcie y = " << y1;
 
                         hTouchPoint = new QPoint(circleICenterX,circleICenterY);
 
@@ -417,11 +405,7 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                         else
                             hTouchPoint->setY(hTouchPoint->y() - y1);
 
-                        //qDebug() << "HTouchPoint: " << *hTouchPoint;
-
                         h = (double) qCeil(qSqrt(qPow((diameters[i]+diameters[k])/2,2) - qPow(distFromCIToh,2)));
-
-                        //qDebug() << "h = " << h;
 
                         qreal x2;
                         qreal y2;
@@ -437,8 +421,6 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                             y2 = (double) qCeil(-1/directionCoefficient * x2);
                         }
 
-                        //qDebug() << "x2 = " << x2 << "y2 = " << y2;
-
                         kCenter = *hTouchPoint;
 
                         if(circleICenterX < circleJCenterX)
@@ -474,37 +456,23 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                                                     kCenter.y()-diameters[k]/2+1,
                                                     diameters[k],diameters[k]);
 
-                        //qDebug() << "Potential BRect" << *potentialCircleKBRect;
-                        //qDebug() << "Potential BRectCenter " << potentialCircleKBRect->center();
-
-
                         for(int l = 0; l < circlesBRects.size(); l++)
                         {
-                            //qDebug() << "l = " << l;
-
                             QPoint lCircleCenter = circlesBRects[l]->center();
                             QPoint kCircleCenter = potentialCircleKBRect->center();
-
-                            //qDebug() << "lx: " << lCircleCenter.x() << "ly: " << lCircleCenter.y();
-                            //qDebug() << "kx: " << kCircleCenter.x() << "ky: " << kCircleCenter.y();
 
                             qreal distanceFromCenter = (double) pointsEuklideanDistance(mainBRect.center(), kCircleCenter);
                             qreal distance = (double) pointsEuklideanDistance(lCircleCenter, kCircleCenter);
                             qreal radiusSum = (double) (diameters[k] + diameters[l])/2;
 
-                            //qDebug() << "Distance: " << distance;
-                            //qDebug() << "Radius sum" << radiusSum;
-
                             if(distanceFromCenter > (mainBRect.width()-diameters[k])/2)
                             {
-                                //qDebug() << "Za daleko od centrum.";
                                 canBePlaced = false;
                                 break;
                             }
 
                             if(qCeil(distance) < radiusSum )
                             {
-                                //qDebug() << lCircleCenter;
                                 canBePlaced = false;
                                 break;
                             }
@@ -513,16 +481,12 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
 
                         if(canBePlaced)
                         {
-                            //qDebug() << "Nadaje się";
                             circlesBRects.append(potentialCircleKBRect);
                             break;
                         }
-                        //else
-                            //qDebug() << "Nie nadaje się.";
 
                         canBePlaced = true;
 
-                        //qDebug() << "hTouchPoint: " << *hTouchPoint;
                         kCenter = *hTouchPoint;
 
                         if(circleICenterX < circleJCenterX)
@@ -557,36 +521,23 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                                                     kCenter.y()-diameters[k]/2+1,
                                                     diameters[k],diameters[k]);
 
-                        //qDebug() << "Potential BRect" << *potentialCircleKBRect;
-                        //qDebug() << "Potential BRectCenter " << potentialCircleKBRect->center();
-
                         for(int l = 0; l < circlesBRects.size(); l++)
                         {
-                            //qDebug() << "l = " << l;
-
                             QPoint lCircleCenter = circlesBRects[l]->center();
                             QPoint kCircleCenter = potentialCircleKBRect->center();
-
-                            //qDebug() << "lx: " << lCircleCenter.x() << "ly: " << lCircleCenter.y();
-                            //qDebug() << "kx: " << kCircleCenter.x() << "ky: " << kCircleCenter.y();
 
                             qreal distanceFromCenter = (double) pointsEuklideanDistance(vSettings->sceneRect->center(), kCircleCenter);
                             qreal distance = (double) pointsEuklideanDistance(lCircleCenter, kCircleCenter);
                             qreal radiusSum = (double) (diameters[k] + diameters[l])/2;
 
-                            //qDebug() << "Distance: " << distance;
-                            //qDebug() << "Radius sum" << radiusSum;
-
                             if(distanceFromCenter > (mainBRect.width()-diameters[k])/2)
                             {
-                                //qDebug() << "Za daleko od centrum.";
                                 canBePlaced = false;
                                 break;
                             }
 
                             if(qCeil(distance) < radiusSum )
                             {
-                                //qDebug() << lCircleCenter;
                                 canBePlaced = false;
                                 break;
                             }
@@ -596,12 +547,9 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
 
                         if(canBePlaced)
                         {
-                            //qDebug() << "Nadaje się";
                             circlesBRects.append(potentialCircleKBRect);
                             break;
                         }
-                        //else
-                            //qDebug() << "Nie nadaje się.";
 
                     }
                     if(canBePlaced)
@@ -663,16 +611,11 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
             qreal d1 = mainBRect.width() * newC->leftNode->size() / newC->size();
             qreal d2 = mainBRect.width() * newC->rightNode->size() / newC->size();
 
-            //qreal top = qMin(vSettings->sceneRect->height(),vSettings->sceneRect->width())/2 - d1/2;
             qreal top = mainBRect.center().y() - d1/2;
             qreal left = mainBRect.left();
 
             QRect* c1BRect =
                 new QRect(left,top+1,d1,d1);
-
-            //qDebug() << "Porównuję centra cM: " << mainBRect.center << "c1: " << &c1BRect->center();
-
-            //top = qMin(vSettings->sceneRect->height(),vSettings->sceneRect->width())/2 - d2/2;
             top = mainBRect.center().y() - d2/2;
             left = mainBRect.left() + mainBRect.width() - d2;
 

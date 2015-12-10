@@ -15,11 +15,11 @@ public:
 
         //Variables
 
-    int visualizationAlgorithmID = 0;
+    int visualizationAlgorithmID;
 
-    bool visualizeAllHierarchyLevels = false;
+    bool visualizeAllHierarchyLevels;
 
-    QRect* sceneRect = new QRect(0,0,0,0);
+    QRect* sceneRect;
 
     //Methods
 
