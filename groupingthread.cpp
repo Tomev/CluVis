@@ -559,7 +559,7 @@ qreal groupingThread::countRSESRulesWeightedSimilarityValue(QString r1, QString 
         argumentsConsidered.insert(prepareAttribute(part)[0]);
     }
 
-    return (double)(countRSESRulesSimpleSimilarityValue(r1,r2)/argumentsConsidered.size());
+    return countRSESRulesSimpleSimilarityValue(r1,r2)/argumentsConsidered.size();
 
 }
 
@@ -865,9 +865,8 @@ qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule, bool
 
     if(c->size()==1 && !recursion)
         return 0;
-
     else
-        return countRSESClusterRuleSimilarityValue(aRule, c);
+        return countRSESRulesSimilarityValue(aRule, c->rule);
 }
 
 void groupingThread::stopGrouping()
@@ -924,7 +923,7 @@ void groupingThread::countMDI(int size)
         return;
     }
 
-    MDI = (double)(maxOutsideSimilarity / minInsideSimilarity);
+    MDI = maxOutsideSimilarity / minInsideSimilarity;
 }
 
 qreal groupingThread::countLowestRSESInterclusterSimilarity(ruleCluster *c1, ruleCluster *c2)
