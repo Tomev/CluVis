@@ -3,6 +3,7 @@
 #include "ui_mainwindow.h"
 
 #include <iostream>
+#include <algorithm>
 #include <QtCore>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -64,9 +65,9 @@ MainWindow::~MainWindow()
     delete vSettings_RSES;
 
     for(int i = settings->objectsNumber; i >= 0; i--)
-        delete newClusters[i];
+        delete clusters[i];
 
-    delete[] newClusters;
+    delete[] clusters;
     delete cInfo;
     delete tim;
 }
@@ -253,8 +254,6 @@ void MainWindow::generateReport()
 
     QString reportContent = createReportContent(fileType);
 
-    //qDebug() << filePath;
-
     QFile report(filePath);
 
     gotLogText("Rozpoczęto generowanie raportu.");
@@ -361,17 +360,17 @@ QString MainWindow::createTXTReportContent()
     content += "\nWybrany algorytm wizualizacji: " + ui->comboBoxAlgorithmVisualization->currentText();
     content += "\nGrupowana część reguły: " + ui->comboBoxRuleGroupedPart->currentText();
     content += "\n\n==Dane skupień==\n";
-    content += "\nNajliczniejsza grupa: " + getRuleClusterName(findBiggestCluster());
-    content += "\nNajmniej liczna grupa: " + getRuleClusterName(findSmallestCluster());
+    content += "\nNajliczniejsza grupa: " + findBiggestCluster()->name();
+    content += "\nNajmniej liczna grupa: " + findSmallestCluster()->name();
     content += "\n\n==Szczegóły skupień==\n";
 
     for(int i = 0; i < settings->stopCondition; i++)
     {
-        content += "\n=Nazwa skupienia: " + getRuleClusterName(vSettings_RSES->clusteredRules[i]) + "=";
-        content += "\n\tLiczba reguł w grupie: " + QString::number(vSettings_RSES->clusteredRules[i]->size());
+        content += "\n=Nazwa skupienia: " + clusters[i]->name() + "=";
+        content += "\n\tLiczba reguł w grupie: " + QString::number(clusters[i]->size());
         content += "\n\tPokrycie skupienia: "
-                + QString::number((float)((countClusterCoverage(vSettings_RSES->clusteredRules[i])*100)/countCoverageSum())) + "%";
-        content += "\n\tReprezentant skupienia: " + vSettings_RSES->clusteredRules[i]->representative;
+                + QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()) + "%";
+        content += "\n\tReprezentant skupienia: " + ((ruleCluster*)clusters[i])->representative;
     }
 
     content += "\n\n===Koniec===";
@@ -387,24 +386,14 @@ QString MainWindow::formatThickString(QString s)
     return s;
 }
 
-int MainWindow::countCoverageSum()
-{
-    int coverageSum = 0;
-
-    for(int i = 0; i < getObjectsNumber(); i++)
-        coverageSum += ((ruleCluster*)newClusters[i])->support;
-
-    return coverageSum;
-}
-
 ruleCluster* MainWindow::findSmallestCluster()
 {
-    ruleCluster* smallest = ((ruleCluster*)newClusters[0]);
+    ruleCluster* smallest = ((ruleCluster*)clusters[0]);
 
-    for(int i = 1; i < settings->stopCondition; i++)
+    for(int i = 1; i < settings->stopCondition; ++i)
     {
-        if(smallest->size() > newClusters[i]->size())
-            smallest = ((ruleCluster*)newClusters[i]);
+        if(smallest->size() > clusters[i]->size())
+            smallest = ((ruleCluster*)clusters[i]);
     }
 
     return smallest;
@@ -412,40 +401,51 @@ ruleCluster* MainWindow::findSmallestCluster()
 
 ruleCluster* MainWindow::findBiggestCluster()
 {
-    ruleCluster* biggest = ((ruleCluster*)newClusters[0]);
+    ruleCluster* biggest = ((ruleCluster*)clusters[0]);
 
     for(int i = 1; i < this->settings->stopCondition; i++)
     {
-        if(biggest->size() < newClusters[i]->size())
-            biggest = ((ruleCluster*)newClusters[i]);
+        if(biggest->size() < clusters[i]->size())
+            biggest = ((ruleCluster*)clusters[i]);
     }
 
     return biggest;
 }
 
-QString MainWindow::getRuleClusterName(ruleCluster* c)
+int MainWindow::countUngroupedObjects()
 {
-    QString name;
+    int result = 0;
 
-    if(c->rule == "")
-        name = "J";
-    else
-        name = "R";
+    for(int i = 0; i < settings->stopCondition; ++i)
+    {
+        //If object is ungrouped it's size = 1;
+        if(clusters[i]->size()==1)
+            ++result;
+    }
 
-    name += QString::number(c->clusterID + 1);
-
-    return name;
+    return result;
 }
 
-int MainWindow::countClusterCoverage(ruleCluster* c)
+int MainWindow::countAllNodes()
 {
-    if(c==NULL)
-        return 0;
+    //Basic number of nodes in dendrogram.
+    return 2*settings->objectsNumber-settings->stopCondition;
+}
 
-    if(c->rule != "")
-        return c->support;
+int MainWindow::countCoverageSum()
+{
+    int coverageSum = 0;
 
-    return countClusterCoverage(((ruleCluster*)c->leftNode)) + countClusterCoverage(((ruleCluster*)c->rightNode));
+    for(int i = 0; i < settings->stopCondition; ++i)
+        coverageSum += ((ruleCluster*)clusters[i])->support;
+
+    return coverageSum;
+}
+
+int MainWindow::countRuleLength(QString rule)
+{
+    //AttributesNum = connectorsNum + 1
+    return std::count(rule.begin(), rule.end(), '&')+1;
 }
 
 QString MainWindow::createXMLReportContent()
@@ -559,16 +559,23 @@ QString MainWindow::createXMLFileTableHeader()
     result += createXMLFileTableCell("Nazwa bazy", true);
     result += createXMLFileTableCell("Liczba atrybutów", true);
     result += createXMLFileTableCell("Liczba obiektów", true);
+    result += createXMLFileTableCell("Liczba wierzchołków", true);
     result += createXMLFileTableCell("Liczba skupień", true);
     result += createXMLFileTableCell("Suma pokryciowa", true);
+    result += createXMLFileTableCell("Wybrany algorytm wizualizacji", true);
     result += createXMLFileTableCell("Wykorzystany algorytm grupowania", true);
     result += createXMLFileTableCell("Wybrana miara podobieństwa obiektów", true);
     result += createXMLFileTableCell("Wybrana miara podobieństwa skupień", true);
-    result += createXMLFileTableCell("Wybrany algorytm wizualizacji", true);
     result += createXMLFileTableCell("Grupowana część reguły", true);
     result += createXMLFileTableCell("Najliczniejsza grupa", true);
-    result += createXMLFileTableCell("Najmniej liczna grupa", true);
-
+    result += createXMLFileTableCell("Najmniej liczniejsza grupa", true);
+    result += createXMLFileTableCell("Liczba niepogrupowanych obiektów", true);
+    result += createXMLFileTableCell("MDI", true);
+    result += createXMLFileTableCell("MDBI", true);
+    result += createXMLFileTableCell("maxMDI", true);
+    result += createXMLFileTableCell("maxMDIClustersNumber", true);
+    result += createXMLFileTableCell("maxMDBI", true);
+    result += createXMLFileTableCell("maxMDBIClustersNumber", true);
     return result;
 }
 
@@ -591,19 +598,38 @@ QString MainWindow::createXMLFileTableCell(QString data, bool isHeader)
 
 QString MainWindow::createXMLFileTableContent()
 {
+    //Index
     QString result = createXMLFileTableCell("1", true);
+    //Base's name
     result += createXMLFileTableCell(formatThickString(ui->labelObjectBaseName->text()), false);
+    //Attributes number
     result += createXMLFileTableCell(QString::number(gSettings->attributesNumber), false);
+    //Objects number
     result += createXMLFileTableCell(QString::number(getObjectsNumber()), false);
+    //Nodes number
+    result += createXMLFileTableCell(QString::number(countAllNodes()), false);
+    //Clusters number
     result += createXMLFileTableCell(QString::number(settings->stopCondition), false);
+    //Coverage sum
     result += createXMLFileTableCell(QString::number(countCoverageSum()), false);
+    //Visualization algorithm
+    result += createXMLFileTableCell(ui->comboBoxAlgorithmVisualization->currentText(), false);
+    //Grouping data
     result += createXMLFileTableCell(formatThickString(ui->labelAlgorithmGroupingValue->text()), false);
     result += createXMLFileTableCell(ui->comboBoxInterobjectDistanceMeasure->currentText(), false);
     result += createXMLFileTableCell(ui->comboBoxInterclusterDistanceMeasure->currentText(), false);
-    result += createXMLFileTableCell(ui->comboBoxAlgorithmVisualization->currentText(), false);
     result += createXMLFileTableCell(ui->comboBoxRuleGroupedPart->currentText(), false);
-    result += createXMLFileTableCell(getRuleClusterName(findBiggestCluster()), false);
-    result += createXMLFileTableCell(getRuleClusterName(findSmallestCluster()), false);
+    //Overall result data
+    result += createXMLFileTableCell(findBiggestCluster()->name(), false);
+    result += createXMLFileTableCell(findSmallestCluster()->name(), false);
+    result += createXMLFileTableCell(QString::number(countUngroupedObjects()), false);
+    //Indexes data
+    result += createXMLFileTableCell(QString::number(MDI), false);
+    result += createXMLFileTableCell(QString::number(MDBI), false);
+    result += createXMLFileTableCell(QString::number(maxMDI), false);
+    result += createXMLFileTableCell(QString::number(maxMDIClustersNumber), false);
+    result += createXMLFileTableCell(QString::number(maxMDBI), false);
+    result += createXMLFileTableCell(QString::number(maxMDBIClustersNumber), false);
 
     return result;
 }
@@ -622,8 +648,13 @@ QString MainWindow::createXMLFileClustersDataHeader()
     result += createXMLFileTableCell("Index", true);
     result += createXMLFileTableCell("Nazwa skupienia", true);
     result += createXMLFileTableCell("Liczba reguł w grupie", true);
+    result += createXMLFileTableCell("Procent reguł w grupie [%]", true);
+    result += createXMLFileTableCell("Liczba węzłów w grupie", true);
+    result += createXMLFileTableCell("Procent węzłów w grupie [%]", true);
     result += createXMLFileTableCell("Pokrycie skupienia", true);
+    result += createXMLFileTableCell("Pokrycie skupienia [%]", true);
     result += createXMLFileTableCell("Reprezentant skupienia", true);
+    result += createXMLFileTableCell("Długość reprezentanta", true);
     result += "\t\t\t</Row>\n";
 
     return result;
@@ -631,17 +662,41 @@ QString MainWindow::createXMLFileClustersDataHeader()
 
 QString MainWindow::createXMLFileClustersDataContent()
 {
-    QString result = "";
+
+    /* Representative holder is needed so the
+     * std::replace doesn't change '&' for "AND"
+     * in cluster[i]. */
+
+    QString result = "", representativeHolder;
 
     for(int i = 0; i < settings->stopCondition; i++)
     {
         result += "\t\t\t<Row>\n";
-        result += createXMLFileTableCell(QString::number(i), false);
-        result += createXMLFileTableCell(getRuleClusterName(vSettings_RSES->clusteredRules[i]), false);
-        result += createXMLFileTableCell(QString::number(vSettings_RSES->clusteredRules[i]->size()), false);
+
+        //Index
+        result += createXMLFileTableCell(QString::number(i+1), false);
+        //Cluster's name
+        result += createXMLFileTableCell(clusters[i]->name(), false);
+        //Rules number
+        result += createXMLFileTableCell(QString::number(clusters[i]->size()), false);
+        //Rules percent
+        result += createXMLFileTableCell(QString::number(clusters[i]->size()*100/settings->objectsNumber), false);
+        //Nodes number
+        result += createXMLFileTableCell(QString::number(clusters[i]->nodesNumber()),false);
+        //Nodes percent
         result += createXMLFileTableCell(
-                    QString::number((float)((countClusterCoverage(vSettings_RSES->clusteredRules[i])*100)/countCoverageSum())) + "%", false);
-        result += createXMLFileTableCell((vSettings_RSES->clusteredRules[i]->representative).replace("&","AND"), false);
+                    QString::number(clusters[i]->nodesNumber()*100/countAllNodes()), false);
+        //Cluster's support
+        result += createXMLFileTableCell(QString::number((((ruleCluster*)clusters[i])->support)),false);
+        //Cluster's support percent
+        result += createXMLFileTableCell(
+                    QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()), false);
+        //Cluster's representative
+        representativeHolder = ((ruleCluster*)clusters[i])->representative;
+        result += createXMLFileTableCell(representativeHolder.replace("&","AND"), false);
+        //Cluster's representative length
+        result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative)), false);
+
         result += "\t\t\t</Row>\n";
     }
 
@@ -762,14 +817,14 @@ void MainWindow::setGroupingSettings()
 
         gThread = new groupingThread(gSettings_RSES, gSettings, settings);
 
-        connect(gThread,SIGNAL(passNewClusters(cluster**)),
-                this,SLOT(getNewClusters(cluster**)));
+        connect(gThread,SIGNAL(passClusters(cluster**)),
+                this,SLOT(getClusters(cluster**)));
         connect(gThread,SIGNAL(passLogMsg(QString)),
                 this,SLOT(gotLogText(QString)));
-        connect(gThread,SIGNAL(passMDI(qreal)),
-                this,SLOT(gotMDI(qreal)));
-        connect(gThread,SIGNAL(passMDBI(qreal)),
-                this,SLOT(gotMDBI(qreal)));
+        connect(gThread,SIGNAL(passMDIData(qreal, qreal, int)),
+                this,SLOT(gotMDIData(qreal, qreal, int)));
+        connect(gThread,SIGNAL(passMDBIData(qreal, qreal, int)),
+                this,SLOT(gotMDBIData(qreal, qreal, int)));
 
         logText = "[" + tim->currentTime().toString() + "] ";
         logText += "Wczytano ustawienia szczególne dla RSES Rules.";
@@ -804,7 +859,7 @@ void MainWindow::setVisualizationSettings()
     {
     case generalSettings::RSES_RULES_ID:
 
-        vSettings_RSES->clusteredRules = ((ruleCluster**)newClusters);
+        vSettings_RSES->clusteredRules = ((ruleCluster**)clusters);
 
         vThread = new visualizationThread(settings, vSettings, vSettings_RSES);
 
@@ -1049,27 +1104,31 @@ void MainWindow::on_pushButtonGeneral_clicked()
 }
 */
 
-void MainWindow::getNewClusters(cluster** c)
+void MainWindow::getClusters(cluster** c)
 {
     QString logText = "[" + tim->currentTime().toString() + "] ";
     logText += "Otrzymano pogrupowane reguły. Można przystąpić do wizualizacji.";
 
     ui->textBrowserLog->append(logText);
 
-    newClusters = c;
+    clusters = c;
 
     areObjectsClustered = true;
     ui->labelIsBaseGrouped->setText("<b>(Pogrupowana)</b>");
 }
 
-void MainWindow::gotMDI(qreal MDI)
+void MainWindow::gotMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber)
 {
     this->MDI = MDI;
+    this->maxMDI = maxMDI;
+    this->maxMDIClustersNumber = maxMDIClustersNumber;
 }
 
-void MainWindow::gotMDBI(qreal MDBI)
+void MainWindow::gotMDBIData(qreal MDBI, qreal maxMDBI, int maxMDBIClustersNumber)
 {
     this->MDBI = MDBI;
+    this->maxMDBI = maxMDBI;
+    this->maxMDBIClustersNumber = maxMDBIClustersNumber;
 }
 
 void MainWindow::getGraphicsRectObject(customGraphicsRectObject *object)

@@ -22,14 +22,7 @@ void customGraphicEllipseObject::paint(QPainter* painter, const QStyleOptionGrap
 {
     QRectF rec = boundingRect();
     QBrush rectBrush(Qt::blue);
-    QString text = "";
-
-    if(c.rule!="")
-        text += "R";
-    else
-        text+= "J";
-
-    text += QString::number(c.clusterID+1);
+    QString text = c.name();
 
     if(isHoverOn)
         rectBrush.setColor(Qt::red);

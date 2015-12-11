@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QMessageBox>
 #include <algorithm>
+#include "math.h"
 
 #include "generalsettings.h"
 
@@ -15,6 +16,8 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
                                generalSettings* settings)
 {
     nextClusterID = 0;
+    maxMDI = 0.0;
+    maxMDBI = 0.0;
 
     this->settings = settings;
     this->groupingSettings = groupingSettings;
@@ -45,8 +48,7 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
                                     + QPoint(20 + groupingProgress->width()/2,0));
 }
 
-groupingThread::~groupingThread()
-{}
+groupingThread::~groupingThread(){}
 
 void groupingThread::run()
 {
@@ -122,17 +124,33 @@ void groupingThread::groupRSESRules()
 
         joinMostSimilarClusters(simMatrix, simMatrixSize, highestSim);
 
-        simMatrixSize--;
-        i--;
+        --simMatrixSize;
+
+        countMDI(simMatrixSize);
+        countMDBI(simMatrixSize);
+
+        //Count indexes each time, so we can find best one.
+        if(MDI > maxMDI)
+        {
+            maxMDI = MDI;
+            maxMDIClustersNumber = simMatrixSize;
+        }
+        if(MDBI > maxMDBI)
+        {
+            maxMDBI = MDBI;
+            maxMDBIClustersNumber = simMatrixSize;
+        }
+
+        //Handicapped deleting memory... TODO: upgrade this.
+        delete[] simMatrix;
+
+        --i;
 
         groupingProgress->setValue(settings->objectsNumber-simMatrixSize+settings->stopCondition);
     }
 
     groupingProgress->close();
     creatingSimMatrixProgress->close();
-
-    countMDI();
-    countMDBI();
 
     logText = "Liczba skupień: " + QString::number(settings->stopCondition) + ". Wskaźnik MDI grupowania: "
             + QString::number(MDI) +". Wskaźnik MDBI grupowania: " + QString::number(MDBI);
@@ -141,9 +159,9 @@ void groupingThread::groupRSESRules()
     logText = "Grupowanie zakończone. Przesyłam otrzymane struktury...";
     emit passLogMsg(logText);
 
-    emit passMDI(MDI);
-    emit passMDBI(MDBI);
-    emit passNewClusters(newClusters);
+    emit passMDIData(MDI, maxMDI, maxMDIClustersNumber);
+    emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
+    emit passClusters(clusters);
 }
 
 void groupingThread::fillAttributesData()
@@ -250,7 +268,7 @@ void groupingThread::fillAttributesData()
 
 void groupingThread::clusterRules()
 {
-    newClusters = new cluster*[settings->objectsNumber];
+    clusters = new cluster*[settings->objectsNumber];
 
     QString line;
 
@@ -273,7 +291,7 @@ void groupingThread::clusterRules()
                 QString rule = line.split("[")[0];
                 rule += ")";
 
-                ruleCluster* temp = new ruleCluster(i, rule);
+                ruleCluster* temp = new ruleCluster(i+1, rule);
 
                 QStringList splitedRule = line.split("=>");
 
@@ -290,7 +308,7 @@ void groupingThread::clusterRules()
                         temp->decisionAttributes << aName;
                 }
 
-                newClusters[i] = temp;
+                clusters[i] = temp;
 
                 i++;
                 continue;
@@ -325,7 +343,7 @@ qreal **groupingThread::createSimMatrix(int simMatrixSize)
                 simMatrix[i][j] = 0;
             else
             {
-                qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)newClusters[i]),((ruleCluster*)newClusters[j]));
+                qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j]));
                 simMatrix[i][j] = simMatrix[j][i] = simValue;
             }
         }
@@ -624,7 +642,9 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     temp->dispersion =
             countClusterDispersion(temp, temp->representative, false);
 
-    temp->clusterID = nextClusterID++;
+    temp->support = ((ruleCluster*) c1)->support + ((ruleCluster*) c2)->support;
+
+    temp->clusterID = ++nextClusterID;
 
     return temp;
 }
@@ -637,9 +657,9 @@ void groupingThread::joinMostSimilarClusters(qreal **simMatrix, int simMatrixSiz
         {
             if(simMatrix[i][j] == highestSim)
             {
-                newClusters[i] = joinClusters(newClusters[i], newClusters[j]);
+                clusters[i] = joinClusters(clusters[i], clusters[j]);
 
-                std::swap(newClusters[j], newClusters[simMatrixSize-1]);
+                std::swap(clusters[j], clusters[simMatrixSize-1]);
 
                 return;
             }
@@ -865,30 +885,30 @@ void groupingThread::stopGrouping()
     emit passLogMsg(logText);
 }
 
-void groupingThread::countMDI()
+void groupingThread::countMDI(int size)
 {
     qreal minInsideSimilarity = -1;
     qreal maxOutsideSimilarity = 0;
     qreal currentSimilarity = 0;
 
-    for(int i = 0; i < settings->stopCondition; i++)
+    for(int i = 0; i < size; i++)
     {
-        for(int j = i+1; j < settings->stopCondition; j++)
+        for(int j = i+1; j < size; j++)
         {
-            currentSimilarity = ((qreal)countRSESClustersSimilarityValue(((ruleCluster*)newClusters[i]),((ruleCluster*)newClusters[j])));
+            currentSimilarity = ((qreal)countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j])));
 
             if(currentSimilarity > maxOutsideSimilarity)
                 maxOutsideSimilarity = currentSimilarity;
         }
     }
 
-    for(int i = 0; i < settings->stopCondition; i++)
+    for(int i = 0; i < size; i++)
     {
-        if(newClusters[i]->size() == 1)
+        if(clusters[i]->size() == 1)
             continue;
 
         currentSimilarity = ((qreal) countLowestRSESInterclusterSimilarity(
-                    ((ruleCluster*)newClusters[i]->leftNode), ((ruleCluster*)newClusters[i]->rightNode)));
+                    ((ruleCluster*)clusters[i]->leftNode), ((ruleCluster*)clusters[i]->rightNode)));
 
         if(minInsideSimilarity == -1)
             minInsideSimilarity = currentSimilarity;
@@ -929,28 +949,28 @@ qreal groupingThread::countLowestRSESClusterRuleSimilarityValue(QString r, ruleC
     return -1;
 }
 
-void groupingThread::countMDBI()
+void groupingThread::countMDBI(int size)
 {
-    qreal similaritySum = countSimilaritySum();
+    qreal similaritySum = countSimilaritySum(size);
 
-    MDBI = (qreal)(similaritySum/settings->stopCondition);
+    MDBI = (qreal)(similaritySum/size);
 }
 
-qreal groupingThread::countSimilaritySum()
+qreal groupingThread::countSimilaritySum(int size)
 {
     qreal sum = 0;
 
-    for(int i = 0; i < settings->stopCondition; i++)
+    for(int i = 0; i < size; i++)
     {
-        for(int j = i+1; j < settings->stopCondition; j++)
+        for(int j = i+1; j < size; j++)
         {
             qreal clustersSim =
-                    countRSESClustersSimilarityValue(((ruleCluster*)newClusters[i]),((ruleCluster*)newClusters[j]));
+                countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j]));
 
             if(clustersSim == 0)
                 continue;
 
-            qreal sumPart = ((ruleCluster*)newClusters[i])->dispersion + ((ruleCluster*)newClusters[j])->dispersion;
+            qreal sumPart = ((ruleCluster*)clusters[i])->dispersion + ((ruleCluster*)clusters[j])->dispersion;
 
             sumPart /= clustersSim;
 

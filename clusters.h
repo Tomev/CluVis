@@ -21,6 +21,19 @@ struct cluster
     cluster* rightNode = NULL;
 
     //Methods
+    QString name()
+    {
+        QString result = "";
+
+        if(hasBothNodes())
+            result+="J";
+        else
+            result+="O";
+
+        result += QString::number(clusterID);
+
+        return result;
+    }
 
     int size()
     {
@@ -28,6 +41,11 @@ struct cluster
             return leftNode->size() + rightNode->size();
 
         return 1;
+    }
+
+    int nodesNumber()
+    {
+        return 2*size()-1;
     }
 
     bool hasBothNodes()

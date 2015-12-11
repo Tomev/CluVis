@@ -26,9 +26,9 @@ signals:
     void passRules(ruleCluster*);
     void passJoinedRules(ruleCluster*);
     void passClusteredRules(ruleCluster**);
-    void passNewClusters(cluster**);
-    void passMDI(qreal MDI);
-    void passMDBI(qreal MDBI);
+    void passClusters(cluster**);
+    void passMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber);
+    void passMDBIData(qreal MDBI, qreal maxMDBI, int maxMDBIClustersNumber);
 
     void passLogMsg(QString);
 
@@ -40,9 +40,13 @@ private:
     bool wasAverageRuleDenumeratorSet;
 
     qreal MDI;
+    qreal maxMDI;
+    int maxMDIClustersNumber;
     qreal MDBI;
+    qreal maxMDBI;
+    int maxMDBIClustersNumber;
 
-    cluster** newClusters;
+    cluster** clusters;
     int nextClusterID;
 
     generalSettings* settings;
@@ -80,13 +84,13 @@ private:
                 QString createAverageRule(ruleCluster* c);
             void stopGrouping();
 
-     void countMDI();
+     void countMDI(int size);
         qreal countLowestRSESInterclusterSimilarity(ruleCluster* c1, ruleCluster* c2);
             qreal countLowestRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
 
             qreal countClusterDispersion(ruleCluster *c, QString aRule, bool recursion);
-     void countMDBI();
-        qreal countSimilaritySum();
+     void countMDBI(int size);
+        qreal countSimilaritySum(int size);
 
 };
 

@@ -44,9 +44,9 @@ private slots:
     void on_pushButtonVisualize_clicked();
 
     //Rest
-    void getNewClusters(cluster** c);
-    void gotMDI(qreal MDI);
-    void gotMDBI(qreal MDBI);
+    void getClusters(cluster** c);
+    void gotMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber);
+    void gotMDBIData(qreal MDBI, qreal maxMDBI, int maxMDBIClustersNumber);
 
     void getGraphicsRectObject(customGraphicsRectObject *object);
     void getGraphicsEllipseObject(customGraphicEllipseObject *object);
@@ -82,13 +82,16 @@ private:
     visualizationSettings_general* vSettings;
     visualizationSettings_RSESRules* vSettings_RSES;
 
-    cluster** newClusters;
+    cluster** clusters;
 
     clusterInfo_RSESRules* cInfo;
 
     qreal MDI;
+    qreal maxMDI;
+    int maxMDIClustersNumber;
     qreal MDBI;
-
+    qreal maxMDBI;
+    int maxMDBIClustersNumber;
     QTime* tim;
 
     int getObjectsNumber();
@@ -120,10 +123,11 @@ private:
                 QString createXMLFileClustersDataContent();
         void createPath(QString path);
         int countCoverageSum();
+        int countRuleLength(QString rule);
+        int countAllNodes();
+        int countUngroupedObjects();
         ruleCluster* findBiggestCluster();
         ruleCluster* findSmallestCluster();
-        QString getRuleClusterName(ruleCluster* c);
-        int countClusterCoverage(ruleCluster* c);
 
     //Rest
     //Functions
