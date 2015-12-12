@@ -308,6 +308,8 @@ void groupingThread::clusterRules()
                         temp->decisionAttributes << aName;
                 }
 
+                temp->dispersion = 0;
+
                 clusters[i] = temp;
 
                 i++;
@@ -523,7 +525,7 @@ qreal groupingThread::countRSESRulesGowersMeasureValue(QString r1, QString r2)
     return (double)result;
 }
 
-qreal groupingThread::countRSESRulesSimpleSimilarityValue(QString r1, QString r2)
+int groupingThread::countRSESRulesSimpleSimilarityValue(QString r1, QString r2)
 {
     QStringList r1GroupedPart = getRuleGroupedPart(r1);
     QStringList r2GroupedPart = getRuleGroupedPart(r2);
@@ -538,6 +540,9 @@ qreal groupingThread::countRSESRulesSimpleSimilarityValue(QString r1, QString r2
                 similarityValue++;
         }
     }
+
+    if(std::abs(similarityValue) > 1e100)
+        qDebug() << r1;
 
     return similarityValue;
 }
@@ -640,7 +645,7 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     temp->representative = createAverageRule(temp);
 
     temp->dispersion =
-            countClusterDispersion(temp, temp->representative, false);
+            countClusterDispersion(temp, temp->representative);
 
     temp->support = ((ruleCluster*) c1)->support + ((ruleCluster*) c2)->support;
 
@@ -858,15 +863,26 @@ QString groupingThread::createAverageRule(ruleCluster *c)
     return result;
 }
 
-qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule, bool recursion)
+qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule)
 {
     if(c->hasBothNodes())
-        return countClusterDispersion(((ruleCluster*) c->leftNode), aRule, true)+ countClusterDispersion(((ruleCluster*) c->rightNode), aRule, true);
+    {
+        qreal result =
+                countClusterDispersion(((ruleCluster*) c->leftNode), aRule)
+                +countClusterDispersion(((ruleCluster*) c->rightNode), aRule);
 
-    if(c->size()==1 && !recursion)
+        //qDebug() << "Disp result: " << result;
+
+        if(std::abs(result)<1e-4)
+            return 0.0;
+
+        return result;
+    }
+
+    if((c->rule == aRule))
         return 0;
-    else
-        return countRSESRulesSimilarityValue(aRule, c->rule);
+
+    return countRSESRulesSimilarityValue(aRule, c->rule);
 }
 
 void groupingThread::stopGrouping()
@@ -952,6 +968,12 @@ void groupingThread::countMDBI(int size)
 {
     qreal similaritySum = countSimilaritySum(size);
 
+    if(std::abs(similaritySum)<= 1e-4)
+    {
+        MDBI = 0.0;
+        return;
+    }
+
     MDBI = (qreal)(similaritySum/size);
 }
 
@@ -970,6 +992,14 @@ qreal groupingThread::countSimilaritySum(int size)
                 continue;
 
             qreal sumPart = ((ruleCluster*)clusters[i])->dispersion + ((ruleCluster*)clusters[j])->dispersion;
+
+            if(size == settings->stopCondition)
+            {
+                qDebug() << "Dispersion i: " << ((ruleCluster*)clusters[i])->dispersion;
+                qDebug() << "Dispersion j: " << ((ruleCluster*)clusters[j])->dispersion;
+                qDebug() << "Part: " << sumPart;
+                qDebug() << "Sim: " << clustersSim;
+            }
 
             sumPart /= clustersSim;
 

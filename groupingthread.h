@@ -70,7 +70,7 @@ private:
                     qreal countRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
                         qreal countRSESRulesSimilarityValue(QString r1, QString r2);
                             qreal countRSESRulesGowersMeasureValue(QString r1, QString r2);
-                            qreal countRSESRulesSimpleSimilarityValue(QString r1, QString r2);
+                            int countRSESRulesSimpleSimilarityValue(QString r1, QString r2);
                             qreal countRSESRulesWeightedSimilarityValue(QString r1, QString r2);
                             QStringList getRuleGroupedPart(QString r);
                                 QStringList prepareAttribute(QString a);
@@ -88,7 +88,7 @@ private:
         qreal countLowestRSESInterclusterSimilarity(ruleCluster* c1, ruleCluster* c2);
             qreal countLowestRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
 
-            qreal countClusterDispersion(ruleCluster *c, QString aRule, bool recursion);
+            qreal countClusterDispersion(ruleCluster *c, QString aRule);
      void countMDBI(int size);
         qreal countSimilaritySum(int size);
 
