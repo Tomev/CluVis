@@ -18,6 +18,8 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
     nextClusterID = 0;
     maxMDI = 0.0;
     maxMDBI = 0.0;
+    maxMDBIClustersNumber = 1;
+    maxMDIClustersNumber = 1;
 
     this->settings = settings;
     this->groupingSettings = groupingSettings;
@@ -126,19 +128,22 @@ void groupingThread::groupRSESRules()
 
         --simMatrixSize;
 
-        countMDI(simMatrixSize);
-        countMDBI(simMatrixSize);
+        if(groupingSettings->findBestClustering)
+        {
+            countMDI(simMatrixSize);
+            countMDBI(simMatrixSize);
 
-        //Count indexes each time, so we can find best one.
-        if(MDI > maxMDI)
-        {
-            maxMDI = MDI;
-            maxMDIClustersNumber = simMatrixSize;
-        }
-        if(MDBI > maxMDBI)
-        {
-            maxMDBI = MDBI;
-            maxMDBIClustersNumber = simMatrixSize;
+            //Count indexes each time, so we can find best one.
+            if(MDI > maxMDI)
+            {
+                maxMDI = MDI;
+                maxMDIClustersNumber = simMatrixSize;
+            }
+            if(MDBI > maxMDBI)
+            {
+                maxMDBI = MDBI;
+                maxMDBIClustersNumber = simMatrixSize;
+            }
         }
 
         //Handicapped deleting memory... TODO: upgrade this.
@@ -147,6 +152,12 @@ void groupingThread::groupRSESRules()
         --i;
 
         groupingProgress->setValue(settings->objectsNumber-simMatrixSize+settings->stopCondition);
+    }
+
+    if(!groupingSettings->findBestClustering)
+    {
+        countMDI(simMatrixSize);
+        countMDBI(simMatrixSize);
     }
 
     groupingProgress->close();
@@ -541,9 +552,6 @@ int groupingThread::countRSESRulesSimpleSimilarityValue(QString r1, QString r2)
         }
     }
 
-    if(std::abs(similarityValue) > 1e100)
-        qDebug() << r1;
-
     return similarityValue;
 }
 
@@ -564,8 +572,11 @@ qreal groupingThread::countRSESRulesWeightedSimilarityValue(QString r1, QString 
         argumentsConsidered.insert(prepareAttribute(part)[0]);
     }
 
-    return countRSESRulesSimpleSimilarityValue(r1,r2)/argumentsConsidered.size();
+    // For some reason it cannot be returned in one line. Dunno why.
+    qreal result = countRSESRulesSimpleSimilarityValue(r1,r2);
+    result /= argumentsConsidered.size();
 
+    return result;
 }
 
 QStringList groupingThread::getRuleGroupedPart(QString r)
@@ -871,8 +882,6 @@ qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule)
                 countClusterDispersion(((ruleCluster*) c->leftNode), aRule)
                 +countClusterDispersion(((ruleCluster*) c->rightNode), aRule);
 
-        //qDebug() << "Disp result: " << result;
-
         if(std::abs(result)<1e-4)
             return 0.0;
 
@@ -992,14 +1001,6 @@ qreal groupingThread::countSimilaritySum(int size)
                 continue;
 
             qreal sumPart = ((ruleCluster*)clusters[i])->dispersion + ((ruleCluster*)clusters[j])->dispersion;
-
-            if(size == settings->stopCondition)
-            {
-                qDebug() << "Dispersion i: " << ((ruleCluster*)clusters[i])->dispersion;
-                qDebug() << "Dispersion j: " << ((ruleCluster*)clusters[j])->dispersion;
-                qDebug() << "Part: " << sumPart;
-                qDebug() << "Sim: " << clustersSim;
-            }
 
             sumPart /= clustersSim;
 

@@ -37,6 +37,8 @@ public:
     int attributesNumber;
     int coverSum;
 
+    bool findBestClustering;
+
     //Methods
 
     groupingSettings_General();

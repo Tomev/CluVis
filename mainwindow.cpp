@@ -196,7 +196,7 @@ void MainWindow::on_actionSaveVisualization_triggered()
 {
     QFileDialog FD;
 
-    QString fileName = FD.getSaveFileName(this,"Zapisz","C:\\","*.png");
+    QString fileName = FD.getSaveFileName(this,"Zapisz","C:\\ANB\\","*.png");
 
     if(fileName == "")
     {
@@ -279,7 +279,7 @@ QString MainWindow::getFilePath()
 {
     QFileDialog FD;
 
-    QString filePath = FD.getSaveFileName(this,"Zapisz raport","C:\\",
+    QString filePath = FD.getSaveFileName(this,"Zapisz raport","C:\\ANB\\",
                                           "Pliki xml (*.xml);; Pliki tekstowe (*.txt)");
 
     if(filePath == "")
@@ -802,6 +802,8 @@ void MainWindow::setGroupingSettings()
             ui->comboBoxInterobjectDistanceMeasure->currentIndex();
     gSettings->interclusterDistanceMeasureID =
             ui->comboBoxInterclusterDistanceMeasure->currentIndex();
+    gSettings->findBestClustering =
+            ui->checkBoxSearchForBestIndexes->isChecked();
 
     QString logText = "[" + tim->currentTime().toString() + "] ";
     logText += "Wczytano ustawienia ogólne.";

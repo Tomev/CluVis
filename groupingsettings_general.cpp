@@ -2,9 +2,9 @@
 
 groupingSettings_General::groupingSettings_General()
 {
+    findBestClustering = false;
 }
 
 groupingSettings_General::~groupingSettings_General()
 {
 }
-

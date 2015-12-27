@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>620</height>
+    <height>657</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -53,13 +53,13 @@
             <property name="minimumSize">
              <size>
               <width>303</width>
-              <height>530</height>
+              <height>540</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
               <width>303</width>
-              <height>530</height>
+              <height>540</height>
              </size>
             </property>
             <property name="frameShape">
@@ -75,7 +75,7 @@
                 <x>9</x>
                 <y>9</y>
                 <width>285</width>
-                <height>520</height>
+                <height>530</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -87,13 +87,13 @@
               <property name="minimumSize">
                <size>
                 <width>285</width>
-                <height>520</height>
+                <height>530</height>
                </size>
               </property>
               <property name="maximumSize">
                <size>
                 <width>241</width>
-                <height>520</height>
+                <height>530</height>
                </size>
               </property>
               <property name="title">
@@ -405,6 +405,13 @@ liczbie obiektów w bazie.</string>
                 </widget>
                </item>
                <item>
+                <widget class="QCheckBox" name="checkBoxSearchForBestIndexes">
+                 <property name="text">
+                  <string>Szukaj optymalnych grupowań</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <layout class="QHBoxLayout" name="horizontalLayoutButtons">
                  <item>
                   <widget class="QPushButton" name="pushButtonGroup">
@@ -471,7 +478,7 @@ liczbie obiektów w bazie.</string>
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>40</height>
+              <height>30</height>
              </size>
             </property>
            </spacer>
