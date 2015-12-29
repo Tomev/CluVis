@@ -124,8 +124,6 @@ void groupingThread::groupRSESRules()
 
         qreal highestSim = findHighestSimilarity(simMatrix, simMatrixSize);
 
-        qDebug() << "Highest sim = " << highestSim;
-
         joinMostSimilarClusters(simMatrix, simMatrixSize, highestSim);
 
         --simMatrixSize;
@@ -371,16 +369,6 @@ qreal **groupingThread::createSimMatrix(int simMatrixSize)
 
 qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2)
 {
-
-    /* First and foremost Centroid Linkage
-     * The reason for that is that every cluster
-     *
-     *
-     *
-     *
-     *
-     *
-    */
     if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->CENTROID_LINK_ID)
     {
         // For some reason if function is returned the value is 0. Hence variable was used.
@@ -388,12 +376,6 @@ qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleClus
 
         return  result;
     }
-
-    if(c1->rule != "")
-        return countRSESClusterRuleSimilarityValue(c1->rule, c2);
-
-    if(c2->rule != "")
-        return countRSESClusterRuleSimilarityValue(c2->rule, c1);
 
     if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->AVERAGE_LINK_ID)
     {
@@ -418,6 +400,13 @@ qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleClus
         //return (double) similaritySum / denumerator;
         return result;
     }
+
+    if(c1->rule != "")
+        return countRSESClusterRuleSimilarityValue(c1->rule, c2);
+
+    if(c2->rule != "")
+        return countRSESClusterRuleSimilarityValue(c2->rule, c1);
+
 
     if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->SINGLE_LINK_ID)
         return qMax(countRSESClustersSimilarityValue(((ruleCluster*) c1->leftNode), c2),
@@ -492,10 +481,25 @@ qreal groupingThread::countRSESRulesGowersMeasureValue(QString r1, QString r2)
 
             if(prepR1Argument.at(0) == prepR2Argument.at(0))
             {
-                qreal r1Value = (double)prepR1Argument.at(1).toDouble(&isNumber);
+                isNumber = false;
+
+                for(int k = 0; k < groupingSettings->attributesNumber; ++k)
+                {
+                    if(prepR1Argument.at(0) == attributes[k].name)
+                    {
+                        if(attributes[k].type == "symbolic")
+                            isNumber = false;
+                        else
+                            isNumber = true;
+                        break;
+                    }
+                }
+
 
                 if(isNumber)
                 {
+                    qreal r1Value = (double)prepR1Argument.at(1).toDouble();
+
                     qreal val = (double) qAbs(r1Value - prepR2Argument.at(1).toDouble());
 
                     qreal denumerator = 0;
@@ -1011,7 +1015,7 @@ qreal groupingThread::countSimilaritySum(int size)
             qreal clustersSim =
                 countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j]));
 
-            if(clustersSim == 0)
+            if(std::abs(clustersSim)<= 1e-4)
                 continue;
 
             qreal sumPart = ((ruleCluster*)clusters[i])->dispersion + ((ruleCluster*)clusters[j])->dispersion;

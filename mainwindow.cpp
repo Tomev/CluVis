@@ -444,7 +444,6 @@ int MainWindow::countCoverageSum()
 
 int MainWindow::countRuleLength(QString rule)
 {
-    //AttributesNum = connectorsNum + 1
     return std::count(rule.begin(), rule.end(), '&')+1;
 }
 
@@ -664,8 +663,8 @@ QString MainWindow::createXMLFileClustersDataContent()
 {
 
     /* Representative holder is needed so the
-     * std::replace doesn't change '&' for "AND"
-     * in cluster[i]. */
+     * std::replace doesn't change symbols like <, > or &
+     * inside actual rule in cluster[i]. */
 
     QString result = "", representativeHolder;
 
@@ -693,7 +692,7 @@ QString MainWindow::createXMLFileClustersDataContent()
                     QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()), false);
         //Cluster's representative
         representativeHolder = ((ruleCluster*)clusters[i])->representative;
-        result += createXMLFileTableCell(representativeHolder.replace("&","AND"), false);
+        result += createXMLFileTableCell(representativeHolder.replace("&","&amp;").replace("<","&lt;").replace(">", "&gt;"), false);
         //Cluster's representative length
         result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative)), false);
 
