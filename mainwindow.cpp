@@ -523,7 +523,7 @@ QString MainWindow::createXMLFileStyles()
 
 QString MainWindow::createXMLFileTable()
 {
-    QString result = "\t<Worksheet ss:Name=\"Raport\">\n";
+    QString result = "\t<Worksheet ss:Name=\"Report\">\n";
     result += "\t\t<Table ss:ExpandedColumnCount=\"2\" ss:ExpandedRowCount=\"5\"\n";
     result += "\t\t\t x:FullColumns=\"1\" x:FullRows=\"1\">\n";
     result += "\t\t\t<Row>\n";
@@ -536,7 +536,6 @@ QString MainWindow::createXMLFileTable()
     result += createXMLFileTableCell("==Dane skupień==",false);
     result += "\t\t\t</Row>\n";
     result += createXMLFileClustersData();
-
     result += "\t\t</Table>\n";
 
     return result;
