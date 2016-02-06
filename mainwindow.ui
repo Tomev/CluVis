@@ -407,7 +407,7 @@ liczbie obiektów w bazie.</string>
                <item>
                 <widget class="QCheckBox" name="checkBoxSearchForBestIndexes">
                  <property name="text">
-                  <string>Szukaj optymalnych grupowań</string>
+                  <string>Szukaj optymalnych grupowań.</string>
                  </property>
                 </widget>
                </item>
@@ -551,7 +551,21 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuWidok">
+    <property name="title">
+     <string>Widok</string>
+    </property>
+    <widget class="QMenu" name="menuJ_zyk">
+     <property name="title">
+      <string>Język</string>
+     </property>
+     <addaction name="actionAngielski"/>
+     <addaction name="actionPolski"/>
+    </widget>
+    <addaction name="menuJ_zyk"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuWidok"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionLoadObjectBase">
@@ -580,6 +594,16 @@ p, li { white-space: pre-wrap; }
   <action name="actionGenerateReport">
    <property name="text">
     <string>Generuj raport</string>
+   </property>
+  </action>
+  <action name="actionAngielski">
+   <property name="text">
+    <string>Angielski</string>
+   </property>
+  </action>
+  <action name="actionPolski">
+   <property name="text">
+    <string>Polski</string>
    </property>
   </action>
  </widget>

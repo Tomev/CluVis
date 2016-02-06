@@ -13,7 +13,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
+    mainwindow.cpp \
     about.cpp \
     customgraphicsrectobject.cpp \
     groupingthread.cpp \
@@ -25,6 +25,9 @@ SOURCES += main.cpp\
     visualizationsettings_rsesrules.cpp \
     clusterinfo_rsesrules.cpp \
     customgraphicellipseobject.cpp
+
+TRANSLATIONS += polish.ts\
+                english.ts
 
 HEADERS  += mainwindow.h \
     about.h \
