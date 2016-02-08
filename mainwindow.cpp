@@ -20,6 +20,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    // Automatically translate to english.
+    QTranslator* translator = new QTranslator();
+    QString transName = QApplication::applicationDirPath() + "/language/english.qm";
+
+    if(!translator->load(transName))
+        delete translator;
+    else
+        qApp->installTranslator(translator);
+
     settings = new generalSettings();
     gSettings = new groupingSettings_General();
     gSettings_RSES = new groupingSettings_RSESRules();
@@ -38,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->labelIsBaseGrouped->setText("");
 
     QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Rozpoczęto działanie programu CluVis.";
+    logText += tr("log.applicationStart"); // Rozpoczęto działanie programu CluVis.
 
     ui->textBrowserLog->setText(logText);
 
@@ -82,16 +91,9 @@ void MainWindow::on_actionLoadObjectBase_triggered()
 
     if(OBName == "")
     {
-        QString msgBoxText = "Nie wybrano nowej bazy wiedzy.";
-
         QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= "Nieudana próba wczytania bazy wiedzy. ";
-        logText+= "Nie wybrano pliku.";
-
-        QMessageBox::information(this,
-                                "Nie wybrano pliku",
-                                msgBoxText,
-                                QMessageBox::Ok);
+        logText+= tr("log.failedToLoadObjBase"); // Nieudana próba wczytania bazy obiektów.
+        logText+= tr("log.noFileSelected"); // Nie wybrano pliku.
 
         ui->textBrowserLog->append(logText);
 
@@ -100,17 +102,9 @@ void MainWindow::on_actionLoadObjectBase_triggered()
 
     if(isRuleSet(KB) == false)
     {
-        QString msgBoxText = "Wybrany plik nie jest bazą wiedzy. \n";
-        msgBoxText += "Proszę wybrać inny plik.";
-
         QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= "Nieudana próba wczytania bazy wiedzy. ";
-        logText+= "Wybrany plik nie jest bazą wiedzy.";
-
-        QMessageBox::information(this,
-                                "Wybrano nieprawidłowy plik",
-                                msgBoxText,
-                                QMessageBox::Ok);
+        logText+= "log."; // Nieudana próba wczytania bazy wiedzy.
+        logText+= ""; // Wybrany plik nie jest bazą wiedzy.
 
         ui->textBrowserLog->append(logText);
 
@@ -120,7 +114,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     scene->clear();
     ui->actionSaveVisualization->setEnabled(false);
     ui->actionGenerateReport->setEnabled(false);
-    ui->labelIsBaseGrouped->setText("<b>(Niepogrupowana)</b>");
+    ui->labelIsBaseGrouped->setText("bold.ungrouped"); // <b>(Niepogrupowana)</b>
     areObjectsClustered = false;
 
     gSettings->objectBaseInfo = KB;

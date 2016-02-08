@@ -180,7 +180,7 @@ to number of objects in base.</translation>
         <location filename="mainwindow.ui" line="410"/>
         <source>Szukaj optymalnych grupowań.</source>
         <oldsource>Szukaj optymalnych grupowań</oldsource>
-        <translation type="unfinished">Search for optimal groupings</translation>
+        <translation>Search for optimal groupings.</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="419"/>
@@ -282,90 +282,95 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="32"/>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>titlePlaceholder</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="48"/>
         <source>Liczba reguł w skupieniu:</source>
-        <translation type="unfinished"></translation>
+        <translation>Number of rules in cluster:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="61"/>
         <source>liczba reguł</source>
-        <translation type="unfinished"></translation>
+        <translation>rulesNumPlaceholder</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="95"/>
         <source>Wizualizuj!</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualize!</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="110"/>
         <source>Reprezentant skupienia:</source>
-        <translation type="unfinished"></translation>
+        <translation>Cluster&apos;s representative:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="135"/>
         <source>reprezentant</source>
-        <translation type="unfinished"></translation>
+        <translation>repPlaceholder</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="158"/>
         <source>Atrybuty warunkowe występujące w skupieniu:</source>
-        <translation type="unfinished"></translation>
+        <translation>Conditional attributes occuring in cluster:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="177"/>
         <location filename="clusterinfo_rsesrules.ui" line="206"/>
         <source>Atrybuty</source>
-        <translation type="unfinished"></translation>
+        <translation>attrPlaceholder</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="193"/>
         <source>Atrybuty decyzyjne występujące w skupieniu:</source>
-        <translation type="unfinished"></translation>
+        <translation>Decisional attributes occuring in cluster:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="226"/>
         <source>Najdłuższa reguła:</source>
-        <translation type="unfinished"></translation>
+        <translation>Longest rule:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="233"/>
         <location filename="clusterinfo_rsesrules.ui" line="262"/>
         <source>reguła</source>
-        <translation type="unfinished"></translation>
+        <translation>rulePlaceholder</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="249"/>
         <source>Najkrótsza reguła:</source>
-        <translation type="unfinished"></translation>
+        <translation>Shortest rule:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="284"/>
         <source>Najczęstsza decyzja:</source>
-        <translation type="unfinished"></translation>
+        <translation>Most common decision:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="297"/>
         <location filename="clusterinfo_rsesrules.ui" line="327"/>
         <source>decyzja</source>
-        <translation type="unfinished"></translation>
+        <translation>decisionPlaceholder</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="314"/>
         <source>Najrzadsza decyzja:</source>
-        <translation type="unfinished"></translation>
+        <translation>Least common decision:</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="344"/>
         <source>Wsparcie reguły:</source>
-        <translation type="unfinished"></translation>
+        <translation>Rule&apos;s support (for rules only):</translation>
     </message>
     <message>
         <location filename="clusterinfo_rsesrules.ui" line="357"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
+    </message>
+    <message>
+        <location filename="clusterinfo_rsesrules.cpp" line="19"/>
+        <source>Informacje o skupieniu:</source>
+        <translation>Informations about cluster:</translation>
     </message>
 </context>
 </TS>

@@ -16,7 +16,7 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     ui->setupUi(this);
     this->c = *c;
 
-    QString title = "Informacje o skupieniu:";
+    QString title = tr("Informacje o skupieniu:");
 
     if(c->rule == "")
         title += " J";
