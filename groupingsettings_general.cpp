@@ -7,4 +7,5 @@ groupingSettings_General::groupingSettings_General()
 
 groupingSettings_General::~groupingSettings_General()
 {
+
 }

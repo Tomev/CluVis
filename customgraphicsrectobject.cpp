@@ -64,4 +64,3 @@ void customGraphicsRectObject::mousePressEvent(QGraphicsSceneMouseEvent *event)
         emit ruleClusterPicked(&c);
     }
 }
-

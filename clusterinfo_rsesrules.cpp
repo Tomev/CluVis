@@ -16,15 +16,14 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     ui->setupUi(this);
     this->c = *c;
 
-    QString title = tr("Informacje o skupieniu:");
+    QString title = tr("clusterInfo.clusterInfo");
 
     if(c->rule == "")
         title += " J";
     else
-        title += " R";
+        title += " O";
 
     title += QString::number(c->clusterID);
-
 
     this->setWindowTitle(title);
 

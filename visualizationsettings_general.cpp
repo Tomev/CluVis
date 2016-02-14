@@ -9,4 +9,3 @@ visualizationSettings_general::~visualizationSettings_general()
 {
 
 }
-

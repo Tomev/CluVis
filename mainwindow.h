@@ -132,6 +132,8 @@ private:
     //Rest
     //Functions
 
+    void addLogMessage(QString msg);
+
     void setGroupingSettings();
     bool areSettingsCorrect();
         bool isBaseLoaded();

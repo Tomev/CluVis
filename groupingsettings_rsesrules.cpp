@@ -61,9 +61,10 @@ int groupingSettings_RSESRules::getRSESRulesAttributeNumber(QFileInfo KBInfo)
 
 groupingSettings_RSESRules::groupingSettings_RSESRules()
 {
+
 }
 
 groupingSettings_RSESRules::~groupingSettings_RSESRules()
 {
-}
 
+}

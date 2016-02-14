@@ -46,10 +46,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->labelIsBaseGrouped->setText("");
 
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += tr("log.applicationStart"); // Rozpoczęto działanie programu CluVis.
-
-    ui->textBrowserLog->setText(logText);
+    addLogMessage(tr("log.applicationStart"));
+    // Rozpoczęto działanie programu CluVis.
 
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -57,8 +55,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionSaveVisualization->setEnabled(false);
     ui->actionGenerateReport->setEnabled(false);
 
-    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::CustomizeWindowHint |
-                   Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint | Qt::WindowMinimizeButtonHint);
+    setWindowFlags(Qt::Window |
+                   Qt::WindowTitleHint |
+                   Qt::CustomizeWindowHint |
+                   Qt::WindowMaximizeButtonHint |
+                   Qt::WindowCloseButtonHint |
+                   Qt::WindowMinimizeButtonHint
+    );
 }
 
 MainWindow::~MainWindow()
@@ -82,6 +85,7 @@ MainWindow::~MainWindow()
 }
 
 //GUI
+
 //File
 
 void MainWindow::on_actionLoadObjectBase_triggered()
@@ -91,22 +95,24 @@ void MainWindow::on_actionLoadObjectBase_triggered()
 
     if(OBName == "")
     {
-        QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= tr("log.failedToLoadObjBase"); // Nieudana próba wczytania bazy obiektów.
-        logText+= tr("log.noFileSelected"); // Nie wybrano pliku.
+        QString logText = tr("log.failedToLoadObjBase") + " ";
+        // Nieudana próba wczytania bazy obiektów.
+        logText+= tr("log.noFileSelected");
+        // Nie wybrano pliku.
 
-        ui->textBrowserLog->append(logText);
+        addLogMessage(logText);
 
         return;
     }
 
     if(isRuleSet(KB) == false)
     {
-        QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= "log."; // Nieudana próba wczytania bazy wiedzy.
-        logText+= ""; // Wybrany plik nie jest bazą wiedzy.
+        QString logText = tr("log.failedToLoadObjBase") + " ";
+        // Nieudana próba wczytania bazy wiedzy.
+        logText+= tr("log.selectedFileIsNotKnowledgeBase");
+        // Wybrany plik nie jest bazą wiedzy.
 
-        ui->textBrowserLog->append(logText);
+        addLogMessage(logText);
 
         return;
     }
@@ -114,7 +120,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     scene->clear();
     ui->actionSaveVisualization->setEnabled(false);
     ui->actionGenerateReport->setEnabled(false);
-    ui->labelIsBaseGrouped->setText("bold.ungrouped"); // <b>(Niepogrupowana)</b>
+    ui->labelIsBaseGrouped->setText(tr("bold.ungrouped")); // <b>(Niepogrupowana)</b>
     areObjectsClustered = false;
 
     gSettings->objectBaseInfo = KB;
@@ -127,10 +133,8 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     ui->spinBoxStopConditionValue->setMaximum(settings->objectsNumber);
     ui->spinBoxStopConditionValue->setValue(1);
 
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wczytano bazę wiedzy " + OBName + ".";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.knowledgeBaseLoaded") + " " + OBName + ".");
+    // Wczytano bazę wiedzy
 }
 
 QFileInfo MainWindow::selectObjectBase()
@@ -146,7 +150,14 @@ QFileInfo MainWindow::selectObjectBase()
     else
         openPath = defaultOpenPath;
 
-    QString OBPath = FD.getOpenFileName(this, tr("Wybierz bazę"),openPath,tr("Pliki reguł(*.rul);; Pliki tekstowe (*.txt)"));
+    QString OBPath = FD.getOpenFileName(
+        this,
+        tr("FD.selectKnowledgeBase"),
+        openPath,
+        tr("FD.RSESRules.fileTypes")
+    );
+    // Wybierz bazę wiedzy
+    // Pliki reguł(*.rul);; Pliki tekstowe (*.txt)
 
     return QFileInfo(OBPath);
 }
@@ -189,43 +200,43 @@ int MainWindow::getObjectsNumber()
 void MainWindow::on_actionSaveVisualization_triggered()
 {
     QFileDialog FD;
+    QString savePath = "C:\\ANB\\";
 
-    QString fileName = FD.getSaveFileName(this,"Zapisz","C:\\ANB\\","*.png");
+    QString fileName = FD.getSaveFileName(
+        this,
+        tr("FD.save"),   // Zapisz
+        savePath,
+        tr("FD.png")      // *.png
+     );
 
     if(fileName == "")
     {
-        QString msgBoxText = "Nie wybrano nazwy pliku.\n";
-        msgBoxText += "Obraz nie został zapisany.";
+        QString logText = tr("log.failedToSaveVisualization") + " ";
+        // Nieudana próba zapisu obrazu.
+        logText+= tr("log.fileNameNotSelected");
+        // Nie wybrano nazwy pliku.
 
-        QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= "Nieudana próba zapisu obrazu. ";
-        logText+= "Nie wybrano nazwy pliku.";
-
-        QMessageBox::information(this,
-                                "Nie wybrano pliku",
-                                msgBoxText,
-                                QMessageBox::Ok);
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(logText);
 
         return;
     }
+
+    // Add .png to ensure proper format.
+    // TODO: Add if to check if format is already added.
 
     fileName += ".png";
 
     QRect sceneRect(ui->graphicsView->frameGeometry().left() + 15,
                     ui->graphicsView->frameGeometry().top() + 55,
-                    ui->graphicsView->frameGeometry().width()-3,
+                    ui->graphicsView->frameGeometry().width() - 3,
                     ui->graphicsView->height()-3);
 
 
     QPixmap pixMap = QWidget::grab(sceneRect);
     pixMap.save(fileName);
 
-    QString logText = "[" +tim->currentTime().toString() + "] ";
-    logText+= "Wizualizację zapisano pod nazwą " + fileName +".";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.visualizationSavedWithName") + " " + fileName +".");
+    // Wizualizację zapisano pod nazwą
 }
 
 void MainWindow::on_actionGenerateReport_triggered()
@@ -239,7 +250,8 @@ void MainWindow::generateReport()
 
     if(filePath == "")
     {
-        gotLogText("Przerwano operację.");
+        addLogMessage(tr("log.operationAborted"));
+        // Przerwano operację.
 
         return ;
     }
@@ -250,11 +262,15 @@ void MainWindow::generateReport()
 
     QFile report(filePath);
 
-    gotLogText("Rozpoczęto generowanie raportu.");
+    addLogMessage(tr("log.reportGenerationStarted"));
+    // Rozpoczęto generowanie raportu.
 
     if(!report.open(QFile::WriteOnly | QFile::Text) && report.exists())
     {
-        gotLogText("Nie można otworzyć pliku do zapisu. Przerwano operację.");
+        QString reportInfo = tr("log.unableToOpenFileForSaving") + " ";
+        // Nie można otworzyć pliku do zapisu.
+        reportInfo += tr("log.operationAborted");
+        addLogMessage(reportInfo);
 
         return ;
     }
@@ -266,30 +282,30 @@ void MainWindow::generateReport()
     report.flush();
     report.close();
 
-    gotLogText("Zakończono generowanie raportu.");
+    addLogMessage(tr("log.reportGenerationFinished"));
+    // Zakończono generowanie raportu.
 }
 
 QString MainWindow::getFilePath()
 {
     QFileDialog FD;
+    QString savePath = "C:\\ANB\\";
 
-    QString filePath = FD.getSaveFileName(this,"Zapisz raport","C:\\ANB\\",
-                                          "Pliki xml (*.xml);; Pliki tekstowe (*.txt)");
+    QString filePath = FD.getSaveFileName(
+        this,
+        tr("FD.saveReport"),            //Zapisz raport
+        savePath,
+        tr("FD.reportFileTypes")        // Pliki xml (*.xml);; Pliki tekstowe (*.txt)
+    );
 
     if(filePath == "")
     {
-        QString msgBoxText = "Nie wybrano nazwy pliku.\n";
-        msgBoxText += "Raport nie został zapisany.";
+        QString logText = tr("log.failedToSaveReport") + " ";
+        // Nieudana próba zapisu raportu.
+        logText+= tr("log.fileNameNotSelected");
 
-        QString logText = "Nieudana próba zapisu raportu. ";
-        logText+= "Nie wybrano nazwy pliku.";
+        addLogMessage(logText);
 
-        gotLogText(logText);
-
-        QMessageBox::information(this,
-                                "Nie wybrano pliku",
-                                msgBoxText,
-                                QMessageBox::Ok);
         return "";
     }
 
@@ -307,6 +323,10 @@ void MainWindow::createPath(QString path)
 {
     QDir().mkpath(path);
 }
+
+// File type is determined by it's name (*.xml/*.txt), so
+// last letter of file's name is enough to detemine it's
+// type. At least in this case.
 
 int MainWindow::getFileType(QChar t)
 {
@@ -339,35 +359,72 @@ QString MainWindow::createReportContent(int type)
 
 QString MainWindow::createTXTReportContent()
 {
-    QString content = "===Raport===";
+    QString content = "===" + tr("report.report") + "===";
+    //Raport
 
-    content += "\n==Dane bazy==\n";
-    content += "\nNazwa bazy: " + formatThickString(ui->labelObjectBaseName->text());
-    content += "\nLiczba atrybutów: " + QString::number(gSettings->attributesNumber);
-    content += "\nLiczba obiektów: " + QString::number(getObjectsNumber());
-    content += "\nLiczba skupień: " + QString::number(settings->stopCondition);
-    content += "\nSuma pokryciowa: " + QString::number(countCoverageSum());
-    content += "\n\n==Ustawienia==\n";
-    content += "\nWykorzystany algorytm grupowania: " + formatThickString(ui->labelAlgorithmGroupingValue->text());
-    content += "\nWybrana miara podobieństwa obiektów: " + ui->comboBoxInterobjectDistanceMeasure->currentText();
-    content += "\nWybrana miara podobieństwa skupień: " + ui->comboBoxInterclusterDistanceMeasure->currentText();
-    content += "\nWybrany algorytm wizualizacji: " + ui->comboBoxAlgorithmVisualization->currentText();
-    content += "\nGrupowana część reguły: " + ui->comboBoxRuleGroupedPart->currentText();
-    content += "\n\n==Dane skupień==\n";
-    content += "\nNajliczniejsza grupa: " + findBiggestCluster()->name();
-    content += "\nNajmniej liczna grupa: " + findSmallestCluster()->name();
-    content += "\n\n==Szczegóły skupień==\n";
+    content += "\n==" + tr("report.knowledgeBaseInformation") + "==\n";
+    // Informacje o bazie wiedzy
+    content += "\n" + tr("report.nameOfBase") + ": "
+            + formatThickString(ui->labelObjectBaseName->text());
+    // Nazwa bazy
+    content += "\n" + tr("report.attributesNumber") + ": "
+            + QString::number(gSettings->attributesNumber);
+    // Liczba atrybutów
+    content += "\n" + tr("report.objectsNumber") + ": "
+            + QString::number(getObjectsNumber());
+    // Liczba obiektów
+    content += "\n" + tr("report.clustersNumber") + ": "
+            + QString::number(settings->stopCondition);
+    // Liczba skupień
+    content += "\n" + tr("report.coverageSum") + ": "
+            + QString::number(countCoverageSum());
+    // Suma pokryciowa
+    content += "\n\n==" + tr("report.settings") + "==\n";
+    // Ustawienia
+    content += "\n" + tr("report.groupingAlgorithmUsed") + ": "
+            + formatThickString(ui->labelAlgorithmGroupingValue->text());
+    // Wykorzystany algorytm grupowania
+    content += "\n" + tr("report.objectsSimilarityMeasure") + ": "
+            + ui->comboBoxInterobjectDistanceMeasure->currentText();
+    // Wybrana miara podobieństwa obiektów
+    content += "\n" + tr("report.clustersSimilarityMeasure") + ": "
+            + ui->comboBoxInterclusterDistanceMeasure->currentText();
+    // Wybrana miara podobieństwa skupień
+    content += "\n" + tr("report.selectedVisualizationAlgorithm") + ": "
+            + ui->comboBoxAlgorithmVisualization->currentText();
+    // Wybrany algorytm wizualizacji
+    content += "\n" + tr("report.groupedRulePart") + ": "
+            + ui->comboBoxRuleGroupedPart->currentText();
+    // Grupowana część reguły
+    content += "\n\n==" + tr("report.clustersInformation") + "==\n";
+    // Dane skupień
+    content += "\n" + tr("report.biggestCluster") + ": "
+            + findBiggestCluster()->name();
+    // Najliczniejsza grupa
+    content += "\n" + tr("report.smallestCluster") + ": "
+            + findSmallestCluster()->name();
+    // Najmniej liczna grupa
+    content += "\n\n==" + tr("report.clustersDetails") + "==\n";
+    // Szczegóły skupień
 
     for(int i = 0; i < settings->stopCondition; i++)
     {
-        content += "\n=Nazwa skupienia: " + clusters[i]->name() + "=";
-        content += "\n\tLiczba reguł w grupie: " + QString::number(clusters[i]->size());
-        content += "\n\tPokrycie skupienia: "
+        content += "\n=" + tr("report.clustersName") + ": "
+                + clusters[i]->name() + "=";
+        // Nazwa skupienia
+        content += "\n\t" + tr("report.clustersSize") + ": "
+                + QString::number(clusters[i]->size());
+        // Liczba reguł w grupie
+        content += "\n\t" + tr("report.clustersCoverage") + ": "
                 + QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()) + "%";
-        content += "\n\tReprezentant skupienia: " + ((ruleCluster*)clusters[i])->representative;
+        // Pokrycie skupienia
+        content += "\n\t" + tr("report.clustersRepresentative") + ": "
+                + ((ruleCluster*)clusters[i])->representative;
+        // Reprezentant skupienia
     }
 
-    content += "\n\n===Koniec===";
+    content += "\n\n===" + tr("report.end") + "===";
+    // Koniec
 
     return content;
 }
@@ -412,7 +469,7 @@ int MainWindow::countUngroupedObjects()
 
     for(int i = 0; i < settings->stopCondition; ++i)
     {
-        //If object is ungrouped it's size = 1;
+        //If object is ungrouped it's size is equal to 1;
         if(clusters[i]->size()==1)
             ++result;
     }
@@ -422,8 +479,8 @@ int MainWindow::countUngroupedObjects()
 
 int MainWindow::countAllNodes()
 {
-    //Basic number of nodes in dendrogram.
-    return 2*settings->objectsNumber-settings->stopCondition;
+    // Basic number of nodes in dendrogram.
+    return 2 * settings->objectsNumber - settings->stopCondition;
 }
 
 int MainWindow::countCoverageSum()
@@ -440,6 +497,9 @@ int MainWindow::countRuleLength(QString rule)
 {
     return std::count(rule.begin(), rule.end(), '&')+1;
 }
+
+// TODO: Add additional classes for report generation.
+// TODO: Investigate the issue with opening xml report in MS Excel.
 
 QString MainWindow::createXMLReportContent()
 {
@@ -547,27 +607,27 @@ QString MainWindow::createXMLFileFooter()
 
 QString MainWindow::createXMLFileTableHeader()
 {
-    QString result = createXMLFileTableCell("Index", true);
-    result += createXMLFileTableCell("Nazwa bazy", true);
-    result += createXMLFileTableCell("Liczba atrybutów", true);
-    result += createXMLFileTableCell("Liczba obiektów", true);
-    result += createXMLFileTableCell("Liczba wierzchołków", true);
-    result += createXMLFileTableCell("Liczba skupień", true);
-    result += createXMLFileTableCell("Suma pokryciowa", true);
-    result += createXMLFileTableCell("Wybrany algorytm wizualizacji", true);
-    result += createXMLFileTableCell("Wykorzystany algorytm grupowania", true);
-    result += createXMLFileTableCell("Wybrana miara podobieństwa obiektów", true);
-    result += createXMLFileTableCell("Wybrana miara podobieństwa skupień", true);
-    result += createXMLFileTableCell("Grupowana część reguły", true);
-    result += createXMLFileTableCell("Najliczniejsza grupa", true);
-    result += createXMLFileTableCell("Najmniej liczniejsza grupa", true);
-    result += createXMLFileTableCell("Liczba niepogrupowanych obiektów", true);
-    result += createXMLFileTableCell("MDI", true);
-    result += createXMLFileTableCell("MDBI", true);
-    result += createXMLFileTableCell("maxMDI", true);
-    result += createXMLFileTableCell("maxMDIClustersNumber", true);
-    result += createXMLFileTableCell("maxMDBI", true);
-    result += createXMLFileTableCell("maxMDBIClustersNumber", true);
+    QString result = createXMLFileTableCell(tr("report.index"), true);
+    result += createXMLFileTableCell(tr("report.nameOfBase"), true);
+    result += createXMLFileTableCell(tr("report.attributesNumber"), true);
+    result += createXMLFileTableCell(tr("report.objectsNumber"), true);
+    result += createXMLFileTableCell(tr("report.nodesNumber"), true);
+    result += createXMLFileTableCell(tr("report.clustersNumber"), true);
+    result += createXMLFileTableCell(tr("report.coverageSum"), true);
+    result += createXMLFileTableCell(tr("report.selectedVisualizationAlgorithm"), true);
+    result += createXMLFileTableCell(tr("report.groupingAlgorithmUsed"), true);
+    result += createXMLFileTableCell(tr("report.objectsSimilarityMeasure"), true);
+    result += createXMLFileTableCell(tr("report.clustersSimilarityMeasure"), true);
+    result += createXMLFileTableCell(tr("report.groupedRulePart"), true);
+    result += createXMLFileTableCell(tr("report.biggestCluster"), true);
+    result += createXMLFileTableCell(tr("report.smallestCluster"), true);
+    result += createXMLFileTableCell(tr("report.ungroupedRules"), true);
+    result += createXMLFileTableCell(tr("report.MDI"), true);
+    result += createXMLFileTableCell(tr("report.MDBI"), true);
+    result += createXMLFileTableCell(tr("report.maxMDI"), true);
+    result += createXMLFileTableCell(tr("report.maxMDIClustersNumber"), true);
+    result += createXMLFileTableCell(tr("report.maxMDBI"), true);
+    result += createXMLFileTableCell(tr("report.maxMDBIClustersNumber"), true);
     return result;
 }
 
@@ -637,16 +697,16 @@ QString MainWindow::createXMLFileClustersData()
 QString MainWindow::createXMLFileClustersDataHeader()
 {
     QString result = "\t\t\t<Row>\n";
-    result += createXMLFileTableCell("Index", true);
-    result += createXMLFileTableCell("Nazwa skupienia", true);
-    result += createXMLFileTableCell("Liczba reguł w grupie", true);
-    result += createXMLFileTableCell("Procent reguł w grupie [%]", true);
-    result += createXMLFileTableCell("Liczba węzłów w grupie", true);
-    result += createXMLFileTableCell("Procent węzłów w grupie [%]", true);
-    result += createXMLFileTableCell("Pokrycie skupienia", true);
-    result += createXMLFileTableCell("Pokrycie skupienia [%]", true);
-    result += createXMLFileTableCell("Reprezentant skupienia", true);
-    result += createXMLFileTableCell("Długość reprezentanta", true);
+    result += createXMLFileTableCell(tr("report.index"), true);
+    result += createXMLFileTableCell(tr("report.clustersName"), true);
+    result += createXMLFileTableCell(tr("report.clustersSize"), true);
+    result += createXMLFileTableCell(tr("report.clustersRulesPercent"), true); // Procent reguł w grupie [%]
+    result += createXMLFileTableCell(tr("report.clustersNodesNumber"), true);
+    result += createXMLFileTableCell(tr("report.clustersNodesNumberPercent"), true);
+    result += createXMLFileTableCell(tr("report.clustersCoverage"), true);
+    result += createXMLFileTableCell(tr("report.clustersCoveragePercent"), true);
+    result += createXMLFileTableCell(tr("report.clustersRepresentative"), true);
+    result += createXMLFileTableCell(tr("report.representativeLength"), true);
     result += "\t\t\t</Row>\n";
 
     return result;
@@ -701,37 +761,29 @@ void MainWindow::on_actionExit_triggered()
 }
 
 //Help
-
 void MainWindow::on_actionAbout_triggered()
 {
     About a;
     a.exec();
 
-    gotLogText("Włączono informacje o programie.");
+    addLogMessage(tr("log.programmeInformationOpened"));
 }
 
 //Rest
-
 void MainWindow::on_pushButtonGroup_clicked()
 {
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wczytytuję ustawienia grupowania...";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.loadingGroupingSettings"));
+    // Wczytytuję ustawienia grupowania...
 
     setGroupingSettings();
 
-    logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Sprawdzam poprawność ustawień...";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.validatingSettings"));
+    // Sprawdzam poprawność ustawień...
 
     if(areSettingsCorrect())
     {
-        logText = "[" + tim->currentTime().toString() + "] ";
-        logText += "Ustawienia poprawne.";
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(tr("log.settingsCorrect"));
+        // Ustawienia poprawne.
 
         groupObjects();
     }
@@ -741,10 +793,8 @@ void MainWindow::on_pushButtonVisualize_clicked()
 {    
     if(areObjectsClustered)
     {
-        QString logText = "[" + tim->currentTime().toString() + "] ";
-        logText += "Wczytytuję ustawienia wizualizacji...";
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(tr("log.loadingVisualizationSettings"));
+        // Wczytytuję ustawienia wizualizacji...
 
         setVisualizationSettings();
 
@@ -758,28 +808,19 @@ void MainWindow::on_pushButtonVisualize_clicked()
         connect(vThread,SIGNAL(passMainEllipseRect(QRect*)),
                 this,SLOT(gotMainEllipseRect(QRect*)));
 
-        logText = "[" + tim->currentTime().toString() + "] ";
-        logText += "Ustawienia wizualizacji wczytane.";
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(tr("log.visualizationSettingsLoaded"));
+        // Ustawienia wizualizacji wczytane.
 
         visualize();
     }
     else
     {
-        QString msgBoxText = "Nie pogrupowano obiektów.\n";
-        msgBoxText += "Proszę najpierw pogrupować obiekty.";
+        QString logText = tr("log.visualizationGenerationFailed") + " ";
+        // Nieudana próba generowania wizualizacji.
+        logText+= tr("log.objectsNotGrouped");
+        // Nie pogrupowano obiektów.
 
-        QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= "Nieudana próba generowania wizualizacji. ";
-        logText+= "Nie pogrupowano obiektów.";
-
-        QMessageBox::information(this,
-                                "Nie pogrupowano obiektów",
-                                msgBoxText,
-                                QMessageBox::Ok);
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(logText);
     }
 }
 
@@ -797,14 +838,12 @@ void MainWindow::setGroupingSettings()
     gSettings->findBestClustering =
             ui->checkBoxSearchForBestIndexes->isChecked();
 
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wczytano ustawienia ogólne.";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.generalSettingsLoaded"));
+    // Wczytano ustawienia ogólne.
 
     switch(settings->dataTypeID)
     {
-    case generalSettings::RSES_RULES_ID:
+        case generalSettings::RSES_RULES_ID:
 
         gSettings_RSES->groupingPartID =
             ui->comboBoxRuleGroupedPart->currentIndex();
@@ -820,14 +859,12 @@ void MainWindow::setGroupingSettings()
         connect(gThread,SIGNAL(passMDBIData(qreal, qreal, int)),
                 this,SLOT(gotMDBIData(qreal, qreal, int)));
 
-        logText = "[" + tim->currentTime().toString() + "] ";
-        logText += "Wczytano ustawienia szczególne dla RSES Rules.";
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(tr("log.rsesRules.detailedSettingsLoaded"));
+        // Wczytano ustawienia szczególne dla RSES Rules.
 
         break;
 
-    default:
+        default:
         ;
     }
 }
@@ -844,32 +881,25 @@ void MainWindow::setVisualizationSettings()
 
     vSettings->sceneRect = new QRect(0,0,sceneWidth,sceneHeight);
 
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wczytano ustawienia ogólne.";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.generalSettingsLoaded"));
 
     switch(settings->dataTypeID)
     {
-    case generalSettings::RSES_RULES_ID:
+        case generalSettings::RSES_RULES_ID:
 
         vSettings_RSES->clusteredRules = ((ruleCluster**)clusters);
 
         vThread = new visualizationThread(settings, vSettings, vSettings_RSES);
 
-        logText = "[" + tim->currentTime().toString() + "] ";
-        logText += "Wczytano ustawienia szczególne.";
-
-        ui->textBrowserLog->append(logText);
+        logText += tr("report.detailedSettingsLoaded");
+        // Wczytano ustawienia szczególne.
 
         break;
 
-    default:
+        default:
         ;
     }
 }
-
-//Checker
 
 bool MainWindow::areSettingsCorrect()
 {
@@ -882,19 +912,12 @@ bool MainWindow::isBaseLoaded()
         return true;
     else
     {
-        QString msgBoxText = "Nie wybrano bazy.\n";
-        msgBoxText += "Proszę wczytać bazę.";
+        QString logText = tr("log.failedAttemptOfGrouping") + " ";
+        // Nieudana próba generowania skupień.
+        logText+= tr("log.baseNotSelected");
+        // Nie wybrano bazy.
 
-        QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= "Nieudana próba generowania skupień. ";
-        logText+= "Nie wybrano bazy.";
-
-        QMessageBox::information(this,
-                                "Nie wczytano bazy",
-                                msgBoxText,
-                                QMessageBox::Ok);
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(logText);
 
         return false;
     }
@@ -910,38 +933,23 @@ bool MainWindow::isStopConditionCorrect()
         }
         else
         {
-            QString msgBoxText = "Niepoprawny warunek stopu.\n";
-            msgBoxText += "Proszę ustawić poprawny warunek stopu.";
+            QString logText = tr("log.failedAttemptOfGrouping") + " ";
+            // Nieudana próba generowania skupień.
+            logText+= tr("log.stopConditionToHigh");
+            // Warunek stopu nie może być większy od liczby obiektów w bazie.
 
-            QString logText = "[" +tim->currentTime().toString() + "] ";
-            logText+= "Nieudana próba generowania skupień. ";
-            logText+= "Warunek stopu nie może być większy od liczby obiektów w bazie.";
-
-            QMessageBox::information(this,
-                                    "Niepoprawny warunek stopu",
-                                    msgBoxText,
-                                    QMessageBox::Ok);
-
-            ui->textBrowserLog->append(logText);
+            addLogMessage(logText);
 
             return false;
         }
     }
     else
     {
-        QString msgBoxText = "Niepoprawny warunek stopu.\n";
-        msgBoxText += "Proszę ustawić poprawny warunek stopu.";
+        QString logText = tr("log.failedAttemptOfGrouping") + " ";
+        logText+= tr("log.stopConditionToSmall");
+        // Warunek stopu nie może być mniejszy od jedynki.
 
-        QString logText = "[" +tim->currentTime().toString() + "] ";
-        logText+= "Nieudana próba generowania skupień. ";
-        logText+= "Warunek stopu nie może być mniejszy od jedynki.";
-
-        QMessageBox::information(this,
-                                "Niepoprawny warunek stopu",
-                                msgBoxText,
-                                QMessageBox::Ok);
-
-        ui->textBrowserLog->append(logText);
+        addLogMessage(logText);
 
         return false;
     }
@@ -953,64 +961,60 @@ bool MainWindow::isStopConditionCorrect()
 
 void MainWindow::groupObjects()
 {
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Rozpoczynam grupowanie...";
+    addLogMessage(tr("log.groupingStarted"));
+    // Rozpoczynam grupowanie...
 
-    ui->textBrowserLog->append(logText);
-
-    logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Blokuję przyciski na czas grupowania...";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.blockingButtonsForOperation"));
+    // Blokuję przyciski na czas operacji...
 
     ui->pushButtonVisualize->setEnabled(false);
     ui->pushButtonGroup->setEnabled(false);
 
     areObjectsClustered = false;
 
-    logText = "[" +tim->currentTime().toString() + "] ";
-    logText+= "Rozpoczynam wątek grupujący...";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.groupingThreadStarted"));
+    // Rozpoczynam wątek grupujący...
 
     tim->start();
     gThread->run();
     int timeElapsed = tim->elapsed();
 
-    logText = "[" +tim->currentTime().toString() + "] ";
-    logText += "Wątek grupujący zakończony w czasie ";
-    logText += QString::number(timeElapsed);
-    logText += " ms.";
+    QString logText = QString(tr("log.groupingThreadFinishedIn"))
+            .arg(QString::number(timeElapsed);
+    // Wątek grupujący zakończony w czasie %1 ms.
 
-    ui->textBrowserLog->append(logText);
+    addLogMessage(logText);
 
     ui->pushButtonVisualize->setEnabled(true);
     ui->pushButtonGroup->setEnabled(true);
 
-    logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Przyciski odblokowane.";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.buttonsUnlocked"));
 
     if(areObjectsClustered)
     {
         QMessageBox mb;
         QString infoText;
 
-        infoText = "Liczba otrzymanych skupień: " + QString::number(settings->stopCondition) + ".\n";
-        infoText += "MDI otrzymanych skupień: " + QString::number(MDI) + ".\n";
-        infoText += "MDBI otrzymanych skupień: " + QString::number(MDBI) + ".\n";
+        infoText = tr("FD.clustersNumber") + ": "
+                + QString::number(settings->stopCondition) + ".\n";
+        // Liczba otrzymanych skupień
+        infoText += tr("FD.clustersMDI") + ": "
+                + QString::number(MDI) + ".\n";
+        // MDI otrzymanych skupień
+        infoText += tr("FD.clustersMDBI") + ": "
+                + QString::number(MDBI) + ".\n";
+        // MDBI otrzymanych skupień
 
+        infoText += tr("FD.visualizeGrouping");
+        // Czy chcesz wygenerować wizualizację struktury grup?
 
-
-        infoText += "Czy chcesz wygenerować wizualizację struktury grup?";
-
-        mb.setWindowTitle("Grupowanie zakończone");
-        mb.setText("Grupowanie zakończone.");
+        mb.setWindowTitle(tr("FD.groupingFinished"));
+        // Grupowanie zakończone
+        mb.setText(tr("FD.groupingFinished") + ".");
         mb.setInformativeText(infoText);
         mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        mb.setButtonText(QMessageBox::Yes, "Tak");
-        mb.setButtonText(QMessageBox::No, "Nie");
+        mb.setButtonText(QMessageBox::Yes, tr("FD.yes"));
+        mb.setButtonText(QMessageBox::No, tr("FD.no"));
         mb.setDefaultButton(QMessageBox::Yes);
 
         if(mb.exec() == QMessageBox::Yes)
@@ -1020,55 +1024,44 @@ void MainWindow::groupObjects()
 
 void MainWindow::visualize()
 {
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Rozpoczynam wizualizowanie...";
+    addLogMessage(tr("log.visualizationStarted"));
 
-    ui->textBrowserLog->append(logText);
-
-    logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Blokuję przyciski na czas wizualizowania.";
+    addLogMessage(tr("log.blockingButtonsForOperation"));
 
     ui->pushButtonVisualize->setEnabled(false);
     ui->pushButtonGroup->setEnabled(false);
 
-    logText = "[" +tim->currentTime().toString() + "] ";
-    logText+= "Rozpoczynam wątek wizualizujący...";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.visualizationThreadStarted"));
 
     tim->start();
     vThread->run();
     int timeElapsed = tim->elapsed();
 
-    logText = "[" +tim->currentTime().toString() + "] ";
-    logText += "Wątek wizualizujący zakończony w czasie ";
-    logText += QString::number(timeElapsed);
-    logText += " ms.";
+    QString logText = QString(tr("log.visualizationThreadFinishedIn"))
+            .arg(QString::number(timeElapsed));
+    // Wątek wizualizujący zakończony w czasie %1 ms.
 
-    ui->textBrowserLog->append(logText);
+    addLogMessage(logText);
 
     if(vSettings->visualizationAlgorithmID == vSettings->RT_SLICE_AND_DICE_ID)
         ui->graphicsView->fitInView(scene->itemsBoundingRect());
     if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
         ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
-    logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wizualizacja wycentrowana.";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage("log.visualizationCentered");
+    // Wizualizacja wycentrowana.
 
     ui->pushButtonVisualize->setEnabled(true);
     ui->pushButtonGroup->setEnabled(true);
 
-    logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Przyciski odblokowane.";
+    addLogMessage("log.buttonsUnlocked");
+    //Przyciski odblokowane.
 
-    ui->textBrowserLog->append(logText);
-
-    QString msgBoxText = "Wizualizowanie zakończone!";
+    QString msgBoxText = tr("log.visualizationFinished");
+    // Wizualizowanie zakończone!
 
     QMessageBox::information(this,
-                            "Proces zakończony",
+                            tr("FD.processFinished"),
                             msgBoxText,
                             QMessageBox::Ok);
 
@@ -1076,34 +1069,12 @@ void MainWindow::visualize()
     ui->actionGenerateReport->setEnabled(true);
 }
 
-/* GENERAL I DETAILS SETTINGS
-void MainWindow::on_pushButtonDetails_clicked()
-{
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wyświetlam ustawienia szczególne.";
-
-    ui->textBrowserLog->append(logText);
-
-    ui->stackedWidgetSettings->setCurrentIndex(1);
-}
-
-void MainWindow::on_pushButtonGeneral_clicked()
-{
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wyświetlam ustawienia ogólne.";
-
-    ui->textBrowserLog->append(logText);
-
-    ui->stackedWidgetSettings->setCurrentIndex(0);
-}
-*/
-
 void MainWindow::getClusters(cluster** c)
 {
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Otrzymano pogrupowane reguły. Można przystąpić do wizualizacji.";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.groupedObjectsReceived"));
+    // Otrzymano pogrupowane obiekty.
+    addLogMessage(tr("log.visualizationAvailable"));
+    // Można przystąpić do wizualizacji.
 
     clusters = c;
 
@@ -1150,10 +1121,8 @@ void MainWindow::gotMainEllipseRect(QRect *r)
 
 void MainWindow::gotRuleClusterToVisualize(ruleCluster *c)
 {
-    QString logText = "[" + tim->currentTime().toString() + "] ";
-    logText += "Wybrano skupienie do wizualizacji. Wizualizuję...";
-
-    ui->textBrowserLog->append(logText);
+    addLogMessage(tr("log.clusterSelectedForVisualization"));
+    // Wybrano skupienie do wizualizacji. Wizualizuję...
 
     ruleCluster newC = *c;
 
@@ -1164,7 +1133,8 @@ void MainWindow::gotRuleClusterToVisualize(ruleCluster *c)
 
 void MainWindow::showRuleInfo(ruleCluster *c)
 {
-    gotLogText("Wyświetlam informacje dotyczące wybranego skupienia.");
+    addLogMessage(tr("log.showClustersInfo"));
+    // Wyświetlam informacje dotyczące wybranego skupienia.
 
     cInfo = new clusterInfo_RSESRules(c);
 
@@ -1175,6 +1145,11 @@ void MainWindow::showRuleInfo(ruleCluster *c)
 }
 
 void MainWindow::gotLogText(QString msg)
+{
+    addLogMessage(msg);
+}
+
+void MainWindow::addLogMessage(QString msg)
 {
     QString logText = "[" + tim->currentTime().toString() + "] ";
     logText += msg;

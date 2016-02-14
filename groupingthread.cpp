@@ -27,10 +27,12 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
 
     wasGroupingCanceled = false;
 
-    groupingProgress = new QProgressDialog("Grupowanie reguł...","Anuluj",1,
-                                           settings->objectsNumber,0,0);
+
+    groupingProgress = new QProgressDialog(tr("gThreadDialog.grouping"),tr("gThreadDialog.cancel"),1, settings->objectsNumber,0,0);
+    // Grupowanie
+    // Anuluj
     groupingProgress->setValue(0);
-    groupingProgress->setWindowTitle("Grupowanie reguł");
+    groupingProgress->setWindowTitle(tr("gThreadDialog.grouping"));
     groupingProgress->setFixedSize(groupingProgress->sizeHint());
     groupingProgress->setWindowFlags(groupingProgress->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     groupingProgress->setWindowModality(Qt::WindowModal);
@@ -38,10 +40,12 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
                            - groupingProgress->rect().center()
                            - QPoint(groupingProgress->width()/2, 0));
 
-    creatingSimMatrixProgress  = new QProgressDialog("Tworzenie macierzy podobieństwa...","Anuluj",1,
-            settings->objectsNumber,0,0);
+
+    creatingSimMatrixProgress  = new QProgressDialog(tr("gThreadDialog.creatingSimilarityMatrix")
+                                                     ,tr("gThreadDialog.cancel"),1,settings->objectsNumber,0,0);
+    // Tworzenie macierzy podobieństwa
     creatingSimMatrixProgress->setValue(0);
-    creatingSimMatrixProgress->setWindowTitle("Tworzenie macierzy podobieństwa");
+    creatingSimMatrixProgress->setWindowTitle(tr("gThreadDialog.creatingSimilarityMatrix"));
     creatingSimMatrixProgress->setFixedSize(creatingSimMatrixProgress->sizeHint());
     creatingSimMatrixProgress->setWindowFlags(creatingSimMatrixProgress->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     creatingSimMatrixProgress->setWindowModality(Qt::WindowModal);
@@ -59,32 +63,29 @@ void groupingThread::run()
 
 void groupingThread::groupObjects()
 {
-    QString logText;
-
     switch(settings->dataTypeID)
     {
         case generalSettings::RSES_RULES_ID:
 
-            logText = "Rozpoczynam grupowanie dla RSES Rules...";
-
-            emit passLogMsg(logText);
+            emit passLogMsg(tr("log.rsesGroupingStarted"));
+            // Rozpoczynam grupowanie dla RSES Rules...
 
             groupRSESRules();
             break;
 
         default:
 
-            logText = "Nieznany typ obiektów. Grupowanie nie rozpocznie się.";
-
-            emit passLogMsg(logText);
-            ;
+            emit passLogMsg(tr("log.unknownObjectsType"));
+            // Nie rozpoznano typu obiektów.
+            emit passLogMsg(tr("log.operationWontStart"));
+            // Operacja nie rozpocznie się.
     }
 }
 
 void groupingThread::groupRSESRules()
 {
-    QString logText = "Zbieram dane dotyczące atrybutów reguł...";
-    emit passLogMsg(logText);
+    emit passLogMsg(tr("log.gatheringAttributesData"));
+    // Zbieram dane dotyczące atrybutów...
 
     fillAttributesData();
 
@@ -93,14 +94,13 @@ void groupingThread::groupRSESRules()
 
     int i = settings->objectsNumber - settings->stopCondition;
 
-    logText = "Rozmieszczam reguły do skupień...";
-    emit passLogMsg(logText);
+    emit passLogMsg(tr("log.placingObjectsInClusters"));
+    // Rozmieszczam reguły do skupień...;
 
     clusterRules();
 
-    logText = "Rozpoczynam proces grupowania...";
-
-    emit passLogMsg(logText);
+    emit passLogMsg(tr("log.groupingProcessStarted"));
+    //"Rozpoczynam proces grupowania..."
 
     groupingProgress->show();
     creatingSimMatrixProgress->show();
@@ -163,12 +163,31 @@ void groupingThread::groupRSESRules()
     groupingProgress->close();
     creatingSimMatrixProgress->close();
 
-    logText = "Liczba skupień: " + QString::number(settings->stopCondition) + ". Wskaźnik MDI grupowania: "
-            + QString::number(MDI) +". Wskaźnik MDBI grupowania: " + QString::number(MDBI);
+
+    emit passLogMsg(
+                QString(tr("log.clustersNumber"))
+                .arg(QString::number(settings->stopCondition))
+    );
+    // Liczba skupień: %1.
+
+    emit passLogMsg(
+                QString(tr("log.mdiPointer"))
+                .arg(QString::number(MDI))
+    );
+    // Wskaźnik MDI grupowania: %1.
+
+    emit passLogMsg(
+                QString(tr("log.mdbiPointer"))
+                .arg(QString::number(MDBI))
+    );
+    // Wskaźnik MDBI grupowania: %1.
+
     emit passLogMsg(logText);
 
-    logText = "Grupowanie zakończone. Przesyłam otrzymane struktury...";
-    emit passLogMsg(logText);
+    emit passLogMsg(tr("log.groupingFinished"));
+    // Grupowanie zakończone.
+    emit passLogMsg(tr("log.sendingResultatntStructure"));
+    // Przesyłam otrzymane struktury...;
 
     emit passMDIData(MDI, maxMDI, maxMDIClustersNumber);
     emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
@@ -914,17 +933,10 @@ qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule)
 
 void groupingThread::stopGrouping()
 {
-    QString msgBoxText = "Grupowanie przerwane.\n";
-    msgBoxText += "Wizualizacja będzie niemożliwa.";
-
-    QMessageBox::information(0,
-                            "Grupowanie przerwane",
-                            msgBoxText,
-                            QMessageBox::Ok);
-
-    QString logText = "Grupowanie przerwane na życzenie użytkownika.";
-    logText += "Wizualizacja nie będzie możliwa do czasu pełnego pogrupowania.";
-    emit passLogMsg(logText);
+    emit passLogMsg(tr("log.groupingCancelled"));
+    // Grupowanie przerwane na życzenie użytkownika.
+    emit passLogMsg(tr("log.visualizationImpossible"));
+    // Wizualizacja nie będzie możliwa do czasu pełnego pogrupowania.
 }
 
 void groupingThread::countMDI(int size)

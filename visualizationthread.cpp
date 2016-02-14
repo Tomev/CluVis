@@ -28,22 +28,22 @@ void visualizationThread::run(ruleCluster *c)
 
 void visualizationThread::visualize(ruleCluster *c)
 {
-    QString logText;
-
     switch(settings->dataTypeID)
     {
-    case 0://settings->RSES_RULES_ID:
+        case 0: //settings->RSES_RULES_ID:
 
-        logText = "Rozpoczynam wizualizację dla RSES Rules...";
-        emit passLogMsg(logText);
+            emit passLogMsg(tr("log.rsesVisualizationStarted"));
+            // Rozpoczynam wizualizację dla RSES Rules...
 
-        visualizeRSESRules(c);
-        break;
-    default:
-        logText = "Nie rozpoznano typu obiektów. Grupowanie nie rozpocznie się.";
-        emit passLogMsg(logText);
+            visualizeRSESRules(c);
+            break;
 
-        ;
+        default:
+
+            emit passLogMsg(tr("log.unknownObjectsType"));
+            // Nie rozpoznano typu obiektów.
+            emit passLogMsg(tr("log.operationWontStart"));
+            // Operacja nie rozpocznie się.
     }
 }
 
@@ -51,20 +51,19 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
 {
     switch(vSettings->visualizationAlgorithmID)
     {
-    case visualizationSettings_general::RT_SLICE_AND_DICE_ID:
-        RSES_RTSAD(vSettings->sceneRect,c);
-        break;
-    case visualizationSettings_general::CIRCULAR_TREEMAP_ID:
-        RSES_CircularTreemap(vSettings->sceneRect,c);
-        break;
-    default:
-        ;
+        case visualizationSettings_general::RT_SLICE_AND_DICE_ID:
+            RSES_RTSAD(vSettings->sceneRect,c);
+            break;
+        case visualizationSettings_general::CIRCULAR_TREEMAP_ID:
+            RSES_CircularTreemap(vSettings->sceneRect,c);
+            break;
+        default:
+            ;
     }
 }
 
 void visualizationThread::RSES_RTSAD(QRect* rect, ruleCluster* c)
 {
-
     QRect paintAreaRect = *rect;
 
     if(paintAreaRect.width() >= paintAreaRect.height())
@@ -296,7 +295,7 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
         {
             newC = vSettings_RSES->clusteredRules[0];
 
-            int sV = countShadeValue(newC->size()); // sV -> shadeValue
+            int sV = countShadeValue(newC->size());
             QColor shadeOfGray(sV,sV,sV);
 
             customGraphicEllipseObject* cRect =
@@ -559,7 +558,7 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
 
             for(int i = 0; i < circlesBRects.size(); i++)
             {
-                int sV = countShadeValue(sortedRuleClusters[i]->size()); // sV -> shadeValue
+                int sV = countShadeValue(sortedRuleClusters[i]->size());
                 QColor shadeOfGray(sV,sV,sV);
 
                 customGraphicEllipseObject* cRect =
@@ -579,7 +578,6 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                     QRect* c1BRect =
                         new QRect(left,top,d1,d1);
 
-                    //top = vSettings->sceneRect->height()/2 - d2/2;
                     top = circlesBRects[i]->center().y() - d2/2;
                     left = circlesBRects[i]->left() + circlesBRects[i]->width() - d2;
 
@@ -719,7 +717,3 @@ qreal visualizationThread::pointsEuklideanDistance(QPoint p1, QPoint p2)
 
     return (double) qSqrt((qPow(x,2) + qPow(y,2)));
 }
-
-
-
-
