@@ -235,8 +235,11 @@ void MainWindow::on_actionSaveVisualization_triggered()
     QPixmap pixMap = QWidget::grab(sceneRect);
     pixMap.save(fileName);
 
-    addLogMessage(tr("log.visualizationSavedWithName") + " " + fileName +".");
-    // Wizualizację zapisano pod nazwą
+    addLogMessage(
+        QString(tr("log.visualizationSavedWithName"))
+        .arg(fileName)
+    );
+    // Wizualizację zapisano pod nazwą %1.
 }
 
 void MainWindow::on_actionGenerateReport_triggered()
@@ -357,11 +360,12 @@ QString MainWindow::createReportContent(int type)
     return content;
 }
 
+// TODO: Reconsider txt report formatting.
+
 QString MainWindow::createTXTReportContent()
 {
     QString content = "===" + tr("report.report") + "===";
-    //Raport
-
+    //===Raport===
     content += "\n==" + tr("report.knowledgeBaseInformation") + "==\n";
     // Informacje o bazie wiedzy
     content += "\n" + tr("report.nameOfBase") + ": "

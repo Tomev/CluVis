@@ -267,14 +267,451 @@ p, li { white-space: pre-wrap; }
         <translation>Polish</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="155"/>
         <source>Wybierz bazę</source>
-        <translation>Select base</translation>
+        <translation type="vanished">Select base</translation>
+    </message>
+    <message>
+        <source>Pliki reguł(*.rul);; Pliki tekstowe (*.txt)</source>
+        <translation type="vanished">Rule files(*.rul);; Text files (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="49"/>
+        <source>log.applicationStart</source>
+        <translation>Application CluVis started.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="98"/>
+        <location filename="mainwindow.cpp" line="110"/>
+        <source>log.failedToLoadObjBase</source>
+        <translation>Failed to load object base.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="100"/>
+        <source>log.noFileSelected</source>
+        <translation>No file has been selected.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="112"/>
+        <source>log.selectedFileIsNotKnowledgeBase</source>
+        <translation>Selected file is not RSES knowledge base.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="123"/>
+        <source>bold.ungrouped</source>
+        <translation>&lt;b&gt;(Ungrouped)&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="136"/>
+        <source>log.knowledgeBaseLoaded</source>
+        <translation>Knowledge base loaded.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="155"/>
-        <source>Pliki reguł(*.rul);; Pliki tekstowe (*.txt)</source>
-        <translation>Rule files(*.rul);; Text files (*.txt)</translation>
+        <source>FD.selectKnowledgeBase</source>
+        <translation>Select object base</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="157"/>
+        <source>FD.RSESRules.fileTypes</source>
+        <translation>RSES Rule files (*.rul);; Text files (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="207"/>
+        <source>FD.save</source>
+        <translation>Save</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="209"/>
+        <source>FD.png</source>
+        <translation>*.png</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="214"/>
+        <source>log.failedToSaveVisualization</source>
+        <translation>Failed to save visualization.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="216"/>
+        <location filename="mainwindow.cpp" line="308"/>
+        <source>log.fileNameNotSelected</source>
+        <translation>No file name has been selected.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="239"/>
+        <source>log.visualizationSavedWithName</source>
+        <translation>Visuzalization saved with name %1.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="256"/>
+        <location filename="mainwindow.cpp" line="275"/>
+        <source>log.operationAborted</source>
+        <translation>Operation aborted.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="268"/>
+        <source>log.reportGenerationStarted</source>
+        <translation>Report generation started.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="273"/>
+        <source>log.unableToOpenFileForSaving</source>
+        <translation>Unable to open file for saving.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="288"/>
+        <source>log.reportGenerationFinished</source>
+        <translation>Report generation finished.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="299"/>
+        <source>FD.saveReport</source>
+        <translation>Save report</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="301"/>
+        <source>FD.reportFileTypes</source>
+        <translation>XML Files (*.xml);; Text files (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="306"/>
+        <source>log.failedToSaveReport</source>
+        <translation>Failed to save report.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="365"/>
+        <source>report.report</source>
+        <translation>Report</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="368"/>
+        <source>report.knowledgeBaseInformation</source>
+        <translation>Object base information</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="370"/>
+        <location filename="mainwindow.cpp" line="614"/>
+        <source>report.nameOfBase</source>
+        <translation>Name of the base</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="373"/>
+        <location filename="mainwindow.cpp" line="615"/>
+        <source>report.attributesNumber</source>
+        <translation>Attributes number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="376"/>
+        <location filename="mainwindow.cpp" line="616"/>
+        <source>report.objectsNumber</source>
+        <translation>Objects number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="379"/>
+        <location filename="mainwindow.cpp" line="618"/>
+        <source>report.clustersNumber</source>
+        <translation>Clusters number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="382"/>
+        <location filename="mainwindow.cpp" line="619"/>
+        <source>report.coverageSum</source>
+        <translation>Coverage sum</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="385"/>
+        <source>report.settings</source>
+        <translation>Settings</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="387"/>
+        <location filename="mainwindow.cpp" line="621"/>
+        <source>report.groupingAlgorithmUsed</source>
+        <translation>Clustering Algorithm used</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="390"/>
+        <location filename="mainwindow.cpp" line="622"/>
+        <source>report.objectsSimilarityMeasure</source>
+        <translation>Objects similarity measure</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="393"/>
+        <location filename="mainwindow.cpp" line="623"/>
+        <source>report.clustersSimilarityMeasure</source>
+        <translation>Clusters similarity measure</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="396"/>
+        <location filename="mainwindow.cpp" line="620"/>
+        <source>report.selectedVisualizationAlgorithm</source>
+        <translation>Selected visualization algorithm</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="399"/>
+        <location filename="mainwindow.cpp" line="624"/>
+        <source>report.groupedRulePart</source>
+        <translation>Grouped rule part</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="402"/>
+        <source>report.clustersInformation</source>
+        <translation>Clusters information</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="404"/>
+        <location filename="mainwindow.cpp" line="625"/>
+        <source>report.biggestCluster</source>
+        <translation>The biggest cluster</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="407"/>
+        <location filename="mainwindow.cpp" line="626"/>
+        <source>report.smallestCluster</source>
+        <translation>The smallest cluster</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="410"/>
+        <source>report.clustersDetails</source>
+        <translation>Cluster&apos;s details</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="415"/>
+        <location filename="mainwindow.cpp" line="704"/>
+        <source>report.clustersName</source>
+        <translation>Cluster&apos;s name</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="418"/>
+        <location filename="mainwindow.cpp" line="705"/>
+        <source>report.clustersSize</source>
+        <translation>Cluster&apos;s size</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="421"/>
+        <location filename="mainwindow.cpp" line="709"/>
+        <source>report.clustersCoverage</source>
+        <translation>Cluster&apos;s coverage</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="424"/>
+        <location filename="mainwindow.cpp" line="711"/>
+        <source>report.clustersRepresentative</source>
+        <translation>Cluster&apos;s representative</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="429"/>
+        <source>report.end</source>
+        <translation>The end</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="613"/>
+        <location filename="mainwindow.cpp" line="703"/>
+        <source>report.index</source>
+        <translation>Index</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="617"/>
+        <source>report.nodesNumber</source>
+        <translation>Nodes number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="627"/>
+        <source>report.ungroupedRules</source>
+        <translation>Ungrouped objects</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="628"/>
+        <source>report.MDI</source>
+        <translation>MDI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="629"/>
+        <source>report.MDBI</source>
+        <translation>MDBI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="630"/>
+        <source>report.maxMDI</source>
+        <translation>Max. MDI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="631"/>
+        <source>report.maxMDIClustersNumber</source>
+        <translation>Max MDI Clusters Number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="632"/>
+        <source>report.maxMDBI</source>
+        <translation>Max. MDBI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="633"/>
+        <source>report.maxMDBIClustersNumber</source>
+        <translation>Max. MDBI Clusters Number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="706"/>
+        <source>report.clustersRulesPercent</source>
+        <translation>Objects percent in cluster [%]</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="707"/>
+        <source>report.clustersNodesNumber</source>
+        <translation>Cluster&apos;s nodes number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="708"/>
+        <source>report.clustersNodesNumberPercent</source>
+        <translation>Cluster&apos;s nodes percent [%]</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="710"/>
+        <source>report.clustersCoveragePercent</source>
+        <translation>Cluster&apos;s coverage percent [%]</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="712"/>
+        <source>report.representativeLength</source>
+        <translation>Cluster&apos;s representative length</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="772"/>
+        <source>log.programmeInformationOpened</source>
+        <translation>Application information opened.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="778"/>
+        <source>log.loadingGroupingSettings</source>
+        <translation>Loading grouping settings...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="783"/>
+        <source>log.validatingSettings</source>
+        <translation>Validating loaded settings...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="788"/>
+        <source>log.settingsCorrect</source>
+        <translation>Settings are correct.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="799"/>
+        <source>log.loadingVisualizationSettings</source>
+        <translation>Loading visualization settings...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="814"/>
+        <source>log.visualizationSettingsLoaded</source>
+        <translation>Visualization settings loaded.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="821"/>
+        <source>log.visualizationGenerationFailed</source>
+        <translation>Visualization generation failed.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="823"/>
+        <source>log.objectsNotGrouped</source>
+        <translation>Objects are not properly clustered.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="844"/>
+        <location filename="mainwindow.cpp" line="887"/>
+        <source>log.generalSettingsLoaded</source>
+        <translation>General settings loaded.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="865"/>
+        <source>log.rsesRules.detailedSettingsLoaded</source>
+        <translation>RSES Rules detailed settings loaded.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="897"/>
+        <source>report.detailedSettingsLoaded</source>
+        <translation>Detailed settings loaded.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="918"/>
+        <location filename="mainwindow.cpp" line="939"/>
+        <location filename="mainwindow.cpp" line="951"/>
+        <source>log.failedAttemptOfGrouping</source>
+        <translation>Failed attempt of clustering.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="920"/>
+        <source>log.baseNotSelected</source>
+        <translation>Objects base is not selected.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="941"/>
+        <source>log.stopConditionToHigh</source>
+        <translation>Stop condition cannot exceed objects number.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="952"/>
+        <source>log.stopConditionToSmall</source>
+        <translation>Stop condition cannot be lower than 1.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="967"/>
+        <source>log.groupingStarted</source>
+        <translation>Grouping started.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="970"/>
+        <source>log.blockingButtonsForOperation</source>
+        <translation>Buttons shall be blocked during execution of operation.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="978"/>
+        <source>log.groupingThreadStarted</source>
+        <translation>Grouping thread started.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="985"/>
+        <source>log.groupingThreadFinishedIn</source>
+        <translation>Grouping thread executed in %1 ms.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="994"/>
+        <source>log.buttonsUnlocked</source>
+        <translation>Buttons has been unlocked.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1001"/>
+        <source>FD.clustersNumber</source>
+        <translation>Resultant clusters number</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1004"/>
+        <source>FD.clustersMDI</source>
+        <translation>Resultant clusters MDI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1007"/>
+        <source>FD.clustersMDBI</source>
+        <translation>Resultant clusters MDBI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1011"/>
+        <source>FD.visualizeGrouping</source>
+        <translation>Do you want to visualize resultant structure of clustering?</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1014"/>
+        <location filename="mainwindow.cpp" line="1016"/>
+        <source>FD.groupingFinished</source>
+        <translation>Clustering finished</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1019"/>
+        <source>FD.yes</source>
+        <translation>Yes</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1020"/>
+        <source>FD.no</source>
+        <translation>No</translation>
     </message>
 </context>
 <context>
@@ -368,9 +805,117 @@ p, li { white-space: pre-wrap; }
         <translation>0</translation>
     </message>
     <message>
-        <location filename="clusterinfo_rsesrules.cpp" line="19"/>
         <source>Informacje o skupieniu:</source>
-        <translation>Informations about cluster:</translation>
+        <translation type="vanished">Informations about cluster:</translation>
+    </message>
+    <message>
+        <location filename="clusterinfo_rsesrules.cpp" line="19"/>
+        <source>clusterInfo.clusterInfo</source>
+        <translation>Information about cluster: </translation>
+    </message>
+</context>
+<context>
+    <name>groupingThread</name>
+    <message>
+        <location filename="groupingthread.cpp" line="31"/>
+        <location filename="groupingthread.cpp" line="35"/>
+        <source>gThreadDialog.grouping</source>
+        <translation>Grouping...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="31"/>
+        <location filename="groupingthread.cpp" line="45"/>
+        <source>gThreadDialog.cancel</source>
+        <translation>Cancel</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="44"/>
+        <location filename="groupingthread.cpp" line="48"/>
+        <source>gThreadDialog.creatingSimilarityMatrix</source>
+        <translation>Creating similarity matrix....</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="70"/>
+        <source>log.rsesGroupingStarted</source>
+        <translation>RSES Rules grouping started...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="78"/>
+        <source>log.unknownObjectsType</source>
+        <translation>Unknown objects type.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="80"/>
+        <source>log.operationWontStart</source>
+        <translation>Operation won&apos;t start.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="87"/>
+        <source>log.gatheringAttributesData</source>
+        <translation>Gathering attributes data...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="97"/>
+        <source>log.placingObjectsInClusters</source>
+        <translation>Placing objects in clusters...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="102"/>
+        <source>log.groupingProcessStarted</source>
+        <translation>Grouping process started.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="168"/>
+        <source>log.clustersNumber</source>
+        <translation>Clusters number: %1.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="174"/>
+        <source>log.mdiPointer</source>
+        <translation>MDI of grouping: %1.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="180"/>
+        <source>log.mdbiPointer</source>
+        <translation>MDBI of grouping: %1.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="187"/>
+        <source>log.groupingFinished</source>
+        <translation>Clustering  finished.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="189"/>
+        <source>log.sendingResultatntStructure</source>
+        <translation>Sending resultant structure to main thread...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="936"/>
+        <source>log.groupingCancelled</source>
+        <translation>Clustering cancelled.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="938"/>
+        <source>log.visualizationImpossible</source>
+        <translation>Visualization will be impossible until clustering is sucessfully completed.</translation>
+    </message>
+</context>
+<context>
+    <name>visualizationThread</name>
+    <message>
+        <location filename="visualizationthread.cpp" line="35"/>
+        <source>log.rsesVisualizationStarted</source>
+        <translation>RSES Rules visualization started.</translation>
+    </message>
+    <message>
+        <location filename="visualizationthread.cpp" line="43"/>
+        <source>log.unknownObjectsType</source>
+        <translation>Unknown object type.</translation>
+    </message>
+    <message>
+        <location filename="visualizationthread.cpp" line="45"/>
+        <source>log.operationWontStart</source>
+        <translation>Operation won&apos;t start.</translation>
     </message>
 </context>
 </TS>

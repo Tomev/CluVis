@@ -266,14 +266,451 @@ p, li { white-space: pre-wrap; }
         <translation>Polski</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="155"/>
         <source>Wybierz bazę</source>
-        <translation>Wybierz bazę</translation>
+        <translation type="vanished">Wybierz bazę</translation>
+    </message>
+    <message>
+        <source>Pliki reguł(*.rul);; Pliki tekstowe (*.txt)</source>
+        <translation type="vanished">Pliki reguł(*.rul);; Pliki tekstowe (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="49"/>
+        <source>log.applicationStart</source>
+        <translation>Rozpoczęto działanie aplikacji CluVis.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="98"/>
+        <location filename="mainwindow.cpp" line="110"/>
+        <source>log.failedToLoadObjBase</source>
+        <translation>Nieudana próba wczytania bazy obiektów.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="100"/>
+        <source>log.noFileSelected</source>
+        <translation>Nie wybrano pliku.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="112"/>
+        <source>log.selectedFileIsNotKnowledgeBase</source>
+        <translation>Wybrany plik nie jest bazą wiedzy RSES.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="123"/>
+        <source>bold.ungrouped</source>
+        <translation>&lt;b&gt;(Niepogrupowana)&lt;/b&gt;</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="136"/>
+        <source>log.knowledgeBaseLoaded</source>
+        <translation>Wczytano bazę wiedzy.</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="155"/>
-        <source>Pliki reguł(*.rul);; Pliki tekstowe (*.txt)</source>
+        <source>FD.selectKnowledgeBase</source>
+        <translation>Wybierz bazę obiektów</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="157"/>
+        <source>FD.RSESRules.fileTypes</source>
         <translation>Pliki reguł(*.rul);; Pliki tekstowe (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="207"/>
+        <source>FD.save</source>
+        <translation>Zapisz</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="209"/>
+        <source>FD.png</source>
+        <translation>*.png</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="214"/>
+        <source>log.failedToSaveVisualization</source>
+        <translation>Nie udało się zapisać wizualizacji.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="216"/>
+        <location filename="mainwindow.cpp" line="308"/>
+        <source>log.fileNameNotSelected</source>
+        <translation>Nie wybrano nazwy pliku.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="239"/>
+        <source>log.visualizationSavedWithName</source>
+        <translation>Wizualizację zapisano pod nazwą %1.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="256"/>
+        <location filename="mainwindow.cpp" line="275"/>
+        <source>log.operationAborted</source>
+        <translation>Przerwano operację.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="268"/>
+        <source>log.reportGenerationStarted</source>
+        <translation>Rozpoczęto generowanie raportu.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="273"/>
+        <source>log.unableToOpenFileForSaving</source>
+        <translation>Nie można otworzyć pliku do zapisu.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="288"/>
+        <source>log.reportGenerationFinished</source>
+        <translation>Zakończono generowanie raportu.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="299"/>
+        <source>FD.saveReport</source>
+        <translation>Zapisz raport</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="301"/>
+        <source>FD.reportFileTypes</source>
+        <translation>Pliki xml (*.xml);; Pliki tekstowe (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="306"/>
+        <source>log.failedToSaveReport</source>
+        <translation>Nieudana próba zapisu raportu.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="365"/>
+        <source>report.report</source>
+        <translation>Raport</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="368"/>
+        <source>report.knowledgeBaseInformation</source>
+        <translation>Informacje o bazie obiektów</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="370"/>
+        <location filename="mainwindow.cpp" line="614"/>
+        <source>report.nameOfBase</source>
+        <translation>Nazwa bazy</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="373"/>
+        <location filename="mainwindow.cpp" line="615"/>
+        <source>report.attributesNumber</source>
+        <translation>Liczba atrybutów</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="376"/>
+        <location filename="mainwindow.cpp" line="616"/>
+        <source>report.objectsNumber</source>
+        <translation>Liczba obiektów</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="379"/>
+        <location filename="mainwindow.cpp" line="618"/>
+        <source>report.clustersNumber</source>
+        <translation>Liczba skupień</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="382"/>
+        <location filename="mainwindow.cpp" line="619"/>
+        <source>report.coverageSum</source>
+        <translation>Suma pokryciowa</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="385"/>
+        <source>report.settings</source>
+        <translation>Ustawienia</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="387"/>
+        <location filename="mainwindow.cpp" line="621"/>
+        <source>report.groupingAlgorithmUsed</source>
+        <translation>Wykorzystany algorytm grupowania</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="390"/>
+        <location filename="mainwindow.cpp" line="622"/>
+        <source>report.objectsSimilarityMeasure</source>
+        <translation>Miara podobieństwa obiektów</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="393"/>
+        <location filename="mainwindow.cpp" line="623"/>
+        <source>report.clustersSimilarityMeasure</source>
+        <translation>Miara podobieństwa skupień</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="396"/>
+        <location filename="mainwindow.cpp" line="620"/>
+        <source>report.selectedVisualizationAlgorithm</source>
+        <translation>Wybrany algorytm wizualizacji</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="399"/>
+        <location filename="mainwindow.cpp" line="624"/>
+        <source>report.groupedRulePart</source>
+        <translation>Grupowana część reguły</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="402"/>
+        <source>report.clustersInformation</source>
+        <translation>Dane skupień</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="404"/>
+        <location filename="mainwindow.cpp" line="625"/>
+        <source>report.biggestCluster</source>
+        <translation>Największe skupienie</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="407"/>
+        <location filename="mainwindow.cpp" line="626"/>
+        <source>report.smallestCluster</source>
+        <translation>Najmniejsze skupienie</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="410"/>
+        <source>report.clustersDetails</source>
+        <translation>Szczegóły skupienia</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="415"/>
+        <location filename="mainwindow.cpp" line="704"/>
+        <source>report.clustersName</source>
+        <translation>Nazwa skupienia</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="418"/>
+        <location filename="mainwindow.cpp" line="705"/>
+        <source>report.clustersSize</source>
+        <translation>Rozmiar skupienia</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="421"/>
+        <location filename="mainwindow.cpp" line="709"/>
+        <source>report.clustersCoverage</source>
+        <translation>Pokrycie skupienia</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="424"/>
+        <location filename="mainwindow.cpp" line="711"/>
+        <source>report.clustersRepresentative</source>
+        <translation>Reprezentant skupienia</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="429"/>
+        <source>report.end</source>
+        <translation>Koniec</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="613"/>
+        <location filename="mainwindow.cpp" line="703"/>
+        <source>report.index</source>
+        <translation>Indeks</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="617"/>
+        <source>report.nodesNumber</source>
+        <translation>Liczba wierzchołków</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="627"/>
+        <source>report.ungroupedRules</source>
+        <translation>Niepogrupowane obiety</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="628"/>
+        <source>report.MDI</source>
+        <translation>MDI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="629"/>
+        <source>report.MDBI</source>
+        <translation>MDBI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="630"/>
+        <source>report.maxMDI</source>
+        <translation>Maks. MDI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="631"/>
+        <source>report.maxMDIClustersNumber</source>
+        <translation>Liczba skupień przy maks. MDI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="632"/>
+        <source>report.maxMDBI</source>
+        <translation>Maks. MDBI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="633"/>
+        <source>report.maxMDBIClustersNumber</source>
+        <translation>Liczba skupień przy maks. MDBI</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="706"/>
+        <source>report.clustersRulesPercent</source>
+        <translation>Procent obiektów w grupie [%]</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="707"/>
+        <source>report.clustersNodesNumber</source>
+        <translation>Liczba wierzchołków grupy</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="708"/>
+        <source>report.clustersNodesNumberPercent</source>
+        <translation>Procent wierzchołków w grupie [%]</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="710"/>
+        <source>report.clustersCoveragePercent</source>
+        <translation>Procentowe pokrycie grupy [%]</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="712"/>
+        <source>report.representativeLength</source>
+        <translation>Długość reprezentanta skupienia</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="772"/>
+        <source>log.programmeInformationOpened</source>
+        <translation>Otworzono informacje o programie.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="778"/>
+        <source>log.loadingGroupingSettings</source>
+        <translation>Wczytuję ustawienia grupowania...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="783"/>
+        <source>log.validatingSettings</source>
+        <translation>Sprawdzam poprawność wczytanych ustawień...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="788"/>
+        <source>log.settingsCorrect</source>
+        <translation>Ustawienia poprawne.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="799"/>
+        <source>log.loadingVisualizationSettings</source>
+        <translation>Wczytuję ustawienia wizualizacji...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="814"/>
+        <source>log.visualizationSettingsLoaded</source>
+        <translation>Wczytano ustawienia wizualizacji.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="821"/>
+        <source>log.visualizationGenerationFailed</source>
+        <translation>Nie udało się wygenerować wizualizacji.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="823"/>
+        <source>log.objectsNotGrouped</source>
+        <translation>Obiekty nie są poprawnie pogrupowane.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="844"/>
+        <location filename="mainwindow.cpp" line="887"/>
+        <source>log.generalSettingsLoaded</source>
+        <translation>Wczytano ustawienia ogólne.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="865"/>
+        <source>log.rsesRules.detailedSettingsLoaded</source>
+        <translation>Wczytano ustawienia szczegółowe reguł RSES.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="897"/>
+        <source>report.detailedSettingsLoaded</source>
+        <translation>Wczytano ustawienia szczegółowe.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="918"/>
+        <location filename="mainwindow.cpp" line="939"/>
+        <location filename="mainwindow.cpp" line="951"/>
+        <source>log.failedAttemptOfGrouping</source>
+        <translation>Nieudana próba grupowania.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="920"/>
+        <source>log.baseNotSelected</source>
+        <translation>Nie wybrano bazy obiektów.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="941"/>
+        <source>log.stopConditionToHigh</source>
+        <translation>Warunek stopu nie może być większy od liczby obiektów w bazie.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="952"/>
+        <source>log.stopConditionToSmall</source>
+        <translation>Warunek stopu nie może być mniejszy od jedynki.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="967"/>
+        <source>log.groupingStarted</source>
+        <translation>Rozpoczęto grupowanie.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="970"/>
+        <source>log.blockingButtonsForOperation</source>
+        <translation>Blokuję przyciski na czas operacji...</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="978"/>
+        <source>log.groupingThreadStarted</source>
+        <translation>Rozpoczęto wątek grupujący.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="985"/>
+        <source>log.groupingThreadFinishedIn</source>
+        <translation>Wątek grupujący zakończony w czasie %1 ms.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="994"/>
+        <source>log.buttonsUnlocked</source>
+        <translation>Odblokowano przyciski.</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1001"/>
+        <source>FD.clustersNumber</source>
+        <translation>Liczba otrzymanych skupień</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1004"/>
+        <source>FD.clustersMDI</source>
+        <translation>MDI otrzymanych skupień</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1007"/>
+        <source>FD.clustersMDBI</source>
+        <translation>MDBI otrzymanych skupień</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1011"/>
+        <source>FD.visualizeGrouping</source>
+        <translation>Czy chcesz wygenerować wizualizację struktury grup?</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1014"/>
+        <location filename="mainwindow.cpp" line="1016"/>
+        <source>FD.groupingFinished</source>
+        <translation>Grupowanie zakończone</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1019"/>
+        <source>FD.yes</source>
+        <translation>Tak</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="1020"/>
+        <source>FD.no</source>
+        <translation>Nie</translation>
     </message>
 </context>
 <context>
@@ -367,9 +804,117 @@ p, li { white-space: pre-wrap; }
         <translation>0</translation>
     </message>
     <message>
-        <location filename="clusterinfo_rsesrules.cpp" line="19"/>
         <source>Informacje o skupieniu:</source>
-        <translation>Informacje o skupieniu:</translation>
+        <translation type="vanished">Informacje o skupieniu:</translation>
+    </message>
+    <message>
+        <location filename="clusterinfo_rsesrules.cpp" line="19"/>
+        <source>clusterInfo.clusterInfo</source>
+        <translation>Informacje o skupieniu: </translation>
+    </message>
+</context>
+<context>
+    <name>groupingThread</name>
+    <message>
+        <location filename="groupingthread.cpp" line="31"/>
+        <location filename="groupingthread.cpp" line="35"/>
+        <source>gThreadDialog.grouping</source>
+        <translation>Grupowanie...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="31"/>
+        <location filename="groupingthread.cpp" line="45"/>
+        <source>gThreadDialog.cancel</source>
+        <translation>Anuluj</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="44"/>
+        <location filename="groupingthread.cpp" line="48"/>
+        <source>gThreadDialog.creatingSimilarityMatrix</source>
+        <translation>Tworzenie macierzy podobieństwa...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="70"/>
+        <source>log.rsesGroupingStarted</source>
+        <translation>Rozpoczęto grupowanie reguł RSES...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="78"/>
+        <source>log.unknownObjectsType</source>
+        <translation>Nieznany typ obiektów.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="80"/>
+        <source>log.operationWontStart</source>
+        <translation>Operacja nie rozpocznie się.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="87"/>
+        <source>log.gatheringAttributesData</source>
+        <translation>Zbieram dane dotyczące atrybutów...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="97"/>
+        <source>log.placingObjectsInClusters</source>
+        <translation>Rozmieszczam obiekty w klastrach...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="102"/>
+        <source>log.groupingProcessStarted</source>
+        <translation>Rozpoczęto proces grupowania.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="168"/>
+        <source>log.clustersNumber</source>
+        <translation>Liczba skupień: %1.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="174"/>
+        <source>log.mdiPointer</source>
+        <translation>MDI grupowania: %1.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="180"/>
+        <source>log.mdbiPointer</source>
+        <translation>MDBI grupowania: %1.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="187"/>
+        <source>log.groupingFinished</source>
+        <translation>Grupowanie zakończone.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="189"/>
+        <source>log.sendingResultatntStructure</source>
+        <translation>Przesyłam otrzymaną strukturę do wątku głównego...</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="936"/>
+        <source>log.groupingCancelled</source>
+        <translation>Grupowanie anulowane.</translation>
+    </message>
+    <message>
+        <location filename="groupingthread.cpp" line="938"/>
+        <source>log.visualizationImpossible</source>
+        <translation>Wizualizacja będzie niemożliwa do czasu zakończenia grupowania.</translation>
+    </message>
+</context>
+<context>
+    <name>visualizationThread</name>
+    <message>
+        <location filename="visualizationthread.cpp" line="35"/>
+        <source>log.rsesVisualizationStarted</source>
+        <translation>Rozpoczynam wizualizację reguł RSES.</translation>
+    </message>
+    <message>
+        <location filename="visualizationthread.cpp" line="43"/>
+        <source>log.unknownObjectsType</source>
+        <translation>Nie rozpoznano typu obiektów.</translation>
+    </message>
+    <message>
+        <location filename="visualizationthread.cpp" line="45"/>
+        <source>log.operationWontStart</source>
+        <translation>Operacja nie rozpocznie się.</translation>
     </message>
 </context>
 </TS>
