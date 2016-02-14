@@ -895,7 +895,7 @@ void MainWindow::setVisualizationSettings()
 
         vThread = new visualizationThread(settings, vSettings, vSettings_RSES);
 
-        logText += tr("report.detailedSettingsLoaded");
+        addLogMessage(tr("report.detailedSettingsLoaded"));
         // Wczytano ustawienia szczególne.
 
         break;
@@ -984,7 +984,7 @@ void MainWindow::groupObjects()
     int timeElapsed = tim->elapsed();
 
     QString logText = QString(tr("log.groupingThreadFinishedIn"))
-            .arg(QString::number(timeElapsed);
+            .arg(QString::number(timeElapsed));
     // Wątek grupujący zakończony w czasie %1 ms.
 
     addLogMessage(logText);

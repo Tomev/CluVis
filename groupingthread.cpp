@@ -182,8 +182,6 @@ void groupingThread::groupRSESRules()
     );
     // Wskaźnik MDBI grupowania: %1.
 
-    emit passLogMsg(logText);
-
     emit passLogMsg(tr("log.groupingFinished"));
     // Grupowanie zakończone.
     emit passLogMsg(tr("log.sendingResultatntStructure"));
