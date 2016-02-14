@@ -165,20 +165,20 @@ void groupingThread::groupRSESRules()
 
 
     emit passLogMsg(
-                QString(tr("log.clustersNumber"))
-                .arg(QString::number(settings->stopCondition))
+        QString(tr("log.clustersNumber"))
+        .arg(QString::number(settings->stopCondition))
     );
     // Liczba skupień: %1.
 
     emit passLogMsg(
-                QString(tr("log.mdiPointer"))
-                .arg(QString::number(MDI))
+        QString(tr("log.mdiPointer"))
+        .arg(QString::number(MDI))
     );
     // Wskaźnik MDI grupowania: %1.
 
     emit passLogMsg(
-                QString(tr("log.mdbiPointer"))
-                .arg(QString::number(MDBI))
+        QString(tr("log.mdbiPointer"))
+        .arg(QString::number(MDBI))
     );
     // Wskaźnik MDBI grupowania: %1.
 
