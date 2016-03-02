@@ -2,10 +2,7 @@
 
 #include <QPoint>
 
-visualizationThread::visualizationThread()
-{
-    rectPadding = 5;
-}
+visualizationThread::visualizationThread(){}
 
 visualizationThread::visualizationThread(generalSettings *settings,
                                          visualizationSettings_general *vSettings,
@@ -16,10 +13,7 @@ visualizationThread::visualizationThread(generalSettings *settings,
     this->vSettings_RSES = vSettings_RSES;
 }
 
-visualizationThread::~visualizationThread()
-{
-
-}
+visualizationThread::~visualizationThread(){}
 
 void visualizationThread::run(ruleCluster *c)
 {
@@ -89,17 +83,15 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
             int height = paintAreaRect.height();
             if(height<1)
                 height =1;
-            int sV = countShadeValue(vSettings_RSES->clusteredRules[i]->size()); // sV -> shadeValue
+            QColor sV = getColorFromSize(vSettings_RSES->clusteredRules[i]->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
             QRect smallerRect(left+rectPadding, top+rectPadding,
                               width-2*rectPadding,height-2*rectPadding);
 
-            QColor shadeOfGray(sV,sV,sV);
-
             customGraphicsRectObject* vRect =
                     new customGraphicsRectObject(newRect,
-                                                 shadeOfGray,
+                                                 sV,
                                                  vSettings_RSES->clusteredRules[i]);
             emit passGraphicsRectObject(vRect);
 
@@ -137,15 +129,13 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
             int left = paintAreaRect.left();
             float width = widthScaled(clusters[i]->size(), rect, c->size());
             int height = paintAreaRect.height();
-            int sV = countShadeValue(clusters[i]->size()); // sV -> shadeValue
+            QColor sV = getColorFromSize(clusters[i]->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
             QRect smallerRect(left+rectPadding, top+rectPadding,
                               width-2*rectPadding,height-2*rectPadding);
 
-            QColor shadeOfGray(sV,sV,sV);
-
-            customGraphicsRectObject* vRect = new customGraphicsRectObject(newRect, shadeOfGray, clusters[i]);
+            customGraphicsRectObject* vRect = new customGraphicsRectObject(newRect, sV, clusters[i]);
 
             emit passGraphicsRectObject(vRect);;
 
@@ -185,17 +175,15 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
             int width = paintAreaRect.width();
             float height = heightScaled(vSettings_RSES->clusteredRules[i]->size(),
                                       rect, settings->objectsNumber);
-            int sV = countShadeValue(vSettings_RSES->clusteredRules[i]->size()); // sV -> shadeValue
+            QColor sV = getColorFromSize(vSettings_RSES->clusteredRules[i]->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
             QRect smallerRect(left+rectPadding, top+rectPadding,
                               width-2*rectPadding,height-2*rectPadding);
 
-            QColor shadeOfGray(sV,sV,sV);
-
             customGraphicsRectObject* vRect =
                     new customGraphicsRectObject(newRect,
-                                                 shadeOfGray,
+                                                 sV,
                                                  vSettings_RSES->clusteredRules[i]);
 
             emit passGraphicsRectObject(vRect);
@@ -234,16 +222,14 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
             int left = paintAreaRect.left();
             int width = paintAreaRect.width();
             float height = heightScaled(clusters[i]->size(), rect, c->size());
-            int sV = countShadeValue(clusters[i]->size()); // sV -> shadeValue
+            QColor sV = getColorFromSize(clusters[i]->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
             QRect smallerRect(left+rectPadding, top+rectPadding,
                               width-2*rectPadding,height-2*rectPadding);
 
-            QColor shadeOfGray(sV,sV,sV);
-
             customGraphicsRectObject* vRect =
-                    new customGraphicsRectObject(newRect, shadeOfGray, clusters[i]);
+                    new customGraphicsRectObject(newRect, sV, clusters[i]);
 
             emit passGraphicsRectObject(vRect);
 
@@ -266,16 +252,16 @@ float visualizationThread::heightScaled(int height, QRect rect,int rulesInCluste
         return 0;
 }
 
-int visualizationThread::countShadeValue(int cSize)
+QColor visualizationThread::getColorFromSize(int cSize)
 {
     int sV = 255 * cSize / settings->objectsNumber;
 
     if(sV > 255)
-        return 255;
+        return QColor(255,255,255);
     if(sV < 40)
-        return 40;
+        return QColor(40,40,40);
 
-    return sV;
+    return QColor(sV,sV,sV);
 }
 
 void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
@@ -295,11 +281,10 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
         {
             newC = vSettings_RSES->clusteredRules[0];
 
-            int sV = countShadeValue(newC->size());
-            QColor shadeOfGray(sV,sV,sV);
+            QColor sV = getColorFromSize(newC->size());
 
             customGraphicEllipseObject* cRect =
-                    new customGraphicEllipseObject(mainBRect,shadeOfGray, newC);
+                    new customGraphicEllipseObject(mainBRect,sV, newC);
 
             emit passGraphicsEllipseObject(cRect);
 
@@ -558,11 +543,10 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
 
             for(int i = 0; i < circlesBRects.size(); i++)
             {
-                int sV = countShadeValue(sortedRuleClusters[i]->size());
-                QColor shadeOfGray(sV,sV,sV);
+                QColor sV = getColorFromSize(sortedRuleClusters[i]->size());
 
                 customGraphicEllipseObject* cRect =
-                    new customGraphicEllipseObject(*circlesBRects[i],shadeOfGray, sortedRuleClusters[i]);
+                    new customGraphicEllipseObject(*circlesBRects[i],sV, sortedRuleClusters[i]);
 
                 emit passGraphicsEllipseObject(cRect);
 
@@ -596,11 +580,10 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
     {
         newC = c;
 
-        int sV = countShadeValue(newC->size()); // sV -> shadeValue
-        QColor shadeOfGray(sV,sV,sV);
+        QColor sV = getColorFromSize(newC->size()); // sV -> shadeValue
 
         customGraphicEllipseObject* cRect =
-            new customGraphicEllipseObject(mainBRect,shadeOfGray, newC);
+            new customGraphicEllipseObject(mainBRect,sV, newC);
 
         emit passGraphicsEllipseObject(cRect);
 
@@ -626,18 +609,16 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
             }
             else
             {
-                sV = countShadeValue(newC->leftNode->size());
-                shadeOfGray = QColor(sV,sV,sV);
+                sV = getColorFromSize(newC->leftNode->size());
 
                 customGraphicEllipseObject* object =
-                   new customGraphicEllipseObject(*c1BRect,shadeOfGray,(ruleCluster*)newC->leftNode);
+                   new customGraphicEllipseObject(*c1BRect,sV,(ruleCluster*)newC->leftNode);
 
                 emit passGraphicsEllipseObject(object);
 
-                sV = countShadeValue(newC->rightNode->size());
-                shadeOfGray = QColor(sV,sV,sV);
+                sV = getColorFromSize(newC->rightNode->size());
 
-                object = new customGraphicEllipseObject(*c2BRect,shadeOfGray,(ruleCluster*)newC->rightNode);
+                object = new customGraphicEllipseObject(*c2BRect,sV,(ruleCluster*)newC->rightNode);
 
                 emit passGraphicsEllipseObject(object);
             }

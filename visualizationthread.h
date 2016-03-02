@@ -44,7 +44,7 @@ private:
                 float widthScaled(int clusterSize, QRect rect, int objectsNumber);
                 float heightScaled(int clusterSize, QRect rect, int objectsNumber);
 
-                int countShadeValue(int clusterSize);
+                QColor getColorFromSize(int clusterSize);
 
             void RSES_CircularTreemap(QRect *rect = new QRect(0,0,0,0), ruleCluster *c = NULL);
                 QRect getCircleBoundingRect(QRect* rect);
