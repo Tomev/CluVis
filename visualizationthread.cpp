@@ -17,6 +17,7 @@ visualizationThread::~visualizationThread(){}
 
 void visualizationThread::run(ruleCluster *c)
 {
+    rectPadding = 3;
     visualize(c);
 }
 
@@ -254,14 +255,42 @@ float visualizationThread::heightScaled(int height, QRect rect,int rulesInCluste
 
 QColor visualizationThread::getColorFromSize(int cSize)
 {
-    int sV = 255 * cSize / settings->objectsNumber;
+    if(cSize == 1) // Red
+        return QColor(128,0,0);
 
-    if(sV > 255)
-        return QColor(255,255,255);
-    if(sV < 40)
-        return QColor(40,40,40);
+    qreal sizePercent = 100 * cSize / settings->objectsNumber;
+    int shade, minShadeValue = 40, maxShadeValue = 240;
 
-    return QColor(sV,sV,sV);
+    if(sizePercent < 10) // Orange
+    {
+        shade = maxShadeValue/2 * sizePercent/10;
+        if(shade < minShadeValue) shade = minShadeValue;
+        return QColor(2*shade,shade,0);
+    }
+    if(sizePercent >= 10 && sizePercent < 25) // Yellow
+    {
+        shade = maxShadeValue * (sizePercent - 10)/(25-10);
+        if(shade < minShadeValue) shade = minShadeValue;
+        return QColor(shade,shade,0);
+    }
+    if(sizePercent >= 25 && sizePercent < 50) // Green
+    {
+        shade = maxShadeValue * (sizePercent - 25)/(50-25);
+        if(shade < minShadeValue) shade = minShadeValue;
+        return QColor(0,shade,0);
+    }
+    if(sizePercent >= 50 && sizePercent < 75) // Blue
+    {
+        shade = maxShadeValue * (sizePercent - 50)/(75-50);
+        if(shade < minShadeValue) shade = minShadeValue;
+        return QColor(0,0,shade);
+    }
+    if(sizePercent >= 75) // Purple
+    {
+        shade = maxShadeValue * (sizePercent - 75)/(100 - 75);
+        if(shade < minShadeValue) shade = minShadeValue;
+        return QColor(shade,0,shade);
+    }
 }
 
 void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
