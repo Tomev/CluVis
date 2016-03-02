@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     // Automatically translate to english.
-    QTranslator* translator = new QTranslator();
+    translator = new QTranslator();
     QString transName = QApplication::applicationDirPath() + "/language/english.qm";
 
     if(!translator->load(transName))
@@ -759,6 +759,40 @@ QString MainWindow::createXMLFileClustersDataContent()
 void MainWindow::on_actionExit_triggered()
 {
     QApplication::quit();
+}
+
+//View
+
+// TODO: There are some minor issues while changing laguague.
+
+void MainWindow::on_actionAngielski_triggered()
+{
+    delete translator;
+
+    translator = new QTranslator();
+    QString transName = QApplication::applicationDirPath() + "/language/english.qm";
+
+    if(!translator->load(transName))
+        delete translator;
+    else
+        qApp->installTranslator(translator);
+
+    ui->retranslateUi(this);
+}
+
+void MainWindow::on_actionPolski_triggered()
+{
+    delete translator;
+
+    translator = new QTranslator();
+    QString transName = QApplication::applicationDirPath() + "/language/polish.qm";
+
+    if(!translator->load(transName))
+        delete translator;
+    else
+        qApp->installTranslator(translator);
+
+    ui->retranslateUi(this);
 }
 
 //Help

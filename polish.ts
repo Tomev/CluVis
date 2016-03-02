@@ -184,7 +184,7 @@ liczbie obiektów w bazie.</translation>
     <message>
         <location filename="mainwindow.ui" line="419"/>
         <source>Grupuj</source>
-        <translation>Frupuj</translation>
+        <translation>Grupuj</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="426"/>
@@ -199,7 +199,7 @@ liczbie obiektów w bazie.</translation>
     <message>
         <location filename="mainwindow.ui" line="508"/>
         <source>Dziennik zdarzeń</source>
-        <translation>Dziennik zdarze</translation>
+        <translation>Dziennik zdarzeń</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="514"/>

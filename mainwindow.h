@@ -57,7 +57,12 @@ private slots:
 
     void gotLogText(QString);
 
+    void on_actionAngielski_triggered();
+
+    void on_actionPolski_triggered();
+
 private:
+    QTranslator* translator;
 
     enum Constants
     {
