@@ -13,9 +13,6 @@
 #include <QDesktopWidget>
 #include <QTime>
 
-#include "customgraphicsrectobject.h"
-#include "customgraphicellipseobject.h"
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
