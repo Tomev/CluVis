@@ -1052,21 +1052,18 @@ void MainWindow::visualize()
     if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
         ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
-    addLogMessage("log.visualizationCentered");
+    addLogMessage(tr("log.visualizationCentered"));
     // Wizualizacja wycentrowana.
 
     ui->pushButtonVisualize->setEnabled(true);
     ui->pushButtonGroup->setEnabled(true);
 
-    addLogMessage("log.buttonsUnlocked");
-    //Przyciski odblokowane.
-
-    QString msgBoxText = tr("log.visualizationFinished");
-    // Wizualizowanie zakończone!
+    addLogMessage(tr("log.buttonsUnlocked"));
+    //Przyciski odblokowane.   
 
     QMessageBox::information(this,
-                            tr("FD.processFinished"),
-                            msgBoxText,
+                            tr("FD.visualizationFinished.title"),
+                            tr("FD.visualizationFinished.msg"), // Wizualizowanie zakończone!
                             QMessageBox::Ok);
 
     ui->actionSaveVisualization->setEnabled(true);
@@ -1083,7 +1080,7 @@ void MainWindow::getClusters(cluster** c)
     clusters = c;
 
     areObjectsClustered = true;
-    ui->labelIsBaseGrouped->setText("<b>(Pogrupowana)</b>");
+    ui->labelIsBaseGrouped->setText(tr("bold.grouped"));
 }
 
 void MainWindow::gotMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber)
