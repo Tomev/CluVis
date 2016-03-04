@@ -98,7 +98,6 @@ void groupingThread::groupRSESRules()
     fillSimMatrix(&newSimMatrix, simMatrixSize);
 
     groupingProgress->show();
-    creatingSimMatrixProgress->show();
 
     while(i != 0)
     {
@@ -155,7 +154,6 @@ void groupingThread::groupRSESRules()
     }
 
     groupingProgress->close();
-    creatingSimMatrixProgress->close();
 
     emit passLogMsg(
         QString(tr("log.clustersNumber"))
@@ -339,8 +337,14 @@ void groupingThread::clusterRules()
 
 void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize)
 {
+    creatingSimMatrixProgress->show();
+
     for(int i = 0; i < simMatrixSize; ++i)
     {
+        creatingSimMatrixProgress->setValue(i);
+
+        QApplication::processEvents();
+
         simMatrix->push_back(simData(new clusterSimilarityData));
 
         for(int j = 0; j <= i; ++j)
@@ -356,6 +360,8 @@ void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatri
             }
         }
     }
+
+    creatingSimMatrixProgress->close();
 }
 
 void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
