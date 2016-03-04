@@ -85,7 +85,7 @@ void groupingThread::groupRSESRules()
 
     int simMatrixSize = settings->objectsNumber;
 
-    std::vector<simData> newSimMatrix;
+    std::vector<simData> simMatrix;
 
     int i = settings->objectsNumber - settings->stopCondition;
 
@@ -95,7 +95,7 @@ void groupingThread::groupRSESRules()
 
     emit passLogMsg(tr("log.groupingProcessStarted"));
 
-    fillSimMatrix(&newSimMatrix, simMatrixSize);
+    fillSimMatrix(&simMatrix, simMatrixSize);
 
     groupingProgress->show();
 
@@ -116,7 +116,7 @@ void groupingThread::groupRSESRules()
             return;
         }
 
-        joinMostSimilarClusters(&newSimMatrix);
+        joinMostSimilarClusters(&simMatrix);
 
         --simMatrixSize;
 
@@ -141,10 +141,10 @@ void groupingThread::groupRSESRules()
 
         --i;
 
-        if(newSimMatrix.size() == 0)
+        if(simMatrix.size() == 0)
             break;
         else
-            updateSimMatrix(&newSimMatrix);
+            updateSimMatrix(&simMatrix);
     }
 
     if(!groupingSettings->findBestClustering)
