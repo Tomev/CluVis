@@ -17,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    // TODO: Consider turning it into method (3 times in code).
     // Automatically translate to english.
     translator = new QTranslator();
     QString transName = QApplication::applicationDirPath() + "/language/english.qm";
@@ -102,9 +103,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     if(isRuleSet(KB) == false)
     {
         QString logText = tr("log.failedToLoadObjBase") + " ";
-        // Nieudana próba wczytania bazy wiedzy.
         logText+= tr("log.selectedFileIsNotKnowledgeBase");
-        // Wybrany plik nie jest bazą wiedzy.
 
         addLogMessage(logText);
 
@@ -128,7 +127,6 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     ui->spinBoxStopConditionValue->setValue(1);
 
     addLogMessage(tr("log.knowledgeBaseLoaded") + " " + OBName + ".");
-    // Wczytano bazę wiedzy
 }
 
 QFileInfo MainWindow::selectObjectBase()
@@ -150,8 +148,6 @@ QFileInfo MainWindow::selectObjectBase()
         openPath,
         tr("FD.RSESRules.fileTypes")
     );
-    // Wybierz bazę wiedzy
-    // Pliki reguł(*.rul);; Pliki tekstowe (*.txt)
 
     return QFileInfo(OBPath);
 }
@@ -206,9 +202,7 @@ void MainWindow::on_actionSaveVisualization_triggered()
     if(fileName == "")
     {
         QString logText = tr("log.failedToSaveVisualization") + " ";
-        // Nieudana próba zapisu obrazu.
         logText+= tr("log.fileNameNotSelected");
-        // Nie wybrano nazwy pliku.
 
         addLogMessage(logText);
 
@@ -233,7 +227,6 @@ void MainWindow::on_actionSaveVisualization_triggered()
         QString(tr("log.visualizationSavedWithName"))
         .arg(fileName)
     );
-    // Wizualizację zapisano pod nazwą %1.
 }
 
 void MainWindow::on_actionGenerateReport_triggered()
@@ -248,7 +241,6 @@ void MainWindow::generateReport()
     if(filePath == "")
     {
         addLogMessage(tr("log.operationAborted"));
-        // Przerwano operację.
 
         return ;
     }
@@ -260,12 +252,10 @@ void MainWindow::generateReport()
     QFile report(filePath);
 
     addLogMessage(tr("log.reportGenerationStarted"));
-    // Rozpoczęto generowanie raportu.
 
     if(!report.open(QFile::WriteOnly | QFile::Text) && report.exists())
     {
         QString reportInfo = tr("log.unableToOpenFileForSaving") + " ";
-        // Nie można otworzyć pliku do zapisu.
         reportInfo += tr("log.operationAborted");
         addLogMessage(reportInfo);
 
@@ -280,7 +270,6 @@ void MainWindow::generateReport()
     report.close();
 
     addLogMessage(tr("log.reportGenerationFinished"));
-    // Zakończono generowanie raportu.
 }
 
 QString MainWindow::getFilePath()
@@ -321,9 +310,10 @@ void MainWindow::createPath(QString path)
     QDir().mkpath(path);
 }
 
-// File type is determined by it's name (*.xml/*.txt), so
-// last letter of file's name is enough to detemine it's
-// type. At least in this case.
+/* File type is determined by it's name (*.xml/*.txt), so
+ * last letter of file's name is enough to detemine it's
+ * type. At least in this case.
+ */
 
 int MainWindow::getFileType(QChar t)
 {
@@ -805,17 +795,14 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_pushButtonGroup_clicked()
 {
     addLogMessage(tr("log.loadingGroupingSettings"));
-    // Wczytytuję ustawienia grupowania...
 
     setGroupingSettings();
 
     addLogMessage(tr("log.validatingSettings"));
-    // Sprawdzam poprawność ustawień...
 
     if(areSettingsCorrect())
     {
         addLogMessage(tr("log.settingsCorrect"));
-        // Ustawienia poprawne.
 
         groupObjects();
     }
@@ -826,7 +813,6 @@ void MainWindow::on_pushButtonVisualize_clicked()
     if(areObjectsClustered)
     {
         addLogMessage(tr("log.loadingVisualizationSettings"));
-        // Wczytytuję ustawienia wizualizacji...
 
         setVisualizationSettings();
 
@@ -841,16 +827,13 @@ void MainWindow::on_pushButtonVisualize_clicked()
                 this,SLOT(gotMainEllipseRect(QRect*)));
 
         addLogMessage(tr("log.visualizationSettingsLoaded"));
-        // Ustawienia wizualizacji wczytane.
 
         visualize();
     }
     else
     {
         QString logText = tr("log.visualizationGenerationFailed") + " ";
-        // Nieudana próba generowania wizualizacji.
         logText+= tr("log.objectsNotGrouped");
-        // Nie pogrupowano obiektów.
 
         addLogMessage(logText);
     }
@@ -871,7 +854,6 @@ void MainWindow::setGroupingSettings()
             ui->checkBoxSearchForBestIndexes->isChecked();
 
     addLogMessage(tr("log.generalSettingsLoaded"));
-    // Wczytano ustawienia ogólne.
 
     switch(settings->dataTypeID)
     {
@@ -892,7 +874,6 @@ void MainWindow::setGroupingSettings()
                 this,SLOT(gotMDBIData(qreal, qreal, int)));
 
         addLogMessage(tr("log.rsesRules.detailedSettingsLoaded"));
-        // Wczytano ustawienia szczególne dla RSES Rules.
 
         break;
 
@@ -924,7 +905,6 @@ void MainWindow::setVisualizationSettings()
         vThread = new visualizationThread(settings, vSettings, vSettings_RSES);
 
         addLogMessage(tr("report.detailedSettingsLoaded"));
-        // Wczytano ustawienia szczególne.
 
         break;
 
@@ -945,9 +925,7 @@ bool MainWindow::isBaseLoaded()
     else
     {
         QString logText = tr("log.failedAttemptOfGrouping") + " ";
-        // Nieudana próba generowania skupień.
         logText+= tr("log.baseNotSelected");
-        // Nie wybrano bazy.
 
         addLogMessage(logText);
 
@@ -966,9 +944,7 @@ bool MainWindow::isStopConditionCorrect()
         else
         {
             QString logText = tr("log.failedAttemptOfGrouping") + " ";
-            // Nieudana próba generowania skupień.
             logText+= tr("log.stopConditionToHigh");
-            // Warunek stopu nie może być większy od liczby obiektów w bazie.
 
             addLogMessage(logText);
 
