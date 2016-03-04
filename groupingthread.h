@@ -86,7 +86,7 @@ private:
             void joinMostSimilarClusters(std::vector<simData> *simMatrix);
                 void findHighestSimilarityIndexes(int* i, int* j, std::vector<simData> *simMatrix);
                 cluster* joinClusters(cluster* c1, cluster* c2);
-                void deleteClusterSimilarityData(int clusterId, std::vector<simData> *simMatrix);
+                void deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix);
                 QString getLongerRule(QString r1, QString r2);
                     int getRuleAttributesNumber(QString r);
                 QString getShorterRule(QString r1, QString r2);

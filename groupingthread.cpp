@@ -143,12 +143,9 @@ void groupingThread::groupRSESRules()
         --i;
 
         if(newSimMatrix.size() == 0)
-        {
-            qDebug() << i;
             break;
-        }
-
-        updateSimMatrix(&newSimMatrix);
+        else
+            updateSimMatrix(&newSimMatrix);
     }
 
     if(!groupingSettings->findBestClustering)
@@ -407,7 +404,7 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
     }
 
     //Then, the row is filled.
-    for(int i = (newClusterIdx + 1); i <= (simMatrix->size() - 1) ; ++i)
+    for(unsigned int i = (newClusterIdx + 1); i <= (simMatrix->size() - 1) ; ++i)
     {
         qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[newClusterIdx]),((ruleCluster*)clusters[i]));
         simMatrix->at(i)->insert(simMatrix->at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
@@ -715,9 +712,9 @@ void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ, st
 
     qreal highestSim = -1;
 
-    for(int i = 0; i < simMatrix->size(); ++i)
+    for(unsigned int i = 0; i < simMatrix->size(); ++i)
     {
-        for(int j = 0; j < i; ++j)
+        for(unsigned int j = 0; j < i; ++j)
         {
             if(*(simMatrix->at(i)->at(j)) > highestSim)
             {
@@ -763,14 +760,14 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     return temp;
 }
 
-void groupingThread::deleteClusterSimilarityData(int clusterId, std::vector<simData> *simMatrix)
+void groupingThread::deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix)
 {
     /*
      * First deleting data from each column that had similarity with clusterId.
      * This happened to be all columns with id > than clusterId.
     */
 
-    for(int i = 0; i < simMatrix->size(); ++i)
+    for(unsigned int i = 0; i < simMatrix->size(); ++i)
     {
         if(simMatrix->at(i)->size() > clusterId)
             simMatrix->at(i)->erase(simMatrix->at(i)->begin()+(clusterId));

@@ -994,10 +994,8 @@ bool MainWindow::isStopConditionCorrect()
 void MainWindow::groupObjects()
 {
     addLogMessage(tr("log.groupingStarted"));
-    // Rozpoczynam grupowanie...
 
     addLogMessage(tr("log.blockingButtonsForOperation"));
-    // Blokuję przyciski na czas operacji...
 
     ui->pushButtonVisualize->setEnabled(false);
     ui->pushButtonGroup->setEnabled(false);
@@ -1005,18 +1003,14 @@ void MainWindow::groupObjects()
     areObjectsClustered = false;
 
     addLogMessage(tr("log.groupingThreadStarted"));
-    // Rozpoczynam wątek grupujący...
 
     tim->start();
     gThread->run();
-
-    qDebug() << "After gThread";
 
     int timeElapsed = tim->elapsed();
 
     QString logText = QString(tr("log.groupingThreadFinishedIn"))
             .arg(QString::number(timeElapsed));
-    // Wątek grupujący zakończony w czasie %1 ms.
 
     addLogMessage(logText);
 
