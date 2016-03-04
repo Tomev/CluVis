@@ -29,8 +29,6 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
 
 
     groupingProgress = new QProgressDialog(tr("gThreadDialog.grouping"),tr("gThreadDialog.cancel"),1, settings->objectsNumber,0,0);
-    // Grupowanie
-    // Anuluj
     groupingProgress->setValue(0);
     groupingProgress->setWindowTitle(tr("gThreadDialog.grouping"));
     groupingProgress->setFixedSize(groupingProgress->sizeHint());
@@ -68,48 +66,45 @@ void groupingThread::groupObjects()
         case generalSettings::RSES_RULES_ID:
 
             emit passLogMsg(tr("log.rsesGroupingStarted"));
-            // Rozpoczynam grupowanie dla RSES Rules...
-
             groupRSESRules();
+            
             break;
 
         default:
 
             emit passLogMsg(tr("log.unknownObjectsType"));
-            // Nie rozpoznano typu obiektów.
             emit passLogMsg(tr("log.operationWontStart"));
-            // Operacja nie rozpocznie się.
     }
 }
 
 void groupingThread::groupRSESRules()
 {
     emit passLogMsg(tr("log.gatheringAttributesData"));
-    // Zbieram dane dotyczące atrybutów...
 
     fillAttributesData();
 
-    qreal** simMatrix;
     int simMatrixSize = settings->objectsNumber;
+
+    std::vector<simData> newSimMatrix;
 
     int i = settings->objectsNumber - settings->stopCondition;
 
     emit passLogMsg(tr("log.placingObjectsInClusters"));
-    // Rozmieszczam reguły do skupień...;
 
     clusterRules();
 
     emit passLogMsg(tr("log.groupingProcessStarted"));
-    //"Rozpoczynam proces grupowania..."
+
+    fillSimMatrix(&newSimMatrix, simMatrixSize);
 
     groupingProgress->show();
     creatingSimMatrixProgress->show();
 
     while(i != 0)
     {
-        QApplication::processEvents();
+        groupingProgress->setValue(settings->objectsNumber-simMatrixSize+settings->stopCondition);
 
-        simMatrix = createSimMatrix(simMatrixSize);
+        QApplication::processEvents();
 
         if(groupingProgress->wasCanceled())
             wasGroupingCanceled = true;
@@ -122,23 +117,22 @@ void groupingThread::groupRSESRules()
             return;
         }
 
-        qreal highestSim = findHighestSimilarity(simMatrix, simMatrixSize);
-
-        joinMostSimilarClusters(simMatrix, simMatrixSize, highestSim);
+        joinMostSimilarClusters(&newSimMatrix);
 
         --simMatrixSize;
 
         if(groupingSettings->findBestClustering)
         {
+            //Count indexes each time, so we can find best one.
             countMDI(simMatrixSize);
             countMDBI(simMatrixSize);
 
-            //Count indexes each time, so we can find best one.
             if(MDI > maxMDI)
             {
                 maxMDI = MDI;
                 maxMDIClustersNumber = simMatrixSize;
             }
+
             if(MDBI > maxMDBI)
             {
                 maxMDBI = MDBI;
@@ -146,12 +140,15 @@ void groupingThread::groupRSESRules()
             }
         }
 
-        //Handicapped deleting memory... TODO: upgrade this.
-        delete[] simMatrix;
-
         --i;
 
-        groupingProgress->setValue(settings->objectsNumber-simMatrixSize+settings->stopCondition);
+        if(newSimMatrix.size() == 0)
+        {
+            qDebug() << i;
+            break;
+        }
+
+        updateSimMatrix(&newSimMatrix);
     }
 
     if(!groupingSettings->findBestClustering)
@@ -163,30 +160,23 @@ void groupingThread::groupRSESRules()
     groupingProgress->close();
     creatingSimMatrixProgress->close();
 
-
     emit passLogMsg(
         QString(tr("log.clustersNumber"))
         .arg(QString::number(settings->stopCondition))
     );
-    // Liczba skupień: %1.
 
     emit passLogMsg(
         QString(tr("log.mdiPointer"))
         .arg(QString::number(MDI))
     );
-    // Wskaźnik MDI grupowania: %1.
 
     emit passLogMsg(
         QString(tr("log.mdbiPointer"))
         .arg(QString::number(MDBI))
     );
-    // Wskaźnik MDBI grupowania: %1.
 
     emit passLogMsg(tr("log.groupingFinished"));
-    // Grupowanie zakończone.
     emit passLogMsg(tr("log.sendingResultatntStructure"));
-    // Przesyłam otrzymane struktury...;
-
     emit passMDIData(MDI, maxMDI, maxMDIClustersNumber);
     emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
     emit passClusters(clusters);
@@ -350,38 +340,78 @@ void groupingThread::clusterRules()
     }
 }
 
-qreal **groupingThread::createSimMatrix(int simMatrixSize)
+void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize)
 {
-    qreal **simMatrix = new qreal*[simMatrixSize];
-
-    for(int i = 0; i < simMatrixSize; i++)
-        simMatrix[i] = new qreal[simMatrixSize];
-
-    for(int i =0 ; i < simMatrixSize; i++)
+    for(int i = 0; i < simMatrixSize; ++i)
     {
-        if(creatingSimMatrixProgress->wasCanceled())
-            wasGroupingCanceled = true;
+        simMatrix->push_back(simData(new clusterSimilarityData));
 
-        if(wasGroupingCanceled)
-            break;
-
-        simMatrix[simMatrixSize-1][simMatrixSize-1] = 3;
-         creatingSimMatrixProgress->setValue(i);
-        for(int j = 0; j <= i; j++)
+        for(int j = 0; j <= i; ++j)
         {
-            if(i==j)
-                simMatrix[i][j] = 0;
+            if(i == j)
+            {
+                simMatrix->at(i)->push_back(qreal_ptr(new qreal(-1.0)));
+            }
             else
             {
                 qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j]));
-                simMatrix[i][j] = simMatrix[j][i] = simValue;
+                simMatrix->at(i)->push_back(qreal_ptr(new qreal(simValue)));
             }
         }
     }
+}
 
-    creatingSimMatrixProgress->setMaximum(simMatrixSize);
+void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
+{
+    /*
+     * I'll explain update algorithm here. It takes 3 steps:
+     * 1) Add an empty column representing new cluster.
+     * 2) Fill the column with similarity values.
+     * 3) Fill the row with new clusters similarity.
+     * 
+     * Consider following structure;
+     * 
+     *      ###
+     *       ##
+     *        #
+     * 
+     * I won't bother with details, but I'm working with triangle
+     * structures to describe objects similarity. Let's imagine,
+     * that new cluster's index is equal to 1. One can graphically
+     * show how algorithm works:
+     * 
+     *   Add empty column.          Fill column.             Add to row.
+     *
+     *      # ##                        #*##                    #*##
+     *        ##       =>                *##            =>       *##
+     *         #                           #                      **                                                          #
+     *                                                             #
+     */
 
-    return simMatrix;
+
+    //First column which would represent new cluster is added.
+    simMatrix->insert(simMatrix->begin()+newClusterIdx,simData(new clusterSimilarityData()));
+
+    //Then, the column is filled.
+    for(int i = 0; i <= newClusterIdx; ++i)
+    {
+        if(i == newClusterIdx)
+        {
+            simMatrix->at(newClusterIdx)->push_back(qreal_ptr(new qreal(-1)));
+        }
+        else
+        {
+            qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[newClusterIdx]),((ruleCluster*)clusters[i]));
+            simMatrix->at(newClusterIdx)->push_back(qreal_ptr(new qreal(simValue)));
+        }
+    }
+
+    //Then, the row is filled.
+    for(int i = (newClusterIdx + 1); i <= (simMatrix->size() - 1) ; ++i)
+    {
+        qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[newClusterIdx]),((ruleCluster*)clusters[i]));
+        simMatrix->at(i)->insert(simMatrix->at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
+    }
 }
 
 qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2)
@@ -414,7 +444,6 @@ qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleClus
         // For some reason if function is returned the value is 0. Hence variable was used.
         qreal result = similaritySum / denumerator;
 
-        //return (double) similaritySum / denumerator;
         return result;
     }
 
@@ -650,20 +679,54 @@ QString groupingThread::removeBraces(QString a)
     return attribute;
 }
 
-qreal groupingThread::findHighestSimilarity(qreal **simMatrix, int simMatrixSize)
+void groupingThread::joinMostSimilarClusters(std::vector<simData> *simMatrix)
 {
-    qreal result = 0;
+    int i, j;
 
-    for(int i = 0; i < simMatrixSize; i++)
+    findHighestSimilarityIndexes(&i, &j, simMatrix);
+
+    clusters[j] = joinClusters(clusters[i], clusters[j]);
+
+    //TODO: Consider deleting / smart_ptr.
+    std::swap(clusters[i], clusters[simMatrix->size()-1]);
+
+    // This is used in updating matrix.
+    newClusterIdx = j;
+;
+    /*
+     *  Order is important!
+     *
+     *  Longest column (always i), must be deleted first.
+     *  If this was implemented other way around then
+     *  columns would move and an additional -1 would be
+     *  needed.
+     */
+
+    deleteClusterSimilarityData(i, simMatrix);
+    deleteClusterSimilarityData(j, simMatrix);
+}
+
+void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ, std::vector<simData> *simMatrix)
+{
+    /*
+     * This method fills i and j references. It's used to find
+     * which clusters should be joined.
+     */
+
+    qreal highestSim = -1;
+
+    for(int i = 0; i < simMatrix->size(); ++i)
     {
-        for(int j = 0; j < i; j++)
+        for(int j = 0; j < i; ++j)
         {
-            if(simMatrix[i][j] > result)
-                result = (double)simMatrix[i][j];
+            if(*(simMatrix->at(i)->at(j)) > highestSim)
+            {
+                *targetI = i;
+                *targetJ = j;
+                highestSim = *(simMatrix->at(i)->at(j));
+            }
         }
     }
-
-    return result;
 }
 
 cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
@@ -700,22 +763,28 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     return temp;
 }
 
-void groupingThread::joinMostSimilarClusters(qreal **simMatrix, int simMatrixSize, qreal highestSim)
+void groupingThread::deleteClusterSimilarityData(int clusterId, std::vector<simData> *simMatrix)
 {
-    for(int i = 0; i < simMatrixSize; i++)
+    /*
+     * First deleting data from each column that had similarity with clusterId.
+     * This happened to be all columns with id > than clusterId.
+    */
+
+    for(int i = 0; i < simMatrix->size(); ++i)
     {
-        for(int j = 0; j < i; j++)
-        {
-            if(simMatrix[i][j] == highestSim)
-            {
-                clusters[i] = joinClusters(clusters[i], clusters[j]);
-
-                std::swap(clusters[j], clusters[simMatrixSize-1]);
-
-                return;
-            }
-        }
+        if(simMatrix->at(i)->size() > clusterId)
+            simMatrix->at(i)->erase(simMatrix->at(i)->begin()+(clusterId));
     }
+
+    /*
+     * Then deleting a column with clusterSimData.
+     *
+     * Swapping with empty vector is required to
+     * call vectors destructor and freeing the memory.
+    */
+
+    simData().swap(simMatrix->at(clusterId));
+    simMatrix->erase(simMatrix->begin()+clusterId);
 }
 
 QString groupingThread::getLongerRule(QString r1, QString r2)
@@ -932,9 +1001,7 @@ qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule)
 void groupingThread::stopGrouping()
 {
     emit passLogMsg(tr("log.groupingCancelled"));
-    // Grupowanie przerwane na życzenie użytkownika.
     emit passLogMsg(tr("log.visualizationImpossible"));
-    // Wizualizacja nie będzie możliwa do czasu pełnego pogrupowania.
 }
 
 void groupingThread::countMDI(int size)

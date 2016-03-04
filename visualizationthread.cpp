@@ -28,17 +28,13 @@ void visualizationThread::visualize(ruleCluster *c)
         case 0: //settings->RSES_RULES_ID:
 
             emit passLogMsg(tr("log.rsesVisualizationStarted"));
-            // Rozpoczynam wizualizację dla RSES Rules...
 
             visualizeRSESRules(c);
             break;
 
         default:
-
             emit passLogMsg(tr("log.unknownObjectsType"));
-            // Nie rozpoznano typu obiektów.
             emit passLogMsg(tr("log.operationWontStart"));
-            // Operacja nie rozpocznie się.
     }
 }
 

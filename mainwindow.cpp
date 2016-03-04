@@ -44,7 +44,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->labelIsBaseGrouped->setText("");
 
     addLogMessage(tr("log.applicationStart"));
-    // Rozpoczęto działanie programu CluVis.
 
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -93,9 +92,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     if(OBName == "")
     {
         QString logText = tr("log.failedToLoadObjBase") + " ";
-        // Nieudana próba wczytania bazy obiektów.
         logText+= tr("log.noFileSelected");
-        // Nie wybrano pliku.
 
         addLogMessage(logText);
 
@@ -1012,6 +1009,9 @@ void MainWindow::groupObjects()
 
     tim->start();
     gThread->run();
+
+    qDebug() << "After gThread";
+
     int timeElapsed = tim->elapsed();
 
     QString logText = QString(tr("log.groupingThreadFinishedIn"))

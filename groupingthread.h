@@ -3,10 +3,16 @@
 
 #include <QtCore>
 #include <QProgressDialog>
-
+#include <boost/shared_ptr.hpp>
 
 #include "groupingsettingsincludes.h"
 #include "generalincludes.h"
+
+
+typedef boost::shared_ptr<qreal> qreal_ptr;
+typedef std::vector<qreal_ptr> clusterSimilarityData;
+typedef boost::shared_ptr<clusterSimilarityData> simData;
+
 
 class groupingThread : public QThread
 {
@@ -47,7 +53,7 @@ private:
     int maxMDBIClustersNumber;
 
     cluster** clusters;
-    int nextClusterID;
+    int nextClusterID, newClusterIdx;
 
     generalSettings* settings;
     groupingSettings_General* groupingSettings;
@@ -66,6 +72,8 @@ private:
         void groupRSESRules();
             void clusterRules();
             qreal **createSimMatrix(int simMatrixSize);
+            void fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize);
+            void updateSimMatrix(std::vector<simData> *simMatrix);
                 qreal countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2);
                     qreal countRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
                         qreal countRSESRulesSimilarityValue(QString r1, QString r2);
@@ -75,9 +83,10 @@ private:
                             QStringList getRuleGroupedPart(QString r);
                                 QStringList prepareAttribute(QString a);
                                     QString removeBraces(QString a);
-            qreal findHighestSimilarity(qreal **simMatrix, int simMatrixSize);
-            cluster* joinClusters(cluster* c1, cluster* c2);
-            void joinMostSimilarClusters(qreal **simMatrix, int simMatrixSize, qreal highestSim);
+            void joinMostSimilarClusters(std::vector<simData> *simMatrix);
+                void findHighestSimilarityIndexes(int* i, int* j, std::vector<simData> *simMatrix);
+                cluster* joinClusters(cluster* c1, cluster* c2);
+                void deleteClusterSimilarityData(int clusterId, std::vector<simData> *simMatrix);
                 QString getLongerRule(QString r1, QString r2);
                     int getRuleAttributesNumber(QString r);
                 QString getShorterRule(QString r1, QString r2);

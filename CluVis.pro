@@ -9,8 +9,19 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = CluVis
-TEMPLATE = app
 
+TEMPLATE = app
+boost=D:/Boost
+boost_include=$$boost/include/boost-1_60
+boost_libs = $$boost/lib/libboost_filesystem-vc140-mt-gd-1_60.lib \
+$$boost/lib/libboost_date_time-vc140-mt-gd-1_60.lib \
+$$boost/lib/libboost_thread-vc140-mt-gd-1_60.lib \
+$$boost/lib/libboost_system-vc140-mt-gd-1_60.lib
+
+INCLUDEPATH += . \
+$$boost_include
+
+LIBS += $$boost_libs
 
 SOURCES += main.cpp\
     mainwindow.cpp \
