@@ -17,7 +17,6 @@ public:
     int dataTypeID;
     int objectsNumber;
     int stopCondition;
-    int attributesFrequencyPercent;
 
     //Methods
 

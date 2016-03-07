@@ -35,6 +35,7 @@ public:
     int interObjectSimMeasureID;
     int interClusterSimMeasureID;
     int attributesNumber;
+    int attributesFrequencyPercent;
     int coverSum;
 
     bool findBestClustering;
