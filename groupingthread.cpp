@@ -419,7 +419,7 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
 
 qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2)
 {
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->CENTROID_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == groupingSettings->CENTROID_LINK_ID)
     {
         // For some reason if function is returned the value is 0. Hence variable was used.
         qreal result = countRSESRulesSimilarityValue(c1->representative,c2->representative);
@@ -427,7 +427,7 @@ qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleClus
         return  result;
     }
 
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->AVERAGE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == groupingSettings->AVERAGE_LINK_ID)
     {
         QStringList c1Rules = c1->getRules();
         QStringList c2Rules = c2->getRules();
@@ -457,12 +457,12 @@ qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleClus
         return countRSESClusterRuleSimilarityValue(c2->rule, c1);
 
 
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->SINGLE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == groupingSettings->SINGLE_LINK_ID)
         return qMax(countRSESClustersSimilarityValue(((ruleCluster*) c1->leftNode), c2),
                     countRSESClustersSimilarityValue(((ruleCluster*) c1->rightNode), c2));
 
 
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->COMPLETE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == groupingSettings->COMPLETE_LINK_ID)
         return qMin(countRSESClustersSimilarityValue(((ruleCluster*) c1->leftNode), c2),
                     countRSESClustersSimilarityValue(((ruleCluster*) c1->rightNode), c2));
 
@@ -474,11 +474,11 @@ qreal groupingThread::countRSESClusterRuleSimilarityValue(QString r, ruleCluster
     if(c->rule !="")
         return countRSESRulesSimilarityValue(r, c->rule);
 
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->SINGLE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == groupingSettings->SINGLE_LINK_ID)
         return qMax(countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),
                     countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->rightNode)));
 
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->COMPLETE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == groupingSettings->COMPLETE_LINK_ID)
         return qMin(countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),
                     countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->rightNode)));
 
@@ -487,7 +487,7 @@ qreal groupingThread::countRSESClusterRuleSimilarityValue(QString r, ruleCluster
 
 qreal groupingThread::countRSESRulesSimilarityValue(QString r1, QString r2)
 {
-    switch(groupingSettings->interobjectDistanceMeasureID)
+    switch(groupingSettings->interObjectSimMeasureID)
     {
         case groupingSettings_General::GOWERS_MEASURE_ID:
             return countRSESRulesGowersMeasureValue(r1,r2);

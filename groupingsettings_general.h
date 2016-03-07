@@ -32,8 +32,8 @@ public:
     QFileInfo objectBaseInfo;
 
     int groupingAlgorithmID;
-    int interobjectDistanceMeasureID;
-    int interclusterDistanceMeasureID;
+    int interObjectSimMeasureID;
+    int interClusterSimMeasureID;
     int attributesNumber;
     int coverSum;
 

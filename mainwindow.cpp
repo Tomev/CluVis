@@ -373,10 +373,10 @@ QString MainWindow::createTXTReportContent()
             + formatThickString(ui->labelAlgorithmGroupingValue->text());
     // Wykorzystany algorytm grupowania
     content += "\n" + tr("report.objectsSimilarityMeasure") + ": "
-            + ui->comboBoxInterobjectDistanceMeasure->currentText();
+            + ui->comboBoxInterObjectSimMeasure->currentText();
     // Wybrana miara podobieństwa obiektów
     content += "\n" + tr("report.clustersSimilarityMeasure") + ": "
-            + ui->comboBoxInterclusterDistanceMeasure->currentText();
+            + ui->comboBoxInterClusterSimMeasure->currentText();
     // Wybrana miara podobieństwa skupień
     content += "\n" + tr("report.selectedVisualizationAlgorithm") + ": "
             + ui->comboBoxAlgorithmVisualization->currentText();
@@ -656,8 +656,8 @@ QString MainWindow::createXMLFileTableContent()
     result += createXMLFileTableCell(ui->comboBoxAlgorithmVisualization->currentText(), false);
     //Grouping data
     result += createXMLFileTableCell(formatThickString(ui->labelAlgorithmGroupingValue->text()), false);
-    result += createXMLFileTableCell(ui->comboBoxInterobjectDistanceMeasure->currentText(), false);
-    result += createXMLFileTableCell(ui->comboBoxInterclusterDistanceMeasure->currentText(), false);
+    result += createXMLFileTableCell(ui->comboBoxInterObjectSimMeasure->currentText(), false);
+    result += createXMLFileTableCell(ui->comboBoxInterClusterSimMeasure->currentText(), false);
     result += createXMLFileTableCell(ui->comboBoxRuleGroupedPart->currentText(), false);
     //Overall result data
     result += createXMLFileTableCell(findBiggestCluster()->name(), false);
@@ -846,10 +846,10 @@ void MainWindow::setGroupingSettings()
             ui->spinBoxStopConditionValue->value();
 
     gSettings->groupingAlgorithmID = 0;
-    gSettings->interobjectDistanceMeasureID =
-            ui->comboBoxInterobjectDistanceMeasure->currentIndex();
-    gSettings->interclusterDistanceMeasureID =
-            ui->comboBoxInterclusterDistanceMeasure->currentIndex();
+    gSettings->interObjectSimMeasureID =
+            ui->comboBoxInterObjectSimMeasure->currentIndex();
+    gSettings->interClusterSimMeasureID =
+            ui->comboBoxInterClusterSimMeasure->currentIndex();
     gSettings->findBestClustering =
             ui->checkBoxSearchForBestIndexes->isChecked();
 

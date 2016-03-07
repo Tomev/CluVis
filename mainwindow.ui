@@ -145,7 +145,7 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <layout class="QHBoxLayout" name="horizontalLayoutBaseName">
                  <item>
                   <widget class="QLabel" name="labelObjectBaseName">
                    <property name="text">
@@ -184,7 +184,7 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <layout class="QHBoxLayout" name="horizontalLayoutGroupedPart">
                  <item>
                   <widget class="QComboBox" name="comboBoxRuleGroupedPart">
                    <item>
@@ -225,9 +225,9 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <layout class="QHBoxLayout" name="horizontalLayoutInterObjectSimMeasure">
                  <item>
-                  <widget class="QComboBox" name="comboBoxInterobjectDistanceMeasure">
+                  <widget class="QComboBox" name="comboBoxInterObjectSimMeasure">
                    <property name="minimumSize">
                     <size>
                      <width>157</width>
@@ -274,9 +274,9 @@
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutInterclusterDistanceMeasure">
+                <layout class="QHBoxLayout" name="horizontalLayoutInterClusterSimMeasure">
                  <item>
-                  <widget class="QComboBox" name="comboBoxInterclusterDistanceMeasure">
+                  <widget class="QComboBox" name="comboBoxInterClusterSimMeasure">
                    <item>
                     <property name="text">
                      <string>Pojedynczego połączenia</string>
@@ -367,12 +367,12 @@ liczbie obiektów w bazie.</string>
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <layout class="QHBoxLayout" name="horizontalLayoutRepresentativeAttributePercent">
                  <property name="topMargin">
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QSpinBox" name="spinBox">
+                  <widget class="QSpinBox" name="spinBoxRepresentativeAttributePercent">
                    <property name="minimumSize">
                     <size>
                      <width>157</width>
