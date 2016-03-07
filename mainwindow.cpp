@@ -844,6 +844,8 @@ void MainWindow::setGroupingSettings()
     settings->dataTypeID = 0;
     settings->stopCondition =
             ui->spinBoxStopConditionValue->value();
+    settings->attributesFrequencyPercent =
+            ui->spinBoxRepresentativeAttributePercent->value();
 
     gSettings->groupingAlgorithmID = 0;
     gSettings->interObjectSimMeasureID =
