@@ -13,9 +13,12 @@ struct cluster
     }
 
     //Members
+    QHash<QString, QString> attributeValue;
 
     int clusterID;
     qreal dispersion;
+
+    QString representative;
 
     cluster* leftNode = NULL;
     cluster* rightNode = NULL;
@@ -65,7 +68,7 @@ struct ruleCluster : cluster
 {
     //Members
 
-    QString rule, longestRule, shortestRule, representative;
+    QString rule, longestRule, shortestRule;
 
     int support;
 

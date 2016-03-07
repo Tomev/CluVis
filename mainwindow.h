@@ -25,7 +25,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
+private slots:  
     //File
     void on_actionLoadObjectBase_triggered();
     void on_actionSaveVisualization_triggered();
@@ -62,7 +62,13 @@ private slots:
     void on_actionPolski_triggered();
 
 private:
-    QTranslator* translator;
+    QTranslator* translator = new QTranslator();
+
+    enum languages
+    {
+        english = 0,
+        polish = 1
+    };
 
     enum Constants
     {
@@ -133,6 +139,7 @@ private:
         int countUngroupedObjects();
         ruleCluster* findBiggestCluster();
         ruleCluster* findSmallestCluster();
+        void translate(int lang);
 
     //Rest
     //Functions

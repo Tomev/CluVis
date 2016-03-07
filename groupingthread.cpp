@@ -27,7 +27,6 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
 
     wasGroupingCanceled = false;
 
-
     groupingProgress = new QProgressDialog(tr("gThreadDialog.grouping"),tr("gThreadDialog.cancel"),1, settings->objectsNumber,0,0);
     groupingProgress->setValue(0);
     groupingProgress->setWindowTitle(tr("gThreadDialog.grouping"));
@@ -835,6 +834,11 @@ QString groupingThread::getShorterRule(QString r1, QString r2)
 
 QString groupingThread::createAverageRule(ruleCluster *c)
 {
+    /*
+     * TODO: This method has to be rewritten after clusters and
+     * attributes are updated.
+     */
+
     QString result = "average Rule";
     QString splitter;
     QString rule;
@@ -855,13 +859,16 @@ QString groupingThread::createAverageRule(ruleCluster *c)
     QString* mostCommonSymbolicAtrValue;
     QStringList symbolicAtrValuesSet;
 
+    std::vector<QString> usedAttributes;
+
+    //findUsedAttributes(&usedAttributes, c);
 
     for(int i = 0; i < groupingSettings->attributesNumber; i++)
     {
         if(attributes[i].type == "numeric")
-            numericAtrNumber++;
+            ++numericAtrNumber;
         else
-            symbolicAtrNumber++;
+            ++symbolicAtrNumber;
     }
 
     averageNumericAtrValues = new qreal[numericAtrNumber];
@@ -942,7 +949,6 @@ QString groupingThread::createAverageRule(ruleCluster *c)
            !c->decisionAttributes.contains(attributes[i].name))
         {
             unusedAtr++;
-
 
             if(attributes[i].type == "numeric")
                 numericAtrIndex++;

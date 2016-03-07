@@ -17,15 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    // TODO: Consider turning it into method (3 times in code).
     // Automatically translate to english.
-    translator = new QTranslator();
-    QString transName = QApplication::applicationDirPath() + "/language/english.qm";
-
-    if(!translator->load(transName))
-        delete translator;
-    else
-        qApp->installTranslator(translator);
+    translate(english);
 
     settings = new generalSettings();
     gSettings = new groupingSettings_General();
@@ -754,25 +747,30 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionAngielski_triggered()
 {
-    delete translator;
-
-    translator = new QTranslator();
-    QString transName = QApplication::applicationDirPath() + "/language/english.qm";
-
-    if(!translator->load(transName))
-        delete translator;
-    else
-        qApp->installTranslator(translator);
-
-    ui->retranslateUi(this);
+    translate(english);
 }
 
 void MainWindow::on_actionPolski_triggered()
 {
-    delete translator;
+    translate(polish);
+}
 
+void MainWindow::translate(int lang)
+{
+    delete translator;
     translator = new QTranslator();
-    QString transName = QApplication::applicationDirPath() + "/language/polish.qm";
+
+    QString transName = QApplication::applicationDirPath();
+
+    switch(lang)
+    {
+        case polish:
+            transName += "/language/polish.qm";
+            break;
+        case english:
+        default:
+            transName += "/language/english.qm";
+    }
 
     if(!translator->load(transName))
         delete translator;

@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     generalsettings.cpp \
     visualizationsettings_rsesrules.cpp \
     clusterinfo_rsesrules.cpp \
-    customgraphicellipseobject.cpp
+    customgraphicellipseobject.cpp \
+    test_clusters.cpp
 
 TRANSLATIONS += polish.ts\
                 english.ts
@@ -56,7 +57,8 @@ HEADERS  += mainwindow.h \
     visualizationsettings_rsesrules.h \
     clusterinfo_rsesrules.h \
     customgraphicellipseobject.h \
-    clusterinfoincludes.h
+    clusterinfoincludes.h \
+    test_clusters.h
 
 FORMS    += mainwindow.ui \
     about.ui \
