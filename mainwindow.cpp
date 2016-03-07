@@ -310,7 +310,7 @@ void MainWindow::createPath(QString path)
     QDir().mkpath(path);
 }
 
-/* File type is determined by it's name (*.xml/*.txt), so
+/* File type is determined by it's name (*.xml / *.txt), so
  * last letter of file's name is enough to detemine it's
  * type. At least in this case.
  */
