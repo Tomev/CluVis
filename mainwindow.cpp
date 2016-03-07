@@ -17,9 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    // Automatically translate to english.
-    translate(english);
-
     settings = new generalSettings();
     gSettings = new groupingSettings_General();
     gSettings_RSES = new groupingSettings_RSESRules();
@@ -52,6 +49,9 @@ MainWindow::MainWindow(QWidget *parent) :
                    Qt::WindowCloseButtonHint |
                    Qt::WindowMinimizeButtonHint
     );
+
+    // Automatically translate to english.
+    translate(english);
 }
 
 MainWindow::~MainWindow()
@@ -303,7 +303,8 @@ void MainWindow::createPath(QString path)
     QDir().mkpath(path);
 }
 
-/* File type is determined by it's name (*.xml / *.txt), so
+/*
+ * File type is determined by it's name (*.xml / *.txt), so
  * last letter of file's name is enough to detemine it's
  * type. At least in this case.
  */

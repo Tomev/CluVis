@@ -309,7 +309,7 @@ void groupingThread::clusterRules()
 
                 temp->support = splitedRule[1].split(" ")[1].toInt();
 
-                for(int j = 0; j < groupingSettings->attributesNumber; j++)
+                for(int j = 0; j < groupingSettings->attributesNumber; ++j)
                 {
                     QString aName = attributes[j].name;
 

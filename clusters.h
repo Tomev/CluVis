@@ -13,7 +13,7 @@ struct cluster
     }
 
     //Members
-    QHash<QString, QString> attributeValue;
+    QHash<QString, QString> attributesValues;
 
     int clusterID;
     qreal dispersion;
@@ -71,6 +71,8 @@ struct ruleCluster : cluster
     QString rule, longestRule, shortestRule;
 
     int support;
+
+    QHash<QString, QString> decisionAttributesValues;
 
     QSet<QString> decisionAttributes;
     QSet<QString> conclusionAttributes;
