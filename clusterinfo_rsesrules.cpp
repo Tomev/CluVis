@@ -30,7 +30,7 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     ui->labelRulesNumberValue->setText("<b>" + QString::number(c->size())+ "</b>");
     ui->labelGroupRepresentativeValue->setText("<b>" + c->getClusterRepresentativeString()+ "</b>");
 
-    QStringList cAttributes = c->conclusionAttributes.toList();
+    QStringList cAttributes = c->premiseAttributes.toList();
 
     ui->labelConditionAttributesValue->setText("<b>" + cAttributes.join(", ")+ "</b>");
 

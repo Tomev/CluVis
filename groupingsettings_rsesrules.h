@@ -7,11 +7,8 @@ struct RSESAttribute
 {
     QString name;
     QString type;
-    QString value;
-
-    qreal maxValue;
-    qreal minValue;
-
+    QString minValue;
+    QString maxValue;
 };
 
 class groupingSettings_RSESRules

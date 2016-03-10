@@ -50,7 +50,14 @@ MainWindow::MainWindow(QWidget *parent) :
                    Qt::WindowMinimizeButtonHint
     );
 
-    // Automatically translate to english.
+    /*
+     * Automatically translate to english.
+     *
+     * Initializing with new QTranslator, so delete at the begining of transale
+     * method won't crash.
+     */
+
+    translator = new QTranslator();
     translate(english);
 }
 
@@ -66,7 +73,7 @@ MainWindow::~MainWindow()
     delete vSettings;
     delete vSettings_RSES;
 
-    for(int i = settings->objectsNumber; i >= 0; i--)
+    for(int i = settings->objectsNumber; i >= 0; --i)
         delete clusters[i];
 
     delete[] clusters;
@@ -106,7 +113,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     scene->clear();
     ui->actionSaveVisualization->setEnabled(false);
     ui->actionGenerateReport->setEnabled(false);
-    ui->labelIsBaseGrouped->setText(tr("bold.ungrouped")); // <b>(Niepogrupowana)</b>
+    ui->labelIsBaseGrouped->setText(tr("bold.ungrouped"));
     areObjectsClustered = false;
 
     gSettings->objectBaseInfo = KB;

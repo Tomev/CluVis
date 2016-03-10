@@ -75,7 +75,7 @@ struct ruleCluster : cluster
     QHash<QString, QString> decisionAttributesValues;
 
     QSet<QString> decisionAttributes;
-    QSet<QString> conclusionAttributes;
+    QSet<QString> premiseAttributes;
 
     //Methods
         //Constructors
@@ -102,7 +102,7 @@ struct ruleCluster : cluster
         rightNode = c.rightNode;
 
         decisionAttributes = c.decisionAttributes;
-        conclusionAttributes = c.conclusionAttributes;
+        premiseAttributes = c.premiseAttributes;
 
         representative = c.representative;
 

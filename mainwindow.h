@@ -62,7 +62,7 @@ private slots:
     void on_actionPolski_triggered();
 
 private:
-    QTranslator* translator = new QTranslator();
+    QTranslator* translator;
 
     enum languages
     {

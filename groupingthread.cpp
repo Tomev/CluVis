@@ -202,6 +202,37 @@ void groupingThread::fillAttributesData()
 
             if(fillAttributesValues)
             {
+                QStringList keys = newAttributes.keys();
+                QString value, additionalLine;
+
+                for(int i = 0; i < keys.length(); ++i)
+                {
+                    // It's important to add +"=" to if, in case some attribute is used also as a value.
+                    if((line.contains(keys.at(i)+"=")) && (newAttributes[keys.at(i)].type != "symbolic"))
+                    {
+                        additionalLine = line;
+                        value = line.split(keys.at(i)+"=")[1];
+                        value = value.split(")")[0];
+
+                        if(newAttributes[keys.at(i)].maxValue == "")
+                        {
+                            //If maxValue is not set, then so isn't minValue.
+                            newAttributes[keys.at(i)].maxValue =
+                            newAttributes[keys.at(i)].minValue =
+                            value;
+                        }
+
+                        if(newAttributes[keys.at(i)].maxValue.toDouble() < value.toDouble())
+                            newAttributes[keys.at(i)].maxValue = value;
+
+                        if(newAttributes[keys.at(i)].minValue.toDouble() > value.toDouble())
+                            newAttributes[keys.at(i)].minValue = value;
+
+                    }
+                    else continue;
+                }
+
+                /* OBSOLETE OLD
                 for(i = 0; i < groupingSettings->attributesNumber; i++)
                 {
                     if(attributes[i].type != "symbolic")
@@ -220,12 +251,15 @@ void groupingThread::fillAttributesData()
                             if(additionalLine.contains("["))
                                 additionalLine.resize(additionalLine.indexOf("["));
 
-
                             qreal value = additionalLine.toDouble();
 
-                            if(attributes[i].value == "")
+                            //if(attributes[i].value == "")
+                            if(newAttributes[].maxValue = "")
                             {
-                                attributes[i].value = "set";
+                                //attributes[i].value = "set";
+
+
+
                                 attributes[i].maxValue = value;
                                 attributes[i].minValue = value;
                             }
@@ -245,6 +279,7 @@ void groupingThread::fillAttributesData()
                     }
 
                 }
+                */
             }
 
             if(line.startsWith("ATTRIBUTES "))
@@ -260,10 +295,20 @@ void groupingThread::fillAttributesData()
                 {
                     line.remove(0,1);
                     QStringList data = line.split(" ");
+                    QString atrName = data.at(0);
+
+                    newAttributes.insert(atrName, RSESAttribute());
+                    newAttributes[atrName].name = atrName;
+                    newAttributes[atrName].type = data.at(1);
+                    newAttributes[atrName].maxValue = "";
+                    newAttributes[atrName].minValue = "";
+
+
                     attributes[i].name = data.at(0);
                     attributes[i].type = data.at(1);
-                    attributes[i].value = "";
-                    i++;
+                    //attributes[i].value = "";
+
+                    ++i;
                     line = in.readLine();
                 }
 
@@ -305,6 +350,9 @@ void groupingThread::clusterRules()
 
                 ruleCluster* temp = new ruleCluster(i+1, rule);
 
+                fillAttributesValues(rule.split("=>")[0], temp);
+                fillDecisionAttributesValues(rule.split("=>")[1], temp);
+
                 QStringList splitedRule = line.split("=>");
 
                 temp->support = splitedRule[1].split(" ")[1].toInt();
@@ -314,7 +362,7 @@ void groupingThread::clusterRules()
                     QString aName = attributes[j].name;
 
                     if(splitedRule[0].contains(aName))
-                        temp->conclusionAttributes << aName;
+                        temp->premiseAttributes << aName;
 
                     if(splitedRule[1].contains(aName))
                         temp->decisionAttributes << aName;
@@ -324,13 +372,35 @@ void groupingThread::clusterRules()
 
                 clusters[i] = temp;
 
-                i++;
+                ++i;
                 continue;
             }
 
             if(line.startsWith("RULES "))
                 startClustering = true;
         }
+    }
+}
+
+void groupingThread::fillAttributesValues(QString data, cluster *c)
+{
+    QStringList tempList, attributesValues = data.split("&");
+
+    for(int i = 0; i < attributesValues.length(); ++i)
+    {
+        tempList = removeBraces(attributesValues.at(i)).split("=");
+        c->attributesValues.insert(tempList[0], tempList[1]);
+    }
+}
+
+void groupingThread::fillDecisionAttributesValues(QString decision, ruleCluster *c)
+{
+    QStringList tempList, attributesValues = decision.split("&");
+
+    for(int i = 0; i < attributesValues.length(); ++i)
+    {
+        tempList = removeBraces(attributesValues.at(i)).split("=");
+        c->decisionAttributesValues.insert(tempList[0], tempList[1]);
     }
 }
 
@@ -557,7 +627,7 @@ qreal groupingThread::countRSESRulesGowersMeasureValue(QString r1, QString r2)
                         if(attributes[k].name == prepR1Argument.at(0))
                         {
                             denumerator = (double)
-                                    attributes[k].maxValue -
+                                    attributes[k].maxValue. -
                                     attributes[k].minValue;
                             break;
                         }
@@ -748,10 +818,10 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     temp->decisionAttributes
             .unite(((ruleCluster*) c2)->decisionAttributes);
 
-    temp->conclusionAttributes
-            .unite(((ruleCluster*) c1)->conclusionAttributes);
-    temp->conclusionAttributes
-            .unite(((ruleCluster*) c2)->conclusionAttributes);
+    temp->premiseAttributes
+            .unite(((ruleCluster*) c1)->premiseAttributes);
+    temp->premiseAttributes
+            .unite(((ruleCluster*) c2)->premiseAttributes);
 
     temp->representative = createAverageRule(temp);
 
@@ -855,15 +925,17 @@ QString groupingThread::createAverageRule(ruleCluster *c)
     int clusterSize = c->size();
 
     qreal* averageNumericAtrValues;
-    QStringList* symbolicAtrValues;
+    QStringList* symbolicAtrValues, symbolicAtrValuesSet, representativeAttributes;
     QString* mostCommonSymbolicAtrValue;
-    QStringList symbolicAtrValuesSet;
 
-    std::vector<QString> usedAttributes;
+    //getRepresentativeAttributes(&representativeAttributes, c);
 
-    //findUsedAttributes(&usedAttributes, c);
+    //for(int i = 0; i < representativeAttributes.length(); ++i)
+    //{
 
-    for(int i = 0; i < groupingSettings->attributesNumber; i++)
+//    }
+
+    for(int i = 0; i < groupingSettings->attributesNumber; ++i)
     {
         if(attributes[i].type == "numeric")
             ++numericAtrNumber;
@@ -945,7 +1017,7 @@ QString groupingThread::createAverageRule(ruleCluster *c)
 
     for(int i = 0; i < groupingSettings->attributesNumber; i++)
     {
-        if(!c->conclusionAttributes.contains(attributes[i].name) &&
+        if(!c->premiseAttributes.contains(attributes[i].name) &&
            !c->decisionAttributes.contains(attributes[i].name))
         {
             unusedAtr++;

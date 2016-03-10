@@ -59,7 +59,9 @@ private:
     groupingSettings_General* groupingSettings;
     groupingSettings_RSESRules* RSESSettings = NULL;
 
+    //TODO: Change to QHash
     RSESAttribute* attributes;
+    QHash<QString, RSESAttribute> newAttributes;
 
     QProgressDialog* groupingProgress;
     QProgressDialog* creatingSimMatrixProgress;
@@ -71,7 +73,8 @@ private:
     void groupObjects();
         void groupRSESRules();
             void clusterRules();
-            qreal **createSimMatrix(int simMatrixSize);
+                void fillAttributesValues(QString data, cluster* c);
+                void fillDecisionAttributesValues(QString decision, ruleCluster* c);
             void fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize);
             void updateSimMatrix(std::vector<simData> *simMatrix);
                 qreal countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2);
