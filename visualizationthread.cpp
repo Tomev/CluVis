@@ -17,7 +17,7 @@ visualizationThread::~visualizationThread(){}
 
 void visualizationThread::run(ruleCluster *c)
 {
-    rectPadding = 3;
+    rectPadding = 10;
     visualize(c);
 }
 
@@ -255,7 +255,7 @@ QColor visualizationThread::getColorFromSize(int cSize)
         return QColor(128,0,0);
 
     qreal sizePercent = 100 * cSize / settings->objectsNumber;
-    int shade, minShadeValue = 40, maxShadeValue = 240;
+    int shade, minShadeValue = 120, maxShadeValue = 240;
 
     if(sizePercent < 10) // Orange
     {
