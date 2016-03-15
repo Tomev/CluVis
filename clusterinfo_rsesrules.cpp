@@ -28,7 +28,9 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     this->setWindowTitle(title);
 
     ui->labelRulesNumberValue->setText("<b>" + QString::number(c->size())+ "</b>");
-    ui->labelGroupRepresentativeValue->setText("<b>" + c->getClusterRepresentativeString()+ "</b>");
+    ui->labelGroupRepresentativeValue->setText("<b>" + c->getClusterRepresentativeString()
+                                               .replace(")&(", ") & (")
+                                               .replace(")=>(", ") => (") + "</b>");
 
     QStringList cAttributes = c->conclusionAttributes.toList();
 
@@ -38,8 +40,8 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
 
     ui->labelDecisionAttributesValue->setText("<b>" + dAttributes.join(", ")+ "</b>");
     ui->labelLongestRuleValue->setText("<b>" + c->longestRule
-                                       .replace("&", " & ")
-                                       .replace("=>", " => ") + "</b>");
+                                       .replace(")&(", ") & (")
+                                       .replace(")=>(", ") => (") + "</b>");
     ui->labelShortestRuleValue->setText("<b>" + c->shortestRule+ "</b>");
     ui->labelMostCommonDecisionValue->setText("<b>" + c->getMostCommonDecision()+ "</b>");
     ui->labelLeastCommonDecisionValue->setText("<b>" + c->getLeastCommonDecision()+ "</b>");
