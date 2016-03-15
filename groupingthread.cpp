@@ -8,6 +8,8 @@
 #include "math.h"
 
 #include "generalsettings.h"
+#include "enum_interclustersimilaritymeasures.h"
+#include "enum_interobjectsimilaritymeasure.h"
 
 groupingThread::groupingThread(){}
 
@@ -400,7 +402,7 @@ void groupingThread::fillDecisionAttributesValues(QString decision, ruleCluster 
     for(int i = 0; i < attributesValues.length(); ++i)
     {
         tempList = removeBraces(attributesValues.at(i)).split("=");
-        c->decisionAttributesValues.insert(tempList[0], tempList[1]);
+        //c->decisionAttributesValues.insert(tempList[0], tempList[1]);
     }
 }
 
@@ -486,9 +488,121 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
     }
 }
 
+qreal groupingThread::getClustersSimilarityValue(cluster *c1, cluster *c2)
+{
+    //In case average link is selected
+    if(groupingSettings->interClusterSimMeasureID == AverageLinkId)
+    {
+        qreal result = 0;
+
+
+    }
+
+    //In case both clusters are objects or centroid link is selected
+    if( !(c1->hasBothNodes() && c2->hasBothNodes()) ||
+        groupingSettings->interClusterSimMeasureID == CentroidLinkId)
+    {
+        switch(groupingSettings->interObjectSimMeasureID)
+        {
+            case GowersMeasureId:
+                return getObjectsGowersSimValue(c1, c2);
+                break;
+            case SMCId:
+                return getObjectsSMCValue(c1, c2);
+                break;
+            case WSMCId:
+                return getObjectsWSMCValue(c1, c2);
+                break;
+            default:
+                return -1;
+        }
+    }
+
+    //In case both clusters are not objects
+    if(c1->hasBothNodes() && c2->hasBothNodes())
+    {
+        switch(groupingSettings->interClusterSimMeasureID)
+        {
+            case SingleLinkId:
+                break;
+            case CompleteLinkId:
+                break;
+            default:
+                return -1;
+        }
+    }
+
+    //In case only one is object
+
+
+    return -1;
+}
+
+qreal groupingThread::getObjectsGowersSimValue(cluster *c1, cluster *c2)
+{
+    qreal result = 0;
+
+    QHash<QString, QString> c1Attributes, c2Attributes;
+    c1Attributes =
+            c1->getAttributesForSimilarityCount(groupingSettings->interClusterSimMeasureID);
+    c2Attributes =
+            c2->getAttributesForSimilarityCount(groupingSettings->interClusterSimMeasureID);
+
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
+    {
+        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
+        {
+
+        }
+    }
+
+    return result;
+}
+
+qreal groupingThread::getObjectsSMCValue(cluster *c1, cluster *c2)
+{
+    qreal result = 0;
+
+    QHash<QString, QString> c1Attributes, c2Attributes;
+    c1Attributes =
+            c1->getAttributesForSimilarityCount(groupingSettings->interClusterSimMeasureID);
+    c2Attributes =
+            c2->getAttributesForSimilarityCount(groupingSettings->interClusterSimMeasureID);
+
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
+        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
+            ++result;
+
+    return result;
+}
+
+qreal groupingThread::getObjectsWSMCValue(cluster *c1, cluster *c2)
+{
+    qreal result = 0;
+    QList<QString> allAttributes;
+    QHash<QString, QString> c1Attributes, c2Attributes;
+
+    c1Attributes =
+            c1->getAttributesForSimilarityCount(groupingSettings->interClusterSimMeasureID);
+    c2Attributes =
+            c2->getAttributesForSimilarityCount(groupingSettings->interClusterSimMeasureID);
+
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
+        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
+            ++result;
+
+
+    allAttributes = c1Attributes.keys() + c2Attributes.keys();
+    allAttributes.removeDuplicates();
+
+    int denumerator = allAttributes.size();
+
+    return result/denumerator;
+}
+
 qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2)
 {
-    if(groupingSettings->interClusterSimMeasureID == groupingSettings->CENTROID_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == CentroidLinkId)
     {
         // For some reason if function is returned the value is 0. Hence variable was used.
         qreal result = countRSESRulesSimilarityValue(c1->representative,c2->representative);
@@ -496,7 +610,7 @@ qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleClus
         return  result;
     }
 
-    if(groupingSettings->interClusterSimMeasureID == groupingSettings->AVERAGE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == AverageLinkId)
     {
         QStringList c1Rules = c1->getRules();
         QStringList c2Rules = c2->getRules();
@@ -526,12 +640,12 @@ qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleClus
         return countRSESClusterRuleSimilarityValue(c2->rule, c1);
 
 
-    if(groupingSettings->interClusterSimMeasureID == groupingSettings->SINGLE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == SingleLinkId)
         return qMax(countRSESClustersSimilarityValue(((ruleCluster*) c1->leftNode), c2),
                     countRSESClustersSimilarityValue(((ruleCluster*) c1->rightNode), c2));
 
 
-    if(groupingSettings->interClusterSimMeasureID == groupingSettings->COMPLETE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == CompleteLinkId)
         return qMin(countRSESClustersSimilarityValue(((ruleCluster*) c1->leftNode), c2),
                     countRSESClustersSimilarityValue(((ruleCluster*) c1->rightNode), c2));
 
@@ -543,11 +657,11 @@ qreal groupingThread::countRSESClusterRuleSimilarityValue(QString r, ruleCluster
     if(c->rule !="")
         return countRSESRulesSimilarityValue(r, c->rule);
 
-    if(groupingSettings->interClusterSimMeasureID == groupingSettings->SINGLE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == SingleLinkId)
         return qMax(countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),
                     countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->rightNode)));
 
-    if(groupingSettings->interClusterSimMeasureID == groupingSettings->COMPLETE_LINK_ID)
+    if(groupingSettings->interClusterSimMeasureID == CompleteLinkId)
         return qMin(countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),
                     countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->rightNode)));
 
@@ -558,13 +672,13 @@ qreal groupingThread::countRSESRulesSimilarityValue(QString r1, QString r2)
 {
     switch(groupingSettings->interObjectSimMeasureID)
     {
-        case groupingSettings_General::GOWERS_MEASURE_ID:
+        case GowersMeasureId:
             return countRSESRulesGowersMeasureValue(r1,r2);
 
-        case groupingSettings_General::SIMPLE_SIMILARITY_ID:
+        case SMCId:
             return countRSESRulesSimpleSimilarityValue(r1,r2);
 
-        case groupingSettings_General::WEIGHTED_SIMILARITY_ID:
+        case WSMCId:
             return countRSESRulesWeightedSimilarityValue(r1,r2);
 
         default:
@@ -576,6 +690,10 @@ qreal groupingThread::countRSESRulesSimilarityValue(QString r1, QString r2)
 
 qreal groupingThread::countRSESRulesGowersMeasureValue(QString r1, QString r2)
 {
+    qreal result = 0;
+
+
+    /*
     QStringList r1GroupedPart = getRuleGroupedPart(r1);
     QStringList r2GroupedPart = getRuleGroupedPart(r2);
 
@@ -670,6 +788,7 @@ qreal groupingThread::countRSESRulesGowersMeasureValue(QString r1, QString r2)
     result = (double) sim/wager;
 
     return (double)result;
+    */
 }
 
 int groupingThread::countRSESRulesSimpleSimilarityValue(QString r1, QString r2)

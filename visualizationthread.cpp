@@ -42,10 +42,10 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
 {
     switch(vSettings->visualizationAlgorithmID)
     {
-        case visualizationSettings_general::RT_SLICE_AND_DICE_ID:
+        case SliceAndDiceRTId:
             RSES_RTSAD(vSettings->sceneRect,c);
             break;
-        case visualizationSettings_general::CIRCULAR_TREEMAP_ID:
+        case CircularTreemapId:
             RSES_CircularTreemap(vSettings->sceneRect,c);
             break;
         default:

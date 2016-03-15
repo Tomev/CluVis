@@ -1056,9 +1056,9 @@ void MainWindow::visualize()
 
     addLogMessage(logText);
 
-    if(vSettings->visualizationAlgorithmID == vSettings->RT_SLICE_AND_DICE_ID)
+    if(vSettings->visualizationAlgorithmID == SliceAndDiceRTId)
         ui->graphicsView->fitInView(scene->itemsBoundingRect());
-    if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
+    if(vSettings->visualizationAlgorithmID == CircularTreemapId)
         ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
     addLogMessage(tr("log.visualizationCentered"));
@@ -1171,12 +1171,12 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     if(e->oldSize().width() != -1 && e->oldSize().height() != -1)
     {
-        if(vSettings->visualizationAlgorithmID == vSettings->RT_SLICE_AND_DICE_ID)
+        if(vSettings->visualizationAlgorithmID == SliceAndDiceRTId)
         {
             ui->graphicsView->fitInView(scene->itemsBoundingRect());
         }
 
-        if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
+        if(vSettings->visualizationAlgorithmID == CircularTreemapId)
         {
             ui->graphicsView->fitInView(scene->itemsBoundingRect(),Qt::KeepAspectRatio);
         }

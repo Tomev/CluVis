@@ -5,6 +5,8 @@
 #include <QStringList>
 #include <QSet>
 
+#include "enum_interclustersimilaritymeasures.h"
+
 struct cluster
 {
     cluster(int id = 0)
@@ -14,6 +16,7 @@ struct cluster
 
     //Members
     QHash<QString, QString> attributesValues;
+    QHash<QString, QString> representativeAttributesValues;
 
     int clusterID;
     qreal dispersion;
@@ -59,20 +62,44 @@ struct cluster
         return true;
     }
 
+
+    QList<cluster*> getObjects()
+    {
+        if(attributesValues.empty())
+        {
+            QList<cluster*> result;
+            result.append(this);
+            return result;
+        }
+        else
+            return this->leftNode->getObjects() + this->rightNode->getObjects();
+    }
+
+    QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+    {
+        if(methodId == CentroidLinkId)
+            return representativeAttributesValues;
+
+        return attributesValues;
+    }
     QString getId() {return "";}
     QString getClusterRepresentativeString() {return "";}
     QString toString(){return "To string.";}
 };
 
+
+
+
 struct ruleCluster : cluster
 {
     //Members
 
+    //TODO: Change to QHash
     QString rule, longestRule, shortestRule;
 
     int support;
 
-    QHash<QString, QString> decisionAttributesValues;
+    bool areDecisionsGrouped;
 
     QSet<QString> decisionAttributes;
     QSet<QString> premiseAttributes;
@@ -218,6 +245,23 @@ struct ruleCluster : cluster
             return ((ruleCluster*) leftNode)->getRules() + ((ruleCluster*) rightNode)->getRules();
 
         return QStringList(rule);
+    }
+
+    QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+    {
+        QHash<QString, QString> result;
+        QSet<QString> attributesToExclude;
+
+        if(methodId == CentroidLinkId){result = representativeAttributesValues;}
+        else{result = attributesValues;}
+
+        if(!areDecisionsGrouped){attributesToExclude = decisionAttributes;}
+        else{attributesToExclude = premiseAttributes;}
+
+        for(QSet<QString>::iterator i = attributesToExclude.begin(); i != attributesToExclude.end(); ++i)
+            result.erase(std::find(result.begin(), result.end(), *i));
+
+        return result;
     }
 
 };

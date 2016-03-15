@@ -58,7 +58,10 @@ HEADERS  += mainwindow.h \
     clusterinfo_rsesrules.h \
     customgraphicellipseobject.h \
     clusterinfoincludes.h \
-    test_clusters.h
+    test_clusters.h \
+    enum_interclustersimilaritymeasures.h \
+    enum_interobjectsimilaritymeasure.h \
+    enum_visualizationalgorithms.h
 
 FORMS    += mainwindow.ui \
     about.ui \

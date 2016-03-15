@@ -77,6 +77,11 @@ private:
                 void fillDecisionAttributesValues(QString decision, ruleCluster* c);
             void fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize);
             void updateSimMatrix(std::vector<simData> *simMatrix);
+                qreal getClustersSimilarityValue(cluster* c1, cluster* c2);
+                    qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);
+                    qreal getObjectsSMCValue(cluster* c1, cluster* c2);
+                    qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
+
                 qreal countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2);
                     qreal countRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
                         qreal countRSESRulesSimilarityValue(QString r1, QString r2);
@@ -86,6 +91,7 @@ private:
                             QStringList getRuleGroupedPart(QString r);
                                 QStringList prepareAttribute(QString a);
                                     QString removeBraces(QString a);
+
             void joinMostSimilarClusters(std::vector<simData> *simMatrix);
                 void findHighestSimilarityIndexes(int* i, int* j, std::vector<simData> *simMatrix);
                 cluster* joinClusters(cluster* c1, cluster* c2);
