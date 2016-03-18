@@ -1,6 +1,7 @@
 #include "groupingdatapreparator_rsesrules.h"
 
 #include <QTextStream>
+#include <QDebug>
 
 groupingDataPreparator_RSESRules::groupingDataPreparator_RSESRules(groupingSettings* settings)
 : groupingDataPreparator(settings->genSet, settings->grpSet)
@@ -10,6 +11,8 @@ groupingDataPreparator_RSESRules::groupingDataPreparator_RSESRules(groupingSetti
 
 void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attributeData> *attributes)
 {
+    qDebug() << "Filling attributes.";
+
     QString line;
     QStringList atrData;
     attributeData newAttribute;
@@ -21,6 +24,8 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
 
         while(!line.startsWith("ATTRIBUTES"))
             line = in.readLine();
+
+        line = in.readLine();
 
         while(line.startsWith(" "))
         {

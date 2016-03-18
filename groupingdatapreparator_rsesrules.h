@@ -8,8 +8,6 @@
 #include "groupingsettings.h"
 #include "groupingsettings_rsesrules.h"
 
-
-
 typedef boost::shared_ptr<ruleCluster> ruleCluster_ptr;
 
 class groupingDataPreparator_RSESRules : public QObject, public groupingDataPreparator

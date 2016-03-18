@@ -69,24 +69,37 @@ void groupingThread::groupObjects()
     switch(settings->dataTypeID)
     {
         case RSESRulesId:
-
+        {
             emit passLogMsg(tr("log.rsesGroupingStarted"));
+
+            groupingSettings* sets = new groupingSettings();
+            sets->dGrpSet = dGrpSettings;
+            sets->grpSet = grpSettings;
+            sets->genSet = settings;
+
+            grpDataPrep = new groupingDataPreparator_RSESRules(sets);
             groupRSESRules();
             
             break;
-
+        }
         default:
-
+        {
             emit passLogMsg(tr("log.unknownObjectsType"));
             emit passLogMsg(tr("log.operationWontStart"));
+
             return;
+        }
     }
-
-
 }
 
 void groupingThread::groupRSESRules()
 {
+    grpDataPrep->fillAttributesData(&attributes);
+
+    qDebug() << "Length: " << attributes.keys().length();
+    qDebug() << attributes.keys().at(0);
+
+    /*
     emit passLogMsg(tr("log.gatheringAttributesData"));
 
     fillAttributesData();
@@ -183,6 +196,7 @@ void groupingThread::groupRSESRules()
     emit passMDIData(MDI, maxMDI, maxMDIClustersNumber);
     emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
     emit passClusters(clusters);
+    */
 }
 
 void groupingThread::fillAttributesData()

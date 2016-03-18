@@ -11,6 +11,8 @@
 #include "attributedata.h"
 #include "groupingsettings.h"
 
+#include "groupingdatapreparator_rsesrules.h"
+
 #include "enum_datatype.h"
 
 typedef boost::shared_ptr<qreal> qreal_ptr;
@@ -18,9 +20,9 @@ typedef std::vector<qreal_ptr> clusterSimilarityData;
 typedef boost::shared_ptr<clusterSimilarityData> simData;
 
 
+
 class groupingThread : public QThread
 {
-
     Q_OBJECT
 
 public:
@@ -33,9 +35,6 @@ public:
     void run();
 
 signals:
-    void passRules(ruleCluster*);
-    void passJoinedRules(ruleCluster*);
-    void passClusteredRules(ruleCluster**);
     void passClusters(cluster**);
     void passMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber);
     void passMDBIData(qreal MDBI, qreal maxMDBI, int maxMDBIClustersNumber);
@@ -44,8 +43,11 @@ signals:
 
 private:
     //Members
-        //Constans
         //Variables
+
+    groupingDataPreparator* grpDataPrep;
+
+
     bool wasGroupingCanceled;
     bool wasAverageRuleDenumeratorSet;
 
@@ -63,7 +65,6 @@ private:
     groupingSettings_General* grpSettings;
     groupingSettings_Detailed* dGrpSettings;
 
-    //TODO: Change to QHash
     QHash<QString, attributeData> attributes;
 
     QProgressDialog* groupingProgress;
