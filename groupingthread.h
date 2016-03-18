@@ -65,7 +65,7 @@ private:
     groupingSettings_General* grpSettings;
     groupingSettings_Detailed* dGrpSettings;
 
-    QHash<QString, attributeData> attributes;
+    QHash<QString, attributeData*> attributes;
 
     QProgressDialog* groupingProgress;
     QProgressDialog* creatingSimMatrixProgress;

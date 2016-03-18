@@ -108,11 +108,11 @@ void groupingThread::groupRSESRules()
     qDebug() << clusters[10]->name();
     qDebug() <<  clusters[0]->attributesValues.value(clusters[0]->attributesValues.keys().at(0));
 
-
+    grpDataPrep->fillNumericAttributesValues(&attributes, clusters);
 
 
     /*
-    emit passLogMsg(tr("log.gatheringAttributesData"));
+
 
     fillAttributesData();
 
@@ -213,6 +213,7 @@ void groupingThread::groupRSESRules()
 
 void groupingThread::fillAttributesData()
 {
+    /*
     grpSettings->attributesNumber =
         groupingSettings_RSESRules::getRSESRulesAttributeNumber(grpSettings->objectBaseInfo);
 
@@ -241,13 +242,13 @@ void groupingThread::fillAttributesData()
                 for(int i = 0; i < keys.length(); ++i)
                 {
                     // It's important to add +"=" to if, in case some attribute is used also as a value.
-                    if((line.contains(keys.at(i)+"=")) && (attributes[keys.at(i)].type != "symbolic"))
+                    if((line.contains(keys.at(i)+"=")) && (attributes[keys.at(i)]->type != "symbolic"))
                     {
                         additionalLine = line;
                         value = line.split(keys.at(i)+"=")[1];
                         value = value.split(")")[0];
 
-                        if(attributes[keys.at(i)].type == "numeric")
+                        if(attributes[keys.at(i)]->type == "numeric")
                         {
                             numericAttributeData* temp =
                                 static_cast<numericAttributeData*>(&attributes[keys.at(i)]);
@@ -305,6 +306,7 @@ void groupingThread::fillAttributesData()
             }
         }
     }
+    */
 }
 
 void groupingThread::clusterRules()
@@ -1057,6 +1059,8 @@ QString groupingThread::createAverageRule(ruleCluster *c)
 
     QStringList keys = attributes.keys();
 
+    /*
+
     for(int i = 0; i < grpSettings->attributesNumber; ++i)
     {
         if(attributes[keys.at(i)].type == "numeric")
@@ -1181,6 +1185,8 @@ QString groupingThread::createAverageRule(ruleCluster *c)
     }
 
     return result;
+
+    */
 }
 
 qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule)

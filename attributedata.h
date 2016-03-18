@@ -29,6 +29,16 @@ struct numericAttributeData : attributeData
 
     QString maxValue;
     QString minValue;
+
+    void setMaxValue(QString newVal)
+    {
+        this->maxValue = newVal;
+    }
+
+    void setMinValue(QString newVal)
+    {
+        this->minValue = newVal;
+    }
 };
 
 #endif // ATTRIBUTEDATA

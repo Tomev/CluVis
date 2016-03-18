@@ -9,13 +9,10 @@ groupingDataPreparator_RSESRules::groupingDataPreparator_RSESRules(groupingSetti
     this->dGrpSet = static_cast<groupingSettings_RSESRules*>(settings->dGrpSet);
 }
 
-void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attributeData> *attributes)
+void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attributeData*> *attributes)
 {
-    qDebug() << "Filling attributes.";
-
-    QString line;
+    QString line, atrName;
     QStringList atrData;
-    attributeData newAttribute;
     QFile KB(grpSet->objectBaseInfo.absoluteFilePath());
 
     if(KB.open(QIODevice::ReadOnly))
@@ -37,10 +34,15 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
              */
 
             atrData = line.split(" ");
-            newAttribute.name = atrData.at(1);
-            newAttribute.type = atrData.at(2);
+            atrName = atrData.at(1);
 
-            attributes->insert(newAttribute.name, newAttribute);
+            if(atrData.at(2) == "numeric")
+                attributes->insert(atrData.at(1), new numericAttributeData());
+            else
+                attributes->insert(atrData.at(1), new attributeData());
+
+            attributes->value(atrName)->name = atrData.at(1);
+            attributes->value(atrName)->type = atrData.at(2);
 
             line = in.readLine();
         }
@@ -66,55 +68,88 @@ void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters)
 
         while(!in.atEnd())
         {
-            qDebug() << "Line: " << line;
             clusterRule(clusters, i, line);
-            qDebug() << static_cast<ruleCluster*>(clusters[i])->rule;
-            qDebug() << clusters[i]->name();
             ++i;
             line = in.readLine();
         }
     }
-
-    qDebug() << "Zwracam";
 }
 
-void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString, attributeData> *attributes, cluster** clusters)
+void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString, attributeData*> *attributes, cluster** clusters)
 {
+    qDebug() << "Filling.";
+
     QStringList keys;
     QString atrName, atrMaxVal, atrMinVal;
 
     for(int i = 0; i < genSet->objectsNumber; ++i)
     {
+        qDebug() << "i = " << i;
+
         keys = clusters[i]->attributesValues.keys();
 
-        for(int j = 0; j < keys.length(); j++)
+        for(int j = 0; j < keys.length(); ++j)
         {
+            qDebug() << "j = " << j;
+
             atrName = keys.at(j);
 
-            if(attributes->value(atrName).type == "symbolic");
+            qDebug() << attributes->keys().length();
+            qDebug() << "Keys " << attributes->keys();
+            qDebug() << "obj keys" << keys;
+
+            qDebug() << "Key = " << atrName;
+            qDebug() << "atrName = " << attributes->value(atrName)->name;
+            qDebug() << "Type = " << attributes->value(atrName)->type;
+
+            if(attributes->value(atrName)->type == "symbolic")
                 continue;
 
-            atrMaxVal = static_cast<numericAttributeData>(attributes->value(atrName)).maxValue;
+            atrMaxVal = static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue;
 
             //If atrMaxValue = "" then so does minValue
             if(atrMaxVal == "")
             {
-                static_cast<numericAttributeData>(attributes->value(atrName)).maxValue =
-                static_cast<numericAttributeData>(attributes->value(atrName)).minValue =
-                clusters[i]->attributesValues.value(atrName);
+                qDebug() << "MaxVal == ''";
+                qDebug() << "AtrName = " << atrName;
+                qDebug() << "new value = " << clusters[i]->attributesValues.value(atrName);
+
+                static_cast<numericAttributeData*>(attributes->value(atrName))
+                    ->setMaxValue(clusters[i]->attributesValues.value(atrName));
+
+                qDebug() << "Atr new max value = " << static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue;
+
+                static_cast<numericAttributeData*>(attributes->value(atrName))
+                    ->setMinValue(clusters[i]->attributesValues.value(atrName));
+
+                continue;
             }
 
-            atrMinVal = static_cast<numericAttributeData>(attributes->value(atrName)).minValue;
+            atrMinVal = static_cast<numericAttributeData*>(attributes->value(atrName))->minValue;
 
             if(atrMaxVal.toDouble() < clusters[i]->attributesValues.value(atrName).toDouble())
-                static_cast<numericAttributeData>(attributes->value(atrName)).maxValue =
+            {
+                //qDebug() << "atr name" << atrName;
+                //qDebug() << "Atr max = " << atrMaxVal;
+                //qDebug() << "Clusters val" << clusters[i]->attributesValues.value(atrName);
+
+                static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue =
                     clusters[i]->attributesValues.value(atrName);
+            }
 
             if(atrMinVal.toDouble() > clusters[i]->attributesValues.value(atrName).toDouble())
-                static_cast<numericAttributeData>(attributes->value(atrName)).minValue =
+            {
+                //qDebug() << "atr name" << atrName;
+                //qDebug() << "Atr max = " << atrMaxVal;
+                //qDebug() << "Clusters val" << clusters[i]->attributesValues.value(atrName);
+
+                static_cast<numericAttributeData*>(attributes->value(atrName))->minValue =
                     clusters[i]->attributesValues.value(atrName);
+            }
         }
     }
+
+    qDebug() << "Fucking done";
 }
 
 void groupingDataPreparator_RSESRules::clusterRule(cluster **clusters, int i, QString rule)
@@ -130,41 +165,27 @@ void groupingDataPreparator_RSESRules::clusterRule(cluster **clusters, int i, QS
      */
 
     QStringList conditionsConclusions, attributesValues, attributeValue;
-    int j = 0; // Loop iterator
 
     clusters[i] = new ruleCluster(i, rule);
 
     // Conclusions are at(1), conditions at(0)
     conditionsConclusions = rule.split(")=>(");
-    // Each value is unprepared attribute (with "(" at the begining.
-    attributesValues = conditionsConclusions.at(0).split(")&(");
+    //Calling QString consturctor to no longer work on constant, enabling use of .remove method
+    attributesValues = QString(conditionsConclusions.at(0))
+            .remove(0, 1) // Remove parentheses at the begining
+            .split(")&("); // Split into nice "name=value" strings;
 
     static_cast<ruleCluster*>(clusters[i])->areDecisionsGrouped = dGrpSet->groupedPartID == 1;
 
     // Working on: "atr=val[sup]) sup"
     static_cast<ruleCluster*>(clusters[i])->support = conditionsConclusions.at(1).split(" ").at(1).toInt();
 
-    //qDebug() << "conditionsConclusions.at(1) = " << conditionsConclusions.at(1);
+    // Conclusion attribute looks like "atr=val[sup]) sup", so split at "[" returns whats needed
+    attributesValues.append(QString(conditionsConclusions.at(1)).split("[").at(0));
 
-    attributesValues.append(conditionsConclusions.at(1));
-
-    for(j; j < attributesValues.length(); ++j)
+    for(int j = 0; j < attributesValues.length(); ++j)
     {
-
-        bool isDecisional = j == (attributesValues.length()-1);
-
-        attributeValue = prepareAttribute(attributesValues.at(j), isDecisional).split("=");
-
+        attributeValue = attributesValues.at(j).split("=");
         static_cast<ruleCluster*>(clusters[i])->attributesValues.insert(attributeValue.at(0), attributeValue.at(1));
     }
-
-    //qDebug() << "Returning temp.";
-}
-
-QString groupingDataPreparator_RSESRules::prepareAttribute(QString unprepAtr, bool isDecisionAttribute)
-{
-    if(isDecisionAttribute)         // looks like atr=val[sup]) sup
-        return unprepAtr.split("[").at(0);
-    else                            // looks like (atr=val
-        return unprepAtr.remove(0, 1);
 }
