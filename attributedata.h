@@ -5,6 +5,14 @@
 
 struct attributeData
 {
+    attributeData(){}
+
+    attributeData(QString name, QString type)
+    {
+        this->name = name;
+        this->type = type;
+    }
+
     QString name;
     QString type;
 };

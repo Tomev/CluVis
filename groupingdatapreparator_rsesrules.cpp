@@ -68,9 +68,43 @@ void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters)
     }
 }
 
-void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString, attributeData> *attributes)
+void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString, attributeData> *attributes, cluster** clusters)
 {
+    QStringList keys;
+    QString atrName, atrMaxVal, atrMinVal;
 
+    for(int i = 0; i < genSet->objectsNumber; ++i)
+    {
+        keys = clusters[i]->attributesValues.keys();
+
+        for(int j = 0; j < keys.length(); j++)
+        {
+            atrName = keys.at(j);
+
+            if(attributes->value(atrName).type == "symbolic");
+                continue;
+
+            atrMaxVal = static_cast<numericAttributeData>(attributes->value(atrName)).maxValue;
+
+            //If atrMaxValue = "" then so does minValue
+            if(atrMaxVal == "")
+            {
+                static_cast<numericAttributeData>(attributes->value(atrName)).maxValue =
+                static_cast<numericAttributeData>(attributes->value(atrName)).minValue =
+                clusters[i]->attributesValues.value(atrName);
+            }
+
+            atrMinVal = static_cast<numericAttributeData>(attributes->value(atrName)).minValue;
+
+            if(atrMaxVal.toDouble() < clusters[i]->attributesValues.value(atrName).toDouble())
+                static_cast<numericAttributeData>(attributes->value(atrName)).maxValue =
+                    clusters[i]->attributesValues.value(atrName);
+
+            if(atrMinVal.toDouble() > clusters[i]->attributesValues.value(atrName).toDouble())
+                static_cast<numericAttributeData>(attributes->value(atrName)).minValue =
+                    clusters[i]->attributesValues.value(atrName);
+        }
+    }
 }
 
 void groupingDataPreparator_RSESRules::clusterRule(cluster **clusters, int i, QString rule)
@@ -86,6 +120,7 @@ void groupingDataPreparator_RSESRules::clusterRule(cluster **clusters, int i, QS
      */
 
     QStringList conditionsConclusions, attributesValues, attributeValue;
+    int j = 0; // Loop iterator
 
     //TODO change into shared_ptr
     ruleCluster* temp = new ruleCluster(i, rule);
@@ -100,19 +135,23 @@ void groupingDataPreparator_RSESRules::clusterRule(cluster **clusters, int i, QS
     // Working on: "atr=val[sup]) sup"
     temp->support = conditionsConclusions.at(1).split(" ").at(1).toInt();
 
-    for(int i = 0; i < attributesValues.length(); ++i)
-        prepareAttribute(&attributesValues.at(i), false);
+    attributesValues.append(conditionsConclusions.at(1));
 
-    attributesValues.append(prepareAttribute(conditionsConclusions.at(1), true));
+    for(j; j < attributesValues.length(); ++j)
+    {
+        bool isDecisional = j == attributesValues.length()-1;
 
+        attributeValue = prepareAttribute(attributesValues.at(j), isDecisional).split("=");
+        temp->attributesValues.insert(attributeValue.at(0), attributeValue.at(1));
+    }
 
     clusters[i] = temp;
 }
 
-void groupingDataPreparator_RSESRules::prepareAttribute(QString* unprepAtr, bool isDecisionAttribute)
+QString groupingDataPreparator_RSESRules::prepareAttribute(QString unprepAtr, bool isDecisionAttribute)
 {
     if(isDecisionAttribute)         // looks like atr=val[sup]) sup
-        unprepAtr->split("[").at(1);
+        unprepAtr.split("[").at(1);
     else                            // looks like (atr=val
-        unprepAtr->remove(0, 1);
+        unprepAtr.remove(0, 1);
 }
