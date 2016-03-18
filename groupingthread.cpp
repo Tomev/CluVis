@@ -105,7 +105,7 @@ void groupingThread::groupRSESRules()
 
     grpDataPrep->clusterObjects(clusters);
 
-    qDebug() << clusters[10]->name();
+    qDebug() << clusters[settings->objectsNumber-1]->name();
     qDebug() <<  clusters[0]->attributesValues.value(clusters[0]->attributesValues.keys().at(0));
 
     grpDataPrep->fillNumericAttributesValues(&attributes, clusters);
