@@ -36,7 +36,7 @@ struct cluster
         else
             result+="O";
 
-        result += QString::number(clusterID);
+        result += QString::number(clusterID+1);
 
         return result;
     }
@@ -62,7 +62,6 @@ struct cluster
         return true;
     }
 
-
     QList<cluster*> getObjects()
     {
         if(attributesValues.empty())
@@ -82,11 +81,11 @@ struct cluster
 
         return attributesValues;
     }
-    QString getId() {return "";}
+
     QString getClusterRepresentativeString() {return "";}
+
     QString toString(){return "To string.";}
 };
-
 
 
 
@@ -139,20 +138,6 @@ struct ruleCluster : cluster
     }
 
         //Other
-
-    QString getId()
-    {
-        QString result = "";
-
-        if(this->size()==1)
-            result += "R";
-        else
-            result += "J";
-
-        result += this->clusterID+1;
-
-        return result;
-    }
 
     QString getMostCommonDecision()
     {
@@ -256,7 +241,7 @@ struct ruleCluster : cluster
         else{result = attributesValues;}
 
         if(!areDecisionsGrouped){attributesToExclude = decisionAttributes;}
-        else{attributesToExclude = premiseAttributes;}
+        else                    {attributesToExclude = premiseAttributes;}
 
         for(QSet<QString>::iterator i = attributesToExclude.begin(); i != attributesToExclude.end(); ++i)
             result.erase(std::find(result.begin(), result.end(), *i));

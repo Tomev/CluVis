@@ -8,6 +8,10 @@
 #include "groupingsettingsincludes.h"
 #include "generalincludes.h"
 
+#include "attributedata.h"
+#include "groupingsettings.h"
+
+#include "enum_datatype.h"
 
 typedef boost::shared_ptr<qreal> qreal_ptr;
 typedef std::vector<qreal_ptr> clusterSimilarityData;
@@ -20,10 +24,10 @@ class groupingThread : public QThread
     Q_OBJECT
 
 public:
-    groupingThread();
-    groupingThread(groupingSettings_RSESRules *RSESSettings,
+    groupingThread(groupingSettings_Detailed *dGrpSettings,
                    groupingSettings_General *groupingSettings,
                    generalSettings *settings);
+    groupingThread(groupingSettings *settings);
     ~groupingThread();
 
     void run();
@@ -56,12 +60,11 @@ private:
     int nextClusterID, newClusterIdx;
 
     generalSettings* settings;
-    groupingSettings_General* groupingSettings;
-    groupingSettings_RSESRules* RSESSettings = NULL;
+    groupingSettings_General* grpSettings;
+    groupingSettings_Detailed* dGrpSettings;
 
     //TODO: Change to QHash
-    RSESAttribute* attributes;
-    QHash<QString, RSESAttribute> newAttributes;
+    QHash<QString, attributeData> attributes;
 
     QProgressDialog* groupingProgress;
     QProgressDialog* creatingSimMatrixProgress;
@@ -77,10 +80,13 @@ private:
                 void fillDecisionAttributesValues(QString decision, ruleCluster* c);
             void fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize);
             void updateSimMatrix(std::vector<simData> *simMatrix);
+
                 qreal getClustersSimilarityValue(cluster* c1, cluster* c2);
-                    qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);
-                    qreal getObjectsSMCValue(cluster* c1, cluster* c2);
-                    qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
+                    qreal getClustersAverageLinkValue(cluster* c1, cluster* c2);
+                    qreal getObjectsSimValue(cluster* c1, cluster* c2);
+                        qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);
+                        qreal getObjectsSMCValue(cluster* c1, cluster* c2);
+                        qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
 
                 qreal countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2);
                     qreal countRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);

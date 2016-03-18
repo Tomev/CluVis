@@ -19,7 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     settings = new generalSettings();
     gSettings = new groupingSettings_General();
-    gSettings_RSES = new groupingSettings_RSESRules();
     vSettings = new visualizationSettings_general();
     vSettings_RSES = new visualizationSettings_RSESRules();
     tim = new QTime();
@@ -69,13 +68,9 @@ MainWindow::~MainWindow()
     delete vThread;
     delete settings;
     delete gSettings;
-    delete gSettings_RSES;
+    delete dGrpSettings;
     delete vSettings;
     delete vSettings_RSES;
-
-    for(int i = settings->objectsNumber; i >= 0; --i)
-        delete clusters[i];
-
     delete[] clusters;
     delete cInfo;
     delete tim;
@@ -176,12 +171,11 @@ int MainWindow::getObjectsNumber()
 {
     switch(settings->dataTypeID)
     {
-        case generalSettings::RSES_RULES_ID:
-            return gSettings_RSES->getRSESRulesNumber(
-                        gSettings->objectBaseInfo);
-            break;
+        case RSESRulesId:
+            return groupingSettings_RSESRules::getRSESRulesNumber(
+                    gSettings->objectBaseInfo);
         default:
-            ;
+            return -1;
     }
 
     return -1;
@@ -865,28 +859,32 @@ void MainWindow::setGroupingSettings()
 
     switch(settings->dataTypeID)
     {
-        case generalSettings::RSES_RULES_ID:
+        case RSESRulesId:
+        {
+            groupingSettings_RSESRules* temp = new groupingSettings_RSESRules();
 
-        gSettings_RSES->groupingPartID =
-            ui->comboBoxRuleGroupedPart->currentIndex();
+            temp->groupedPartID =
+                ui->comboBoxRuleGroupedPart->currentIndex();
 
-        gThread = new groupingThread(gSettings_RSES, gSettings, settings);
+            dGrpSettings = temp;
 
-        connect(gThread,SIGNAL(passClusters(cluster**)),
-                this,SLOT(getClusters(cluster**)));
-        connect(gThread,SIGNAL(passLogMsg(QString)),
-                this,SLOT(gotLogText(QString)));
-        connect(gThread,SIGNAL(passMDIData(qreal, qreal, int)),
-                this,SLOT(gotMDIData(qreal, qreal, int)));
-        connect(gThread,SIGNAL(passMDBIData(qreal, qreal, int)),
-                this,SLOT(gotMDBIData(qreal, qreal, int)));
+            gThread = new groupingThread(dGrpSettings, gSettings, settings);
 
-        addLogMessage(tr("log.rsesRules.detailedSettingsLoaded"));
+            connect(gThread,SIGNAL(passClusters(cluster**)),
+                    this,SLOT(getClusters(cluster**)));
+            connect(gThread,SIGNAL(passLogMsg(QString)),
+                    this,SLOT(gotLogText(QString)));
+            connect(gThread,SIGNAL(passMDIData(qreal, qreal, int)),
+                    this,SLOT(gotMDIData(qreal, qreal, int)));
+            connect(gThread,SIGNAL(passMDBIData(qreal, qreal, int)),
+                    this,SLOT(gotMDBIData(qreal, qreal, int)));
 
-        break;
+            addLogMessage(tr("log.rsesRules.detailedSettingsLoaded"));
 
+            break;
+        }
         default:
-        ;
+            ;
     }
 }
 
@@ -906,7 +904,7 @@ void MainWindow::setVisualizationSettings()
 
     switch(settings->dataTypeID)
     {
-        case generalSettings::RSES_RULES_ID:
+        case RSESRulesId:
 
         vSettings_RSES->clusteredRules = ((ruleCluster**)clusters);
 

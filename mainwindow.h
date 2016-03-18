@@ -13,6 +13,12 @@
 
 #include "clusterinfoincludes.h"
 
+#include "enum_languages.h"
+#include "enum_datatype.h"
+#include "enum_reporttypes.h"
+
+//typedef boost::shared_ptr<cluster> cluster_ptr;
+
 namespace Ui {
 class MainWindow;
 }
@@ -64,12 +70,6 @@ private slots:
 private:
     QTranslator* translator;
 
-    enum languages
-    {
-        english = 0,
-        polish = 1
-    };
-
     enum Constants
     {
         REPORT_TYPE_XML = 0,
@@ -89,7 +89,8 @@ private:
 
     generalSettings* settings;
     groupingSettings_General* gSettings;
-    groupingSettings_RSESRules* gSettings_RSES;
+    groupingSettings_Detailed* dGrpSettings;
+
     visualizationSettings_general* vSettings;
     visualizationSettings_RSESRules* vSettings_RSES;
 
