@@ -87,8 +87,6 @@ struct cluster
     QString toString(){return "To string.";}
 };
 
-
-
 struct ruleCluster : cluster
 {
     //Members

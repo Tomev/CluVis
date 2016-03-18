@@ -94,10 +94,22 @@ void groupingThread::groupObjects()
 
 void groupingThread::groupRSESRules()
 {
+    emit passLogMsg(tr("log.gatheringAttributesData"));
+
     grpDataPrep->fillAttributesData(&attributes);
 
     qDebug() << "Length: " << attributes.keys().length();
     qDebug() << attributes.keys().at(0);
+
+    clusters = new cluster*[settings->objectsNumber];
+
+    grpDataPrep->clusterObjects(clusters);
+
+    qDebug() << clusters[10]->name();
+    qDebug() <<  clusters[0]->attributesValues.value(clusters[0]->attributesValues.keys().at(0));
+
+
+
 
     /*
     emit passLogMsg(tr("log.gatheringAttributesData"));

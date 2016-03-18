@@ -49,7 +49,6 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
 
 void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters)
 {
-    clusters = new cluster*[genSet->objectsNumber];
     int i = 0;
 
     QString line;
@@ -63,14 +62,20 @@ void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters)
         while(!line.startsWith("RULES"))
             line = in.readLine();
 
+        line = in.readLine();
+
         while(!in.atEnd())
         {
+            qDebug() << "Line: " << line;
             clusterRule(clusters, i, line);
+            qDebug() << static_cast<ruleCluster*>(clusters[i])->rule;
+            qDebug() << clusters[i]->name();
             ++i;
             line = in.readLine();
         }
-
     }
+
+    qDebug() << "Zwracam";
 }
 
 void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString, attributeData> *attributes, cluster** clusters)
@@ -127,36 +132,39 @@ void groupingDataPreparator_RSESRules::clusterRule(cluster **clusters, int i, QS
     QStringList conditionsConclusions, attributesValues, attributeValue;
     int j = 0; // Loop iterator
 
-    //TODO change into shared_ptr
-    ruleCluster* temp = new ruleCluster(i, rule);
+    clusters[i] = new ruleCluster(i, rule);
 
     // Conclusions are at(1), conditions at(0)
     conditionsConclusions = rule.split(")=>(");
     // Each value is unprepared attribute (with "(" at the begining.
     attributesValues = conditionsConclusions.at(0).split(")&(");
 
-    temp->areDecisionsGrouped = dGrpSet->groupedPartID == 1;
+    static_cast<ruleCluster*>(clusters[i])->areDecisionsGrouped = dGrpSet->groupedPartID == 1;
 
     // Working on: "atr=val[sup]) sup"
-    temp->support = conditionsConclusions.at(1).split(" ").at(1).toInt();
+    static_cast<ruleCluster*>(clusters[i])->support = conditionsConclusions.at(1).split(" ").at(1).toInt();
+
+    //qDebug() << "conditionsConclusions.at(1) = " << conditionsConclusions.at(1);
 
     attributesValues.append(conditionsConclusions.at(1));
 
     for(j; j < attributesValues.length(); ++j)
     {
-        bool isDecisional = j == attributesValues.length()-1;
+
+        bool isDecisional = j == (attributesValues.length()-1);
 
         attributeValue = prepareAttribute(attributesValues.at(j), isDecisional).split("=");
-        temp->attributesValues.insert(attributeValue.at(0), attributeValue.at(1));
+
+        static_cast<ruleCluster*>(clusters[i])->attributesValues.insert(attributeValue.at(0), attributeValue.at(1));
     }
 
-    clusters[i] = temp;
+    //qDebug() << "Returning temp.";
 }
 
 QString groupingDataPreparator_RSESRules::prepareAttribute(QString unprepAtr, bool isDecisionAttribute)
 {
     if(isDecisionAttribute)         // looks like atr=val[sup]) sup
-        unprepAtr.split("[").at(1);
+        return unprepAtr.split("[").at(0);
     else                            // looks like (atr=val
-        unprepAtr.remove(0, 1);
+        return unprepAtr.remove(0, 1);
 }
