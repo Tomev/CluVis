@@ -410,6 +410,7 @@ struct ruleCluster : cluster
         QStringList getClustersDecisionsList()
         {
             QList<cluster*> rules = this->getObjects();
+            QString decision;
             QStringList decisions;
 
             for(int i = 0; i < rules.length(); ++i)
@@ -431,4 +432,3 @@ struct ruleCluster : cluster
 };
 
 #endif // CLUSTERS
-
