@@ -493,7 +493,9 @@ void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ, st
 
 cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
 {
+    QStringList atrNames;
     ruleCluster* temp = new ruleCluster(++nextClusterID);
+
 
     temp->leftNode = c1;
     temp->rightNode = c2;
@@ -507,6 +509,16 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
             .unite(((ruleCluster*) c1)->premiseAttributes);
     temp->premiseAttributes
             .unite(((ruleCluster*) c2)->premiseAttributes);
+
+    temp->attributes = c1->attributes;
+    atrNames = c2->attributes.keys();
+    for(int i = 0; i < atrNames.length(); ++i)
+    {
+        if(c1->attributes.keys().contains(atrNames.at(i)))
+            continue;
+
+        temp->attributes.insert(atrNames.at(i), c2->attributes.value(atrNames.at(i)));
+    }
 
     temp->fillRepresentativesAttributesValues(grpSettings->repTreshold);
 

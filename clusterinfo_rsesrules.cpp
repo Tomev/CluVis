@@ -21,7 +21,7 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     this->setWindowTitle(title);
 
     ui->labelRulesNumberValue->setText("<b>" + QString::number(c->size())+ "</b>");
-    //ui->labelGroupRepresentativeValue->setText("<b>" + c->getClusterRepresentativeString()+ "</b>");
+    ui->labelGroupRepresentativeValue->setText("<b>" + c->representative()+ "</b>");
 
     QStringList cAttributes = c->premiseAttributes.toList();
 

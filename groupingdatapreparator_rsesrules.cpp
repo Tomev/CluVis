@@ -71,6 +71,7 @@ void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters, QHash<
             ++i;
         }
     }
+
 }
 
 void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule, QHash<QString, attributeData *> *attributes)
@@ -115,6 +116,8 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
         else
             c->premiseAttributes.insert(attributeValue.at(0));
     }
+
+    c->fillRepresentativesAttributesValues(grpSet->repTreshold);
 }
 
 void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString, attributeData*> *attributes, cluster** clusters)
