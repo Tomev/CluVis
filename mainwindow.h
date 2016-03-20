@@ -70,12 +70,6 @@ private slots:
 private:
     QTranslator* translator;
 
-    enum Constants
-    {
-        REPORT_TYPE_XML = 0,
-        REPORT_TYPE_TXT = 1
-    };
-
     Ui::MainWindow *ui;
 
     QString raportMessage;

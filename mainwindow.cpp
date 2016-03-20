@@ -313,9 +313,9 @@ void MainWindow::createPath(QString path)
 int MainWindow::getFileType(QChar t)
 {
     if(t=='l')
-        return REPORT_TYPE_XML;
+        return XmlReportId;
     if(t=='t')
-        return REPORT_TYPE_TXT;
+        return TxtReportId;
 
     return -1;
 }
@@ -326,10 +326,10 @@ QString MainWindow::createReportContent(int type)
 
     switch(type)
     {
-    case REPORT_TYPE_TXT:
+    case TxtReportId:
         content = createTXTReportContent();
         break;
-    case REPORT_TYPE_XML:
+    case XmlReportId:
         content = createXMLReportContent();
         break;
     default:

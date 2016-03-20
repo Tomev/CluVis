@@ -508,7 +508,7 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     temp->premiseAttributes
             .unite(((ruleCluster*) c2)->premiseAttributes);
 
-    //temp->representative = createAverageRule(temp);
+    temp->fillRepresentativesAttributesValues(grpSettings->repTreshold);
 
     //temp->compactness =
             //countClustersCompactness(temp, temp->representative);

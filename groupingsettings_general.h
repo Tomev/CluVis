@@ -26,6 +26,7 @@ public:
     int attributesNumber;
     int attributesFrequencyPercent;
     int coverSum;
+    int repTreshold;
 
     bool findBestClustering;
 
