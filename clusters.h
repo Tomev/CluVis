@@ -4,7 +4,6 @@
 #include <QString>
 #include <QStringList>
 #include <QSet>
-#include <QDebug>
 
 #include "attributedata.h"
 
@@ -242,19 +241,20 @@ struct ruleCluster : cluster
             for(QSet<QString>::iterator i = premiseAttributes.begin(); i != premiseAttributes.end(); ++i)
             {
                 if(ruleAttributes.contains(*i))
-                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")";
-
-                if(i+1 != premiseAttributes.end())
-                    rule += "&";
+                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")&";
             }
+
+            rule.remove(rule.length()-1,1);
 
             rule += "=>";
 
             for(QSet<QString>::iterator i = decisionAttributes.begin(); i != decisionAttributes.end(); ++i)
             {
                 if(ruleAttributes.contains(*i))
-                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")";
+                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")&";
             }
+
+            rule.remove(rule.length()-1,1);
 
             return rule;
         }
@@ -270,35 +270,69 @@ struct ruleCluster : cluster
             for(QSet<QString>::iterator i = premiseAttributes.begin(); i != premiseAttributes.end(); ++i)
             {
                 if(representativeAttributes.contains(*i))
-                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")";
+                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")&";
             }
 
+            representative.remove(representative.length()-1,1);
             representative += "=>";
 
             for(QSet<QString>::iterator i = decisionAttributes.begin(); i != decisionAttributes.end(); ++i)
             {
                 if(representativeAttributes.contains(*i))
-                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")";
+                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")&";
             }
+
+            representative.remove(representative.length()-1,1);
 
             return representative;
         }
 
         QString getMostCommonDecision()
         {
-            QList<cluster*> rules = this->getObjects();
+            QStringList decisions, uniqueDecisions;
+            int mostCommonDecisionIdx = 0, mostCommonDecisionOccurences;
 
-            QString result;
+            decisions = this->getClustersDecisionsList();
 
+            uniqueDecisions = decisions;
+            uniqueDecisions.removeDuplicates();
 
-            return result;
+            mostCommonDecisionOccurences = decisions.count(uniqueDecisions.at(0));
+
+            for(int i = 1; i < uniqueDecisions.length(); ++i)
+            {
+                if(decisions.count(uniqueDecisions.at(i)) > mostCommonDecisionOccurences)
+                {
+                    mostCommonDecisionIdx = i;
+                    mostCommonDecisionOccurences = decisions.count(uniqueDecisions.at(i));
+                }
+            }
+
+            return uniqueDecisions.at(mostCommonDecisionIdx);
         }
 
         QString getLeastCommonDecision()
         {
-            QString result = "Least common decision";
+            QStringList decisions, uniqueDecisions;
+            int leastCommonDecisionIdx = 0, leastCommonDecisionOccurences;
 
-            return result;
+            decisions = this->getClustersDecisionsList();
+
+            uniqueDecisions = decisions;
+            uniqueDecisions.removeDuplicates();
+
+            leastCommonDecisionOccurences = decisions.count(uniqueDecisions.at(0));
+
+            for(int i = 1; i < uniqueDecisions.length(); ++i)
+            {
+                if(decisions.count(uniqueDecisions.at(i)) < leastCommonDecisionOccurences)
+                {
+                    leastCommonDecisionIdx = i;
+                    leastCommonDecisionOccurences = decisions.count(uniqueDecisions.at(i));
+                }
+            }
+
+            return uniqueDecisions.at(leastCommonDecisionIdx);
         }
 
         QString getLongestRule()
@@ -371,6 +405,27 @@ struct ruleCluster : cluster
                 return 0;
 
             return this->premiseAttributes.size();
+        }
+
+        QStringList getClustersDecisionsList()
+        {
+            QList<cluster*> rules = this->getObjects();
+            QStringList decisions;
+
+            for(int i = 0; i < rules.length(); ++i)
+            {
+                ruleCluster* ruleClu = static_cast<ruleCluster*>(rules[i]);
+                decision = "";
+
+                for(    QSet<QString>::iterator j = ruleClu->decisionAttributes.begin();
+                        j != ruleClu->decisionAttributes.end(); ++j)
+                {
+                    decision += QString("(" + *j + "=" + ruleClu->attributesValues.value(*j) + ")&");
+                }
+
+                decision.remove(decision.length()-1,1);
+                decisions.append(decision);
+            }
         }
 
 };
