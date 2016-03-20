@@ -4,11 +4,12 @@
 #include <QString>
 #include <QStringList>
 #include <QSet>
-#include <QDebug>
+
+#include "attributedata.h"
 
 #include "enum_interclustersimilaritymeasures.h"
 
-#include "attributedata.h"
+
 
 struct cluster
 {
@@ -72,22 +73,14 @@ struct cluster
     }
 
         QList<cluster*> getObjects()
-    {
-        if(this->hasBothNodes())
-            return this->leftNode->getObjects() + this->rightNode->getObjects();
-
-        QList<cluster*> result;
-        result.append(this);
-
-        return result;
-    }
-
-        virtual QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
         {
-        if(methodId == CentroidLinkId)
-            return representativeAttributesValues;
+            if(this->hasBothNodes())
+                return this->leftNode->getObjects() + this->rightNode->getObjects();
 
-        return attributesValues;
+            QList<cluster*> result;
+            result.append(this);
+
+            return result;
         }
 
         void fillRepresentativesAttributesValues(int treshold)
@@ -100,6 +93,14 @@ struct cluster
                 atrName = repAttributes.at(i);
                 representativeAttributesValues.insert(atrName, getAttributesAverageValue(atrName));
             }
+        }
+
+        virtual QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+        {
+            if(methodId == CentroidLinkId)
+                return representativeAttributesValues;
+
+            return attributesValues;
         }
 
     protected:
@@ -204,81 +205,142 @@ struct cluster
 
 struct ruleCluster : cluster
 {
-    //Members
+    /*
+     *  This struct represents RSES generated rules clusters.
+     */
 
-    //TODO: Change to QHash
-    QString rule, longestRule, shortestRule;
+    public:
 
-    int support;
+        //Members
 
-    bool areDecisionsGrouped;
+        int support;
 
-    QSet<QString> decisionAttributes;
-    QSet<QString> premiseAttributes;
+        QSet<QString> decisionAttributes;
+        QSet<QString> premiseAttributes;
 
-    //Methods
-        //Constructors
+        //Methods
 
-    ruleCluster(int id = 0, QString r = "")
-    {
-        clusterID = id;
+            //Other
 
-        rule =  longestRule = shortestRule = r;
-    }
+        QString rule()
+        {
+            if(this->size() != 1)
+                return "";
 
-        //Operators
+            QString rule = "";
 
-    inline ruleCluster operator = (ruleCluster c)
-    {
-        clusterID = c.clusterID;
 
-        rule = c.rule;
-        longestRule = c.longestRule;
-        shortestRule = c.shortestRule;
 
-        leftNode = c.leftNode;
-        rightNode = c.rightNode;
+            return rule;
+        }
 
-        decisionAttributes = c.decisionAttributes;
-        premiseAttributes = c.premiseAttributes;
+        QString representative()
+        {
+            if(representativeAttributesValues.size() == 0)
+                return "";
 
-        support = c.support;
+            QString representative = "", attribute;
+            QStringList repPremiseAtrs = representativeAttributesValues.keys();
 
-        return c;
-    }
+            for(int i = 0; i < decisionAttributes.size(); ++i)
+                repPremiseAtrs.remove();
 
-        //Other
+            for(int i = 0; i < premiseAttributes.size(); ++i)
+            {
 
-    QString getMostCommonDecision()
-    {
-        QString result = "Most common decision";
+            }
 
-        return result;
-    }
+            return representative;
+        }
 
-    QString getLeastCommonDecision()
-    {
-        QString result = "Least common decision";
+        QString getMostCommonDecision()
+        {
+            QList<cluster*> rules = this->getObjects();
 
-        return result;
-    }
+            QString result = "Most common decision";
 
-    QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
-    {
-        QHash<QString, QString> result;
-        QSet<QString> attributesToExclude;
+            for(int i = 0; i < rules.length(); ++i)
+            {
+                if(static_cast<ruleCluster*>(rules[i]))
+            }
 
-        if(methodId == CentroidLinkId){result = representativeAttributesValues;}
-        else{result = attributesValues;}
 
-        if(!areDecisionsGrouped){attributesToExclude = decisionAttributes;}
-        else                    {attributesToExclude = premiseAttributes;}
+            return result;
+        }
 
-        for(QSet<QString>::iterator i = attributesToExclude.begin(); i != attributesToExclude.end(); ++i)
-            result.remove(*i);
+        QString getLeastCommonDecision()
+        {
+            QString result = "Least common decision";
 
-        return result;
-    }
+            return result;
+        }
+
+        QString getLongestRule()
+        {
+            QList<cluster*> rules = this->getObjects();
+
+            QString result = static_cast<ruleCluster*>(rules[0])->rule();
+            int longestRuleSize = static_cast<ruleCluster*>(rules[i])->size();;
+
+            for(int i = 1; i < rules.length(); ++i)
+            {
+                if(static_cast<ruleCluster*>(rules[i])->size() > longestRuleSize)
+                {
+                    longestRuleSize = static_cast<ruleCluster*>(rules[i])->size();
+                    result = static_cast<ruleCluster*>(rules[i])->rule();
+                }
+            }
+
+            return result;
+        }
+
+        QString getShortestRule()
+        {
+            QList<cluster*> rules = this->getObjects();
+
+            QString result = static_cast<ruleCluster*>(rules[0])->rule();
+            int shortestRuleSize = static_cast<ruleCluster*>(rules[i])->size();;
+
+            for(int i = 1; i < rules.length(); ++i)
+            {
+                if(static_cast<ruleCluster*>(rules[i])->size() < shortestRuleSize)
+                {
+                    shortestRuleSize = static_cast<ruleCluster*>(rules[i])->size();
+                    result = static_cast<ruleCluster*>(rules[i])->rule();
+                }
+            }
+
+            return result;
+
+        QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+        {
+            QHash<QString, QString> result;
+            QSet<QString> attributesToExclude;
+
+            if(methodId == CentroidLinkId){result = representativeAttributesValues;}
+            else{result = attributesValues;}
+
+            if(!areDecisionsGrouped){attributesToExclude = decisionAttributes;}
+            else                    {attributesToExclude = premiseAttributes;}
+
+            for(QSet<QString>::iterator i = attributesToExclude.begin(); i != attributesToExclude.end(); ++i)
+                result.remove(*i);
+
+            return result;
+        }
+
+    private:
+
+        bool areDecisionsGrouped;
+
+        int getRulesLength()
+        {
+            if(this->size() > 1)
+                return 0;
+
+            return this->premiseAttributes.size();
+        }
+
 };
 
 #endif // CLUSTERS
