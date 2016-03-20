@@ -31,7 +31,6 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
              * lines(0) = "", lines(1) = atr_name, lines(2) atr_type
              */
 
-
             atrData = line.split(" ");
             atrName = atrData.at(1);
 
@@ -48,7 +47,7 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
     }
 }
 
-void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters)
+void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters, QHash<QString, attributeData*> *attributes)
 {
     int i = 0;
 
@@ -67,9 +66,54 @@ void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters)
         while(!in.atEnd())
         {
             line = in.readLine();
-            clusterRule(clusters, i, line);
+            clusters[i] = new ruleCluster(i, line);
+            clusterRule(static_cast<ruleCluster*>(clusters[i]), line, attributes);
             ++i;
         }
+    }
+}
+
+void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule, QHash<QString, attributeData *> *attributes)
+{
+    /*
+     *  Rules in RSES knowledge bases are stored in following format:
+     *  (attribute=value)&(atr=val)&(...)=>(decisionAtr=value[sup]) sup,
+     *  hence I can use split to split them by ")&(" and ")=>(", thus
+     *  removing some of the parentheses I don't want.
+     *
+     *  In all the KBs so far only one-decision rules were seen.
+     *  I'll take that for granted and change it in the future.
+     */
+
+    QStringList conditionsConclusions, attributesValues, attributeValue;
+
+    // Conclusions are at(1), conditions at(0)
+    conditionsConclusions = rule.split(")=>(");
+
+    //Calling QString consturctor to no longer work on constant, enabling use of .remove method
+    attributesValues = QString(conditionsConclusions.at(0))
+        .remove(0, 1)   // Remove parentheses at the begining
+        .split(")&(");  // Split into nice "name=value" strings;
+
+    c->areDecisionsGrouped = dGrpSet->groupedPartID == 1;
+
+    // Working on: "atr=val[sup]) sup"
+    c->support = conditionsConclusions.at(1).split(" ").at(1).toInt();
+
+    // Conclusion attribute looks like "atr=val[sup]) sup", so split at "[" returns whats needed
+    attributesValues.append(QString(conditionsConclusions.at(1)).split("[").at(0));
+
+    for(int i = 0; i < attributesValues.length(); ++i)
+    {
+        attributeValue = attributesValues.at(i).split("=");
+        c->attributesValues.insert(attributeValue.at(0), attributeValue.at(1));
+        c->attributes.insert(attributeValue.at(0), attributes->value(attributeValue.at(0)));
+
+        //Last attribute is decisional, hence:
+        if(i == attributesValues.length()-1)
+            c->decisionAttributes.insert(attributeValue.at(0));
+        else
+            c->premiseAttributes.insert(attributeValue.at(0));
     }
 }
 
@@ -125,43 +169,5 @@ void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString
                     clusters[i]->attributesValues.value(atrName);
             }
         }
-    }
-}
-
-void groupingDataPreparator_RSESRules::clusterRule(cluster **clusters, int i, QString rule)
-{
-    /*
-     *  Rules in RSES knowledge bases are stored in following format:
-     *  (attribute=value)&(atr=val)&(...)=>(decisionAtr=value[sup]) sup,
-     *  hence I can use split to split them by ")&(" and ")=>(", thus
-     *  removing some of the parentheses I don't want.
-     *
-     *  In all the KBs so far only one-decision rules were seen.
-     *  I'll take that for granted and change it in the future.
-     */
-
-    QStringList conditionsConclusions, attributesValues, attributeValue;
-
-    clusters[i] = new ruleCluster(i, rule);
-
-    // Conclusions are at(1), conditions at(0)
-    conditionsConclusions = rule.split(")=>(");
-    //Calling QString consturctor to no longer work on constant, enabling use of .remove method
-    attributesValues = QString(conditionsConclusions.at(0))
-            .remove(0, 1) // Remove parentheses at the begining
-            .split(")&("); // Split into nice "name=value" strings;
-
-    static_cast<ruleCluster*>(clusters[i])->areDecisionsGrouped = dGrpSet->groupedPartID == 1;
-
-    // Working on: "atr=val[sup]) sup"
-    static_cast<ruleCluster*>(clusters[i])->support = conditionsConclusions.at(1).split(" ").at(1).toInt();
-
-    // Conclusion attribute looks like "atr=val[sup]) sup", so split at "[" returns whats needed
-    attributesValues.append(QString(conditionsConclusions.at(1)).split("[").at(0));
-
-    for(int j = 0; j < attributesValues.length(); ++j)
-    {
-        attributeValue = attributesValues.at(j).split("=");
-        static_cast<ruleCluster*>(clusters[i])->attributesValues.insert(attributeValue.at(0), attributeValue.at(1));
     }
 }

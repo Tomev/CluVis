@@ -4,30 +4,39 @@
 #include <QString>
 #include <QStringList>
 #include <QSet>
+#include <QDebug>
 
 #include "enum_interclustersimilaritymeasures.h"
 
+#include "attributedata.h"
+
 struct cluster
 {
-    cluster(int id = 0)
+    public:
+
+        cluster(int id = 0)
     {
-        clusterID = id;
+        this->clusterID = id;
     }
 
     //Members
-    QHash<QString, QString> attributesValues;
-    QHash<QString, QString> representativeAttributesValues;
+        QHash<QString, QString> attributesValues;
+        QHash<QString, QString> representativeAttributesValues;
 
-    int clusterID;
-    qreal dispersion;
+        // Cosists of attributes that are present in cluster.
+        QHash<QString, attributeData*> attributes;
 
-    QString representative;
+        /*
+         * Compactness requires knowledge about similarity measures
+         * hence should be filled in grouping thread.
+         */
+        qreal compactness;
 
-    cluster* leftNode = NULL;
-    cluster* rightNode = NULL;
+        cluster* leftNode = NULL;
+        cluster* rightNode = NULL;
 
-    //Methods
-    QString name()
+        //Methods
+        QString name()
     {
         QString result = "";
 
@@ -41,7 +50,7 @@ struct cluster
         return result;
     }
 
-    int size()
+        int size()
     {
         if(hasBothNodes())
             return leftNode->size() + rightNode->size();
@@ -49,12 +58,12 @@ struct cluster
         return 1;
     }
 
-    int nodesNumber()
+        int nodesNumber()
     {
         return 2*size()-1;
     }
 
-    bool hasBothNodes()
+        bool hasBothNodes()
     {
         if(leftNode == NULL || rightNode == NULL)
             return false;
@@ -62,29 +71,135 @@ struct cluster
         return true;
     }
 
-    QList<cluster*> getObjects()
+        QList<cluster*> getObjects()
     {
-        if(attributesValues.empty())
-        {
-            QList<cluster*> result;
-            result.append(this);
-            return result;
-        }
-        else
+        if(this->hasBothNodes())
             return this->leftNode->getObjects() + this->rightNode->getObjects();
+
+        QList<cluster*> result;
+        result.append(this);
+
+        return result;
     }
 
-    QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
-    {
+        QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+        {
         if(methodId == CentroidLinkId)
             return representativeAttributesValues;
 
         return attributesValues;
-    }
+        }
 
-    QString getClusterRepresentativeString() {return "";}
+        void fillRepresentativesAttributesValues(int treshold)
+        {
+            QStringList repAttributes = getRepresentativesAttributesList(treshold);
+            QString atrName;
 
-    QString toString(){return "To string.";}
+            for(int i = 0; i < repAttributes.length(); ++i)
+            {
+                atrName = repAttributes.at(i);
+                representativeAttributesValues.insert(atrName, getAttributesAverageValue(atrName));
+            }
+        }
+
+    protected:
+
+        int clusterID;
+
+        QStringList getRepresentativesAttributesList(int treshold)
+        {
+            /*
+             *  If in *treshold* percent rules some attribute occurs
+             *  then it should be used to represent the this cluster.
+             */
+
+            QList<cluster*> objects = this->getObjects();
+            int rulesContainingAttribute;
+            QStringList result, attributesNames;
+
+            attributesNames = attributes.keys();
+
+            for(int i = 0; i < attributesNames.length(); ++i)
+            {
+                rulesContainingAttribute = 0;
+
+                for(int j = 0; j < objects.length(); ++j)
+                {
+                    if(objects.at(j)->attributesValues.keys().contains(attributesNames.at(i)))
+                        ++rulesContainingAttribute;
+                }
+
+                if(qreal(100*rulesContainingAttribute/this->size()) >= treshold)
+                    result.append(attributesNames.at(i));
+            }
+
+            return result;
+        }
+
+        QString getAttributesAverageValue(QString atrName)
+        {
+            //  Get modal for symbolic and average for numeric attributes
+            QString result;
+
+            if(attributes.value(atrName)->type == "symbolic")
+                result = getAttributesModal(atrName);
+            else
+                result = getNumericAttributesAverage(atrName);
+
+            return result;
+        }
+
+        QString getAttributesModal(QString atrName)
+        {
+            QList<cluster*> objects = this->getObjects();
+            QStringList values, uniqueValues;
+            int mostCommonValueIdx = 0, mostCommonValueOccurences = 0, currentValueOccurences;
+
+            for(int i = 0; i < objects.length(); ++i)
+            {
+                if(objects.at(i)->attributesValues.keys().contains(atrName))
+                {
+                    values.append(objects.at(i)->attributesValues.value(atrName));
+                    uniqueValues.append(objects.at(i)->attributesValues.value(atrName));
+                }
+            }
+
+            uniqueValues.removeDuplicates();
+
+            for(int i = 0; i < uniqueValues.length(); ++i)
+            {
+                currentValueOccurences = values.count(uniqueValues.at(i));
+
+                if(currentValueOccurences > mostCommonValueOccurences)
+                {
+                    mostCommonValueIdx = i;
+                    mostCommonValueOccurences = currentValueOccurences;
+                }
+            }
+
+            return uniqueValues.at(mostCommonValueIdx);
+        }
+
+        QString getNumericAttributesAverage(QString atrName)
+        {
+            qreal result = 0;
+            int denumerator = 0;
+
+            QList<cluster*> objects = this->getObjects();
+
+            for(int i = 0; i < objects.length(); ++i)
+            {
+                if(objects.at(i)->attributesValues.keys().contains(atrName))
+                {
+                   result += objects.at(i)->attributesValues.value(atrName).toDouble();
+                   ++denumerator;
+                }
+            }
+
+            result /= denumerator;
+
+            return QString::number(result);
+        }
 };
 
 struct ruleCluster : cluster
@@ -108,8 +223,7 @@ struct ruleCluster : cluster
     {
         clusterID = id;
 
-        rule =  longestRule = shortestRule =
-                representative = r;
+        rule =  longestRule = shortestRule = r;
     }
 
         //Operators
@@ -128,8 +242,6 @@ struct ruleCluster : cluster
         decisionAttributes = c.decisionAttributes;
         premiseAttributes = c.premiseAttributes;
 
-        representative = c.representative;
-
         support = c.support;
 
         return c;
@@ -141,39 +253,6 @@ struct ruleCluster : cluster
     {
         QString result = "Most common decision";
 
-        QStringList rules = getRules();
-        QStringList decisions;
-        QList<int> decisionOccurences;
-
-        for(int i = 0; i < rules.length(); i++)
-        {
-            QString decision = rules[i].split("=>")[1];
-
-            if(decisions.contains(decision))
-            {
-                decisionOccurences[decisions.indexOf(decision)] ++;
-            }
-            else
-            {
-                decisions.append(decision);
-                decisionOccurences.append(1);
-            }
-        }
-
-        int highestValue = 1;
-        int highestValueIndex = 0;
-
-        for(int i = 0; i < decisionOccurences.length(); i++)
-        {
-            if(decisionOccurences[i] > highestValue)
-            {
-                highestValue = decisionOccurences[i];
-                highestValueIndex = i;
-            }
-        }
-
-        result = decisions[highestValueIndex];
-
         return result;
     }
 
@@ -181,53 +260,7 @@ struct ruleCluster : cluster
     {
         QString result = "Least common decision";
 
-        QStringList rules = getRules();
-        QStringList decisions;
-        QList<int> decisionOccurences;
-
-        for(int i = 0; i < rules.length(); i++)
-        {
-            QString decision = rules[i].split("=>")[1];
-
-            if(decisions.contains(decision))
-            {
-                decisionOccurences[decisions.indexOf(decision)] ++;
-            }
-            else
-            {
-                decisions.append(decision);
-                decisionOccurences.append(1);
-            }
-        }
-
-        int lowestValue = 1;
-        int lowestValueIndex = 0;
-
-        for(int i = 0; i < decisionOccurences.length(); i++)
-        {
-            if(decisionOccurences[i] < lowestValue)
-            {
-                lowestValue = decisionOccurences[i];
-                lowestValueIndex = i;
-            }
-        }
-
-        result = decisions[lowestValueIndex];
-
         return result;
-    }
-
-    QString getClusterRepresentativeString()
-    {        
-        return this->representative;
-    }
-
-    QStringList getRules()
-    {
-        if(rule=="")
-            return ((ruleCluster*) leftNode)->getRules() + ((ruleCluster*) rightNode)->getRules();
-
-        return QStringList(rule);
     }
 
     QHash<QString, QString> getAttributesForSimilarityCount(int methodId)

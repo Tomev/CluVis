@@ -18,15 +18,15 @@ class groupingDataPreparator_RSESRules : public QObject, public groupingDataPrep
 public:
     groupingDataPreparator_RSESRules(groupingSettings* settings);
 
-    void clusterObjects(cluster** clusters);
     void fillAttributesData(QHash<QString, attributeData *> *attributes);
+    void clusterObjects(cluster** clusters, QHash<QString, attributeData *> *attributes);
     void fillNumericAttributesValues(QHash<QString, attributeData*>* attributes, cluster **clusters);
 
 private:
 
     groupingSettings_RSESRules* dGrpSet;
 
-    void clusterRule(cluster **clusters, int i, QString rule);
+    void clusterRule(ruleCluster* c, QString rule, QHash<QString, attributeData *> *attributes);
 };
 
 #endif // GROUPINGDATAPREPARATOR_RSESRULES_H

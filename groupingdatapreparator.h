@@ -20,7 +20,7 @@ class groupingDataPreparator
         groupingDataPreparator(generalSettings* genSet, groupingSettings_General* grpSet);
 
         virtual void fillAttributesData(QHash<QString, attributeData*>* attributes) = 0;
-        virtual void clusterObjects(cluster** clusters) = 0;
+        virtual void clusterObjects(cluster** clusters, QHash<QString, attributeData*> *attributes) = 0;
         virtual void fillNumericAttributesValues(QHash<QString, attributeData*>* attributes, cluster **clusters) = 0;
 
     protected:

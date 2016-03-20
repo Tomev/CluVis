@@ -401,8 +401,8 @@ QString MainWindow::createTXTReportContent()
         content += "\n\t" + tr("report.clustersCoverage") + ": "
                 + QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()) + "%";
         // Pokrycie skupienia
-        content += "\n\t" + tr("report.clustersRepresentative") + ": "
-                + ((ruleCluster*)clusters[i])->representative;
+        //content += "\n\t" + tr("report.clustersRepresentative") + ": "
+                //+ ((ruleCluster*)clusters[i])->representative;
         // Reprezentant skupienia
     }
 
@@ -727,10 +727,10 @@ QString MainWindow::createXMLFileClustersDataContent()
         result += createXMLFileTableCell(
                     QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()), false);
         //Cluster's representative
-        representativeHolder = ((ruleCluster*)clusters[i])->representative;
-        result += createXMLFileTableCell(representativeHolder.replace("&","&amp;").replace("<","&lt;").replace(">", "&gt;"), false);
+        //representativeHolder = ((ruleCluster*)clusters[i])->representative;
+        //result += createXMLFileTableCell(representativeHolder.replace("&","&amp;").replace("<","&lt;").replace(">", "&gt;"), false);
         //Cluster's representative length
-        result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative)), false);
+        //result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative)), false);
 
         result += "\t\t\t</Row>\n";
     }

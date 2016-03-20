@@ -16,19 +16,12 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     ui->setupUi(this);
     this->c = *c;
 
-    QString title = tr("clusterInfo.clusterInfo");
-
-    if(c->rule == "")
-        title += " J";
-    else
-        title += " O";
-
-    title += QString::number(c->clusterID);
+    QString title = tr("clusterInfo.clusterInfo") + c->name();
 
     this->setWindowTitle(title);
 
     ui->labelRulesNumberValue->setText("<b>" + QString::number(c->size())+ "</b>");
-    ui->labelGroupRepresentativeValue->setText("<b>" + c->getClusterRepresentativeString()+ "</b>");
+    //ui->labelGroupRepresentativeValue->setText("<b>" + c->getClusterRepresentativeString()+ "</b>");
 
     QStringList cAttributes = c->premiseAttributes.toList();
 

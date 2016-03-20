@@ -39,6 +39,20 @@ struct numericAttributeData : attributeData
     {
         this->minValue = newVal;
     }
+
+    bool areMinMaxEqual()
+    {
+        return this->maxValue == this->minValue;
+    }
+
+    qreal getMaxMinAbsDiff()
+    {
+        qreal result;
+
+        result = this->maxValue.toDouble() - this->minValue.toDouble();
+
+        return qAbs(result);
+    }
 };
 
 #endif // ATTRIBUTEDATA
