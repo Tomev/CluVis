@@ -854,6 +854,8 @@ void MainWindow::setGroupingSettings()
             ui->comboBoxInterClusterSimMeasure->currentIndex();
     gSettings->findBestClustering =
             ui->checkBoxSearchForBestIndexes->isChecked();
+    gSettings->repTreshold =
+            ui->spinBoxRepresentativeAttributePercent->value();
 
     addLogMessage(tr("log.generalSettingsLoaded"));
 
