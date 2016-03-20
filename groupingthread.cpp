@@ -131,9 +131,6 @@ void groupingThread::groupRSESRules()
     std::vector<simData> simMatrix;
     fillSimMatrix(&simMatrix, settings->objectsNumber);
 
-    //qDebug() << "simMatrix[0][0]" << *(simMatrix.at(0)->at(0));
-    //qDebug() << "simMatrix[0][0]" << *(simMatrix.at(1)->at(0));
-
     emit passLogMsg(tr("log.groupingProcessStarted"));
 
     groupingProgress->show();
@@ -214,20 +211,6 @@ void groupingThread::groupRSESRules()
     emit passMDIData(MDI, maxMDI, maxMDIClustersNumber);
     emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
     emit passClusters(clusters);
-}
-
-void groupingThread::fillDecisionAttributesValues(QString decision, ruleCluster *c)
-{
-
-    QStringList tempList, attributesValues = decision.split("&");
-
-    for(int i = 0; i < attributesValues.length(); ++i)
-    {
-        ;
-        //tempList = removeBraces(attributesValues.at(i)).split("=");
-        //c->decisionAttributesValues.insert(tempList[0], tempList[1]);
-    }
-
 }
 
 void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize)
@@ -393,6 +376,8 @@ qreal groupingThread::getObjectsGowersSimValue(cluster *c1, cluster *c2)
             c1->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
     c2Attributes =
             c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
+
+    qDebug() << c2Attributes;
 
     for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
     {

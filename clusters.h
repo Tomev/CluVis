@@ -82,7 +82,7 @@ struct cluster
         return result;
     }
 
-        QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+        virtual QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
         {
         if(methodId == CentroidLinkId)
             return representativeAttributesValues;
@@ -275,11 +275,10 @@ struct ruleCluster : cluster
         else                    {attributesToExclude = premiseAttributes;}
 
         for(QSet<QString>::iterator i = attributesToExclude.begin(); i != attributesToExclude.end(); ++i)
-            result.erase(std::find(result.begin(), result.end(), *i));
+            result.remove(*i);
 
         return result;
     }
-
 };
 
 #endif // CLUSTERS
