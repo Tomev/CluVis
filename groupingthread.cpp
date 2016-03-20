@@ -171,15 +171,9 @@ void groupingThread::groupRSESRules()
             }
         }
 
-        //qDebug() << "Joining clusters.";
-
         joinMostSimilarClusters(&simMatrix);
 
-        //qDebug() << "Clusters joined. Updating matrix.";
-
         updateSimMatrix(&simMatrix);
-
-        //qDebug() << "Clusters joined. Updating matrix.";
     }
 
     if(!grpSettings->findBestClustering)
@@ -377,8 +371,6 @@ qreal groupingThread::getObjectsGowersSimValue(cluster *c1, cluster *c2)
     c2Attributes =
             c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
 
-    qDebug() << c2Attributes;
-
     for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
     {
         if(c2Attributes.contains(i.key()))
@@ -505,11 +497,6 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
 
     temp->leftNode = c1;
     temp->rightNode = c2;
-
-    temp->longestRule =  getLongerRule  (((ruleCluster*) c1)->longestRule,
-                                        ((ruleCluster*) c2)->longestRule);
-    temp->shortestRule = getShorterRule (((ruleCluster*) c1)->shortestRule,
-                                        ((ruleCluster*) c2)->shortestRule);
 
     temp->decisionAttributes
             .unite(((ruleCluster*) c1)->decisionAttributes);
@@ -683,8 +670,8 @@ void groupingThread::countMDI(int size)
 
 qreal groupingThread::countLowestRSESInterclusterSimilarity(ruleCluster *c1, ruleCluster *c2)
 {
-    if(c1->rule != "")
-        return countLowestRSESClusterRuleSimilarityValue(c1->rule, c2);
+    if(c1->rule() != "")
+        return countLowestRSESClusterRuleSimilarityValue(c1->rule(), c2);
 
     return qMin(countLowestRSESInterclusterSimilarity(((ruleCluster*) c1->leftNode),c2),
                 countLowestRSESInterclusterSimilarity(((ruleCluster*) c1->rightNode),c2));
@@ -694,7 +681,7 @@ qreal groupingThread::countLowestRSESInterclusterSimilarity(ruleCluster *c1, rul
 
 qreal groupingThread::countLowestRSESClusterRuleSimilarityValue(QString r, ruleCluster *c)
 {
-    if(c->rule !="")
+    if(c->rule() !="")
         return 0;
 
     return qMin(countLowestRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),

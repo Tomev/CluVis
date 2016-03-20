@@ -30,10 +30,10 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     QStringList dAttributes = c->decisionAttributes.toList();
 
     ui->labelDecisionAttributesValue->setText("<b>" + dAttributes.join(", ")+ "</b>");
-    ui->labelLongestRuleValue->setText("<b>" + c->longestRule
+    ui->labelLongestRuleValue->setText("<b>" + c->getLongestRule()
                                        .replace("&", " & ")
                                        .replace("=>", " => ") + "</b>");
-    ui->labelShortestRuleValue->setText("<b>" + c->shortestRule+ "</b>");
+    ui->labelShortestRuleValue->setText("<b>" + c->getShortestRule()+ "</b>");
     ui->labelMostCommonDecisionValue->setText("<b>" + c->getMostCommonDecision()+ "</b>");
     ui->labelLeastCommonDecisionValue->setText("<b>" + c->getLeastCommonDecision()+ "</b>");
 

@@ -66,7 +66,7 @@ void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters, QHash<
         while(!in.atEnd())
         {
             line = in.readLine();
-            clusters[i] = new ruleCluster(i, line);
+            clusters[i] = new ruleCluster(i);
             clusterRule(static_cast<ruleCluster*>(clusters[i]), line, attributes);
             ++i;
         }
@@ -95,7 +95,7 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
         .remove(0, 1)   // Remove parentheses at the begining
         .split(")&(");  // Split into nice "name=value" strings;
 
-    c->areDecisionsGrouped = dGrpSet->groupedPartID == 1;
+    c->setDecisionGroupingInfo(dGrpSet->groupedPartID == 1);
 
     // Working on: "atr=val[sup]) sup"
     c->support = conditionsConclusions.at(1).split(" ").at(1).toInt();

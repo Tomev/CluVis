@@ -4,6 +4,7 @@
 #include <QString>
 #include <QStringList>
 #include <QSet>
+#include <QDebug>
 
 #include "attributedata.h"
 
@@ -212,6 +213,14 @@ struct ruleCluster : cluster
     public:
 
         //Members
+        ruleCluster()
+        {
+            support = 0;
+        }
+        ruleCluster(int id) : cluster(id)
+        {
+            support = 0;
+        }
 
         int support;
 
@@ -228,8 +237,24 @@ struct ruleCluster : cluster
                 return "";
 
             QString rule = "";
+            QStringList ruleAttributes = attributesValues.keys();
 
+            for(QSet<QString>::iterator i = premiseAttributes.begin(); i != premiseAttributes.end(); ++i)
+            {
+                if(ruleAttributes.contains(*i))
+                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")";
 
+                if(i+1 != premiseAttributes.end())
+                    rule += "&";
+            }
+
+            rule += "=>";
+
+            for(QSet<QString>::iterator i = decisionAttributes.begin(); i != decisionAttributes.end(); ++i)
+            {
+                if(ruleAttributes.contains(*i))
+                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")";
+            }
 
             return rule;
         }
@@ -239,15 +264,21 @@ struct ruleCluster : cluster
             if(representativeAttributesValues.size() == 0)
                 return "";
 
-            QString representative = "", attribute;
-            QStringList repPremiseAtrs = representativeAttributesValues.keys();
+            QString representative = "";
+            QStringList representativeAttributes = representativeAttributesValues.keys();
 
-            for(int i = 0; i < decisionAttributes.size(); ++i)
-                repPremiseAtrs.remove();
-
-            for(int i = 0; i < premiseAttributes.size(); ++i)
+            for(QSet<QString>::iterator i = premiseAttributes.begin(); i != premiseAttributes.end(); ++i)
             {
+                if(representativeAttributes.contains(*i))
+                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")";
+            }
 
+            representative += "=>";
+
+            for(QSet<QString>::iterator i = decisionAttributes.begin(); i != decisionAttributes.end(); ++i)
+            {
+                if(representativeAttributes.contains(*i))
+                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")";
             }
 
             return representative;
@@ -257,12 +288,7 @@ struct ruleCluster : cluster
         {
             QList<cluster*> rules = this->getObjects();
 
-            QString result = "Most common decision";
-
-            for(int i = 0; i < rules.length(); ++i)
-            {
-                if(static_cast<ruleCluster*>(rules[i]))
-            }
+            QString result;
 
 
             return result;
@@ -280,13 +306,13 @@ struct ruleCluster : cluster
             QList<cluster*> rules = this->getObjects();
 
             QString result = static_cast<ruleCluster*>(rules[0])->rule();
-            int longestRuleSize = static_cast<ruleCluster*>(rules[i])->size();;
+            int longestRuleLength = static_cast<ruleCluster*>(rules[0])->size();;
 
             for(int i = 1; i < rules.length(); ++i)
             {
-                if(static_cast<ruleCluster*>(rules[i])->size() > longestRuleSize)
+                if(static_cast<ruleCluster*>(rules[i])->getRulesLength() > longestRuleLength)
                 {
-                    longestRuleSize = static_cast<ruleCluster*>(rules[i])->size();
+                    longestRuleLength = static_cast<ruleCluster*>(rules[i])->size();
                     result = static_cast<ruleCluster*>(rules[i])->rule();
                 }
             }
@@ -299,18 +325,24 @@ struct ruleCluster : cluster
             QList<cluster*> rules = this->getObjects();
 
             QString result = static_cast<ruleCluster*>(rules[0])->rule();
-            int shortestRuleSize = static_cast<ruleCluster*>(rules[i])->size();;
+            int shortestRuleLength = static_cast<ruleCluster*>(rules[0])->size();
 
             for(int i = 1; i < rules.length(); ++i)
             {
-                if(static_cast<ruleCluster*>(rules[i])->size() < shortestRuleSize)
+                if(static_cast<ruleCluster*>(rules[i])->getRulesLength() < shortestRuleLength)
                 {
-                    shortestRuleSize = static_cast<ruleCluster*>(rules[i])->size();
+                    shortestRuleLength = static_cast<ruleCluster*>(rules[i])->size();
                     result = static_cast<ruleCluster*>(rules[i])->rule();
                 }
             }
 
             return result;
+        }
+
+        void setDecisionGroupingInfo(bool areDecisionsGrouped)
+        {
+            this->areDecisionsGrouped = areDecisionsGrouped;
+        }
 
         QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
         {
