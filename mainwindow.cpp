@@ -607,8 +607,8 @@ QString MainWindow::createXMLFileTableHeader()
     result += createXMLFileTableCell(tr("report.ungroupedRules"), true);
     result += createXMLFileTableCell(tr("report.MDI"), true);
     result += createXMLFileTableCell(tr("report.MDBI"), true);
-    result += createXMLFileTableCell(tr("report.maxMDI"), true);
-    result += createXMLFileTableCell(tr("report.maxMDIClustersNumber"), true);
+    result += createXMLFileTableCell(tr("report.minMDI"), true);
+    result += createXMLFileTableCell(tr("report.minMDIClustersNumber"), true);
     result += createXMLFileTableCell(tr("report.maxMDBI"), true);
     result += createXMLFileTableCell(tr("report.maxMDBIClustersNumber"), true);
     return result;
