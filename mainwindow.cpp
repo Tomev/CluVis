@@ -683,7 +683,7 @@ QString MainWindow::createXMLFileClustersDataHeader()
     result += createXMLFileTableCell(tr("report.index"), true);
     result += createXMLFileTableCell(tr("report.clustersName"), true);
     result += createXMLFileTableCell(tr("report.clustersSize"), true);
-    result += createXMLFileTableCell(tr("report.clustersRulesPercent"), true); // Procent reguł w grupie [%]
+    result += createXMLFileTableCell(tr("report.clustersRulesPercent"), true);
     result += createXMLFileTableCell(tr("report.clustersNodesNumber"), true);
     result += createXMLFileTableCell(tr("report.clustersNodesNumberPercent"), true);
     result += createXMLFileTableCell(tr("report.clustersCoverage"), true);
@@ -697,7 +697,6 @@ QString MainWindow::createXMLFileClustersDataHeader()
 
 QString MainWindow::createXMLFileClustersDataContent()
 {
-
     /* Representative holder is needed so the
      * std::replace doesn't change symbols like <, > or &
      * inside actual rule in cluster[i]. */
@@ -722,15 +721,16 @@ QString MainWindow::createXMLFileClustersDataContent()
         result += createXMLFileTableCell(
                     QString::number(clusters[i]->nodesNumber()*100/countAllNodes()), false);
         //Cluster's support
+        //TODO: RECONSIDER
         result += createXMLFileTableCell(QString::number((((ruleCluster*)clusters[i])->support)),false);
         //Cluster's support percent
         result += createXMLFileTableCell(
                     QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()), false);
         //Cluster's representative
-        //representativeHolder = ((ruleCluster*)clusters[i])->representative;
-        //result += createXMLFileTableCell(representativeHolder.replace("&","&amp;").replace("<","&lt;").replace(">", "&gt;"), false);
+        representativeHolder = ((ruleCluster*)clusters[i])->representative();
+        result += createXMLFileTableCell(representativeHolder.replace("&","&amp;").replace("<","&lt;").replace(">", "&gt;"), false);
         //Cluster's representative length
-        //result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative)), false);
+        result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative())), false);
 
         result += "\t\t\t</Row>\n";
     }

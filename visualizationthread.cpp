@@ -25,7 +25,7 @@ void visualizationThread::visualize(ruleCluster *c)
 {
     switch(settings->dataTypeID)
     {
-        case 0: //settings->RSES_RULES_ID:
+        case RSESRulesId:
 
             emit passLogMsg(tr("log.rsesVisualizationStarted"));
 

@@ -6,6 +6,8 @@
 #include "generalincludes.h"
 #include "visualizationincludes.h"
 
+#include "enum_datatype.h"
+
 class visualizationThread : public QThread
 {
     Q_OBJECT

@@ -47,16 +47,11 @@ private:
 
     groupingDataPreparator* grpDataPrep;
 
-
     bool wasGroupingCanceled;
     bool wasAverageRuleDenumeratorSet;
 
-    qreal MDI;
-    qreal maxMDI;
-    int maxMDIClustersNumber;
-    qreal MDBI;
-    qreal maxMDBI;
-    int maxMDBIClustersNumber;
+    qreal MDI, minMDI, MDBI, maxMDBI;
+    int minMDIClustersNumber, maxMDBIClustersNumber;
 
     cluster** clusters;
     int nextClusterID, newClusterIdx;
@@ -74,39 +69,30 @@ private:
 
     void initializeGroupingProgressbar();
     void initializeCreatingMatrixProgressbar();
+    void initializeDataPreparator();
 
-    void groupObjects();
-        void groupRSESRules();
-            void clusterRules();
-                void fillAttributesValues(QString data, cluster* c);
-                void fillDecisionAttributesValues(QString decision, ruleCluster* c);
-            void fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize);
-            void updateSimMatrix(std::vector<simData> *simMatrix);
+    void groupObjects();     
+        void fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize);
+        void joinMostSimilarClusters(std::vector<simData> *simMatrix);
+            void findHighestSimilarityIndexes(int* i, int* j, std::vector<simData> *simMatrix);
+            cluster* joinClusters(cluster* c1, cluster* c2);
+            void deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix);
+        void updateSimMatrix(std::vector<simData> *simMatrix);
 
-                qreal getClustersSimilarityValue(cluster* c1, cluster* c2);
-                    qreal getClustersAverageLinkValue(cluster* c1, cluster* c2);
-                    qreal getObjectsSimValue(cluster* c1, cluster* c2);
-                        qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);
-                        qreal getObjectsSMCValue(cluster* c1, cluster* c2);
-                        qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
+        qreal getClustersSimilarityValue(cluster* c1, cluster* c2);
+            qreal getClustersAverageLinkValue(cluster* c1, cluster* c2);
+            qreal getObjectsSimValue(cluster* c1, cluster* c2);
+                qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);
+                qreal getObjectsSMCValue(cluster* c1, cluster* c2);
+                 qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
 
-            void joinMostSimilarClusters(std::vector<simData> *simMatrix);
-                void findHighestSimilarityIndexes(int* i, int* j, std::vector<simData> *simMatrix);
-                cluster* joinClusters(cluster* c1, cluster* c2);
-                void deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix);
-                QString getLongerRule(QString r1, QString r2);
-                    int getRuleAttributesNumber(QString r);
-                QString getShorterRule(QString r1, QString r2);
-            void stopGrouping();
+        qreal countClustersCompactness(cluster *c);
 
      void countMDI(int size);
-        qreal countLowestRSESInterclusterSimilarity(ruleCluster* c1, ruleCluster* c2);
-            qreal countLowestRSESClusterRuleSimilarityValue(QString r, ruleCluster *c);
+        qreal getMaxInterClusterSimilarity(int clustersNum);
+        qreal getMinIntraClusterSimilarity(int clustersNum);
 
-            qreal countClustersCompactness(ruleCluster *c, QString aRule);
      void countMDBI(int size);
-        qreal countSimilaritySum(int size);
-
 };
 
 #endif // GROUPINGTHREAD_H

@@ -427,6 +427,8 @@ struct ruleCluster : cluster
                 decision.remove(decision.length()-1,1);
                 decisions.append(decision);
             }
+
+            return decisions;
         }
 
 };

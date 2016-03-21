@@ -100,6 +100,7 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
 
     // Working on: "atr=val[sup]) sup"
     c->support = conditionsConclusions.at(1).split(" ").at(1).toInt();
+    c->compactness = 0;
 
     // Conclusion attribute looks like "atr=val[sup]) sup", so split at "[" returns whats needed
     attributesValues.append(QString(conditionsConclusions.at(1)).split("[").at(0));
