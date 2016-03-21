@@ -19,7 +19,7 @@ QRectF customGraphicsRectObject::boundingRect() const
 }
 
 void customGraphicsRectObject::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
+{  
     QRectF rec = boundingRect();
     QBrush rectBrush(Qt::blue);
     QString text = c.name();

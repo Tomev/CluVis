@@ -17,19 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    // TODO: Consider turning it into method (3 times in code).
-    // Automatically translate to english.
-    translator = new QTranslator();
-    QString transName = QApplication::applicationDirPath() + "/language/english.qm";
-
-    if(!translator->load(transName))
-        delete translator;
-    else
-        qApp->installTranslator(translator);
-
     settings = new generalSettings();
     gSettings = new groupingSettings_General();
-    gSettings_RSES = new groupingSettings_RSESRules();
     vSettings = new visualizationSettings_general();
     vSettings_RSES = new visualizationSettings_RSESRules();
     tim = new QTime();
@@ -59,6 +48,16 @@ MainWindow::MainWindow(QWidget *parent) :
                    Qt::WindowCloseButtonHint |
                    Qt::WindowMinimizeButtonHint
     );
+
+    /*
+     * Automatically translate to english.
+     *
+     * Initializing with new QTranslator, so delete at the begining of transale
+     * method won't crash.
+     */
+
+    translator = new QTranslator();
+    translate(english);
 }
 
 MainWindow::~MainWindow()
@@ -69,13 +68,9 @@ MainWindow::~MainWindow()
     delete vThread;
     delete settings;
     delete gSettings;
-    delete gSettings_RSES;
+    delete dGrpSettings;
     delete vSettings;
     delete vSettings_RSES;
-
-    for(int i = settings->objectsNumber; i >= 0; i--)
-        delete clusters[i];
-
     delete[] clusters;
     delete cInfo;
     delete tim;
@@ -113,7 +108,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     scene->clear();
     ui->actionSaveVisualization->setEnabled(false);
     ui->actionGenerateReport->setEnabled(false);
-    ui->labelIsBaseGrouped->setText(tr("bold.ungrouped")); // <b>(Niepogrupowana)</b>
+    ui->labelIsBaseGrouped->setText(tr("bold.ungrouped"));
     areObjectsClustered = false;
 
     gSettings->objectBaseInfo = KB;
@@ -176,12 +171,11 @@ int MainWindow::getObjectsNumber()
 {
     switch(settings->dataTypeID)
     {
-        case generalSettings::RSES_RULES_ID:
-            return gSettings_RSES->getRSESRulesNumber(
-                        gSettings->objectBaseInfo);
-            break;
+        case RSESRulesId:
+            return groupingSettings_RSESRules::getRSESRulesNumber(
+                    gSettings->objectBaseInfo);
         default:
-            ;
+            return -1;
     }
 
     return -1;
@@ -310,7 +304,8 @@ void MainWindow::createPath(QString path)
     QDir().mkpath(path);
 }
 
-/* File type is determined by it's name (*.xml/*.txt), so
+/*
+ * File type is determined by it's name (*.xml / *.txt), so
  * last letter of file's name is enough to detemine it's
  * type. At least in this case.
  */
@@ -318,9 +313,9 @@ void MainWindow::createPath(QString path)
 int MainWindow::getFileType(QChar t)
 {
     if(t=='l')
-        return REPORT_TYPE_XML;
+        return XmlReportId;
     if(t=='t')
-        return REPORT_TYPE_TXT;
+        return TxtReportId;
 
     return -1;
 }
@@ -331,10 +326,10 @@ QString MainWindow::createReportContent(int type)
 
     switch(type)
     {
-    case REPORT_TYPE_TXT:
+    case TxtReportId:
         content = createTXTReportContent();
         break;
-    case REPORT_TYPE_XML:
+    case XmlReportId:
         content = createXMLReportContent();
         break;
     default:
@@ -373,10 +368,10 @@ QString MainWindow::createTXTReportContent()
             + formatThickString(ui->labelAlgorithmGroupingValue->text());
     // Wykorzystany algorytm grupowania
     content += "\n" + tr("report.objectsSimilarityMeasure") + ": "
-            + ui->comboBoxInterobjectDistanceMeasure->currentText();
+            + ui->comboBoxInterObjectSimMeasure->currentText();
     // Wybrana miara podobieństwa obiektów
     content += "\n" + tr("report.clustersSimilarityMeasure") + ": "
-            + ui->comboBoxInterclusterDistanceMeasure->currentText();
+            + ui->comboBoxInterClusterSimMeasure->currentText();
     // Wybrana miara podobieństwa skupień
     content += "\n" + tr("report.selectedVisualizationAlgorithm") + ": "
             + ui->comboBoxAlgorithmVisualization->currentText();
@@ -406,8 +401,8 @@ QString MainWindow::createTXTReportContent()
         content += "\n\t" + tr("report.clustersCoverage") + ": "
                 + QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()) + "%";
         // Pokrycie skupienia
-        content += "\n\t" + tr("report.clustersRepresentative") + ": "
-                + ((ruleCluster*)clusters[i])->representative;
+        //content += "\n\t" + tr("report.clustersRepresentative") + ": "
+                //+ ((ruleCluster*)clusters[i])->representative;
         // Reprezentant skupienia
     }
 
@@ -656,8 +651,8 @@ QString MainWindow::createXMLFileTableContent()
     result += createXMLFileTableCell(ui->comboBoxAlgorithmVisualization->currentText(), false);
     //Grouping data
     result += createXMLFileTableCell(formatThickString(ui->labelAlgorithmGroupingValue->text()), false);
-    result += createXMLFileTableCell(ui->comboBoxInterobjectDistanceMeasure->currentText(), false);
-    result += createXMLFileTableCell(ui->comboBoxInterclusterDistanceMeasure->currentText(), false);
+    result += createXMLFileTableCell(ui->comboBoxInterObjectSimMeasure->currentText(), false);
+    result += createXMLFileTableCell(ui->comboBoxInterClusterSimMeasure->currentText(), false);
     result += createXMLFileTableCell(ui->comboBoxRuleGroupedPart->currentText(), false);
     //Overall result data
     result += createXMLFileTableCell(findBiggestCluster()->name(), false);
@@ -688,7 +683,7 @@ QString MainWindow::createXMLFileClustersDataHeader()
     result += createXMLFileTableCell(tr("report.index"), true);
     result += createXMLFileTableCell(tr("report.clustersName"), true);
     result += createXMLFileTableCell(tr("report.clustersSize"), true);
-    result += createXMLFileTableCell(tr("report.clustersRulesPercent"), true); // Procent reguł w grupie [%]
+    result += createXMLFileTableCell(tr("report.clustersRulesPercent"), true);
     result += createXMLFileTableCell(tr("report.clustersNodesNumber"), true);
     result += createXMLFileTableCell(tr("report.clustersNodesNumberPercent"), true);
     result += createXMLFileTableCell(tr("report.clustersCoverage"), true);
@@ -702,7 +697,6 @@ QString MainWindow::createXMLFileClustersDataHeader()
 
 QString MainWindow::createXMLFileClustersDataContent()
 {
-
     /* Representative holder is needed so the
      * std::replace doesn't change symbols like <, > or &
      * inside actual rule in cluster[i]. */
@@ -727,15 +721,16 @@ QString MainWindow::createXMLFileClustersDataContent()
         result += createXMLFileTableCell(
                     QString::number(clusters[i]->nodesNumber()*100/countAllNodes()), false);
         //Cluster's support
+        //TODO: RECONSIDER
         result += createXMLFileTableCell(QString::number((((ruleCluster*)clusters[i])->support)),false);
         //Cluster's support percent
         result += createXMLFileTableCell(
                     QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()), false);
         //Cluster's representative
-        representativeHolder = ((ruleCluster*)clusters[i])->representative;
+        representativeHolder = ((ruleCluster*)clusters[i])->representative();
         result += createXMLFileTableCell(representativeHolder.replace("&","&amp;").replace("<","&lt;").replace(">", "&gt;"), false);
         //Cluster's representative length
-        result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative)), false);
+        result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative())), false);
 
         result += "\t\t\t</Row>\n";
     }
@@ -754,25 +749,30 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionAngielski_triggered()
 {
-    delete translator;
-
-    translator = new QTranslator();
-    QString transName = QApplication::applicationDirPath() + "/language/english.qm";
-
-    if(!translator->load(transName))
-        delete translator;
-    else
-        qApp->installTranslator(translator);
-
-    ui->retranslateUi(this);
+    translate(english);
 }
 
 void MainWindow::on_actionPolski_triggered()
 {
-    delete translator;
+    translate(polish);
+}
 
+void MainWindow::translate(int lang)
+{
+    delete translator;
     translator = new QTranslator();
-    QString transName = QApplication::applicationDirPath() + "/language/polish.qm";
+
+    QString transName = QApplication::applicationDirPath();
+
+    switch(lang)
+    {
+        case polish:
+            transName += "/language/polish.qm";
+            break;
+        case english:
+        default:
+            transName += "/language/english.qm";
+    }
 
     if(!translator->load(transName))
         delete translator;
@@ -846,39 +846,47 @@ void MainWindow::setGroupingSettings()
             ui->spinBoxStopConditionValue->value();
 
     gSettings->groupingAlgorithmID = 0;
-    gSettings->interobjectDistanceMeasureID =
-            ui->comboBoxInterobjectDistanceMeasure->currentIndex();
-    gSettings->interclusterDistanceMeasureID =
-            ui->comboBoxInterclusterDistanceMeasure->currentIndex();
+    gSettings->attributesFrequencyPercent =
+            ui->spinBoxRepresentativeAttributePercent->value();
+    gSettings->interObjectSimMeasureID =
+            ui->comboBoxInterObjectSimMeasure->currentIndex();
+    gSettings->interClusterSimMeasureID =
+            ui->comboBoxInterClusterSimMeasure->currentIndex();
     gSettings->findBestClustering =
             ui->checkBoxSearchForBestIndexes->isChecked();
+    gSettings->repTreshold =
+            ui->spinBoxRepresentativeAttributePercent->value();
 
     addLogMessage(tr("log.generalSettingsLoaded"));
 
     switch(settings->dataTypeID)
     {
-        case generalSettings::RSES_RULES_ID:
+        case RSESRulesId:
+        {
+            groupingSettings_RSESRules* temp = new groupingSettings_RSESRules();
 
-        gSettings_RSES->groupingPartID =
-            ui->comboBoxRuleGroupedPart->currentIndex();
+            temp->groupedPartID =
+                ui->comboBoxRuleGroupedPart->currentIndex();
 
-        gThread = new groupingThread(gSettings_RSES, gSettings, settings);
+            dGrpSettings = temp;
 
-        connect(gThread,SIGNAL(passClusters(cluster**)),
-                this,SLOT(getClusters(cluster**)));
-        connect(gThread,SIGNAL(passLogMsg(QString)),
-                this,SLOT(gotLogText(QString)));
-        connect(gThread,SIGNAL(passMDIData(qreal, qreal, int)),
-                this,SLOT(gotMDIData(qreal, qreal, int)));
-        connect(gThread,SIGNAL(passMDBIData(qreal, qreal, int)),
-                this,SLOT(gotMDBIData(qreal, qreal, int)));
+            gThread = new groupingThread(dGrpSettings, gSettings, settings);
 
-        addLogMessage(tr("log.rsesRules.detailedSettingsLoaded"));
+            connect(gThread,SIGNAL(passClusters(cluster**)),
+                    this,SLOT(getClusters(cluster**)));
+            connect(gThread,SIGNAL(passLogMsg(QString)),
+                    this,SLOT(gotLogText(QString)));
+            connect(gThread,SIGNAL(passMDIData(qreal, qreal, int)),
+                    this,SLOT(gotMDIData(qreal, qreal, int)));
+            connect(gThread,SIGNAL(passMDBIData(qreal, qreal, int)),
+                    this,SLOT(gotMDBIData(qreal, qreal, int)));
 
-        break;
+            addLogMessage(tr("log.rsesRules.detailedSettingsLoaded"));
 
+            break;
+        }
         default:
-        ;
+            ;
     }
 }
 
@@ -898,7 +906,7 @@ void MainWindow::setVisualizationSettings()
 
     switch(settings->dataTypeID)
     {
-        case generalSettings::RSES_RULES_ID:
+        case RSESRulesId:
 
         vSettings_RSES->clusteredRules = ((ruleCluster**)clusters);
 
@@ -1048,9 +1056,9 @@ void MainWindow::visualize()
 
     addLogMessage(logText);
 
-    if(vSettings->visualizationAlgorithmID == vSettings->RT_SLICE_AND_DICE_ID)
+    if(vSettings->visualizationAlgorithmID == SliceAndDiceRTId)
         ui->graphicsView->fitInView(scene->itemsBoundingRect());
-    if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
+    if(vSettings->visualizationAlgorithmID == CircularTreemapId)
         ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
     addLogMessage(tr("log.visualizationCentered"));
@@ -1163,12 +1171,12 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 {
     if(e->oldSize().width() != -1 && e->oldSize().height() != -1)
     {
-        if(vSettings->visualizationAlgorithmID == vSettings->RT_SLICE_AND_DICE_ID)
+        if(vSettings->visualizationAlgorithmID == SliceAndDiceRTId)
         {
             ui->graphicsView->fitInView(scene->itemsBoundingRect());
         }
 
-        if(vSettings->visualizationAlgorithmID == vSettings->CIRCULAR_TREEMAP_ID)
+        if(vSettings->visualizationAlgorithmID == CircularTreemapId)
         {
             ui->graphicsView->fitInView(scene->itemsBoundingRect(),Qt::KeepAspectRatio);
         }

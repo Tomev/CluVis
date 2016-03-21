@@ -5,29 +5,59 @@
 #include <QStringList>
 #include <QMessageBox>
 #include <algorithm>
+
 #include "math.h"
 
 #include "generalsettings.h"
+#include "enum_interclustersimilaritymeasures.h"
+#include "enum_interobjectsimilaritymeasure.h"
 
-groupingThread::groupingThread(){}
+#include "objectsclusterer_rsesrules.h"
 
-groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
+groupingThread::groupingThread(groupingSettings_Detailed *dGrpSettings,
                                groupingSettings_General *groupingSettings,
                                generalSettings* settings)
 {
     nextClusterID = 0;
-    maxMDI = 0.0;
-    maxMDBI = 0.0;
-    maxMDBIClustersNumber = 1;
-    maxMDIClustersNumber = 1;
+    minMDI = maxMDBI = -1;
+    maxMDBIClustersNumber = minMDIClustersNumber = 1;
 
     this->settings = settings;
-    this->groupingSettings = groupingSettings;
-    this->RSESSettings = RSESSettings;
+    this->grpSettings =  groupingSettings;
+    this->dGrpSettings = dGrpSettings;
 
     wasGroupingCanceled = false;
 
+    initializeGroupingProgressbar();
+    initializeCreatingMatrixProgressbar();
+}
 
+groupingThread::groupingThread(groupingSettings *settings)
+{
+    nextClusterID = 0;
+    minMDI = maxMDBI = -1;
+    maxMDBIClustersNumber = minMDIClustersNumber = 1;
+
+    this->settings = settings->genSet;
+    this->grpSettings = settings->grpSet;
+    this->dGrpSettings = settings->dGrpSet;
+
+    wasGroupingCanceled = false;
+
+    initializeGroupingProgressbar();
+    initializeCreatingMatrixProgressbar();
+}
+
+groupingThread::~groupingThread(){}
+
+void groupingThread::run()
+{
+    initializeDataPreparator();
+    groupObjects();
+}
+
+void groupingThread::initializeGroupingProgressbar()
+{
     groupingProgress = new QProgressDialog(tr("gThreadDialog.grouping"),tr("gThreadDialog.cancel"),1, settings->objectsNumber,0,0);
     groupingProgress->setValue(0);
     groupingProgress->setWindowTitle(tr("gThreadDialog.grouping"));
@@ -37,11 +67,12 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
     groupingProgress->move(QApplication::desktop()->availableGeometry().center()
                            - groupingProgress->rect().center()
                            - QPoint(groupingProgress->width()/2, 0));
+}
 
-
+void groupingThread::initializeCreatingMatrixProgressbar()
+{
     creatingSimMatrixProgress  = new QProgressDialog(tr("gThreadDialog.creatingSimilarityMatrix")
                                                      ,tr("gThreadDialog.cancel"),1,settings->objectsNumber,0,0);
-    // Tworzenie macierzy podobieństwa
     creatingSimMatrixProgress->setValue(0);
     creatingSimMatrixProgress->setWindowTitle(tr("gThreadDialog.creatingSimilarityMatrix"));
     creatingSimMatrixProgress->setFixedSize(creatingSimMatrixProgress->sizeHint());
@@ -52,56 +83,60 @@ groupingThread::groupingThread(groupingSettings_RSESRules *RSESSettings,
                                     + QPoint(20 + groupingProgress->width()/2,0));
 }
 
-groupingThread::~groupingThread(){}
-
-void groupingThread::run()
-{
-     groupObjects();
-}
-
-void groupingThread::groupObjects()
+void groupingThread::initializeDataPreparator()
 {
     switch(settings->dataTypeID)
     {
-        case generalSettings::RSES_RULES_ID:
-
+        case RSESRulesId:
+        {
             emit passLogMsg(tr("log.rsesGroupingStarted"));
-            groupRSESRules();
-            
+
+            groupingSettings* sets = new groupingSettings();
+            sets->dGrpSet = dGrpSettings;
+            sets->grpSet = grpSettings;
+            sets->genSet = settings;
+
+            grpDataPrep = new groupingDataPreparator_RSESRules(sets);
+
             break;
-
+        }
         default:
-
+        {
             emit passLogMsg(tr("log.unknownObjectsType"));
             emit passLogMsg(tr("log.operationWontStart"));
+
+            return;
+        }
     }
 }
 
-void groupingThread::groupRSESRules()
-{
+void groupingThread::groupObjects()
+{   
     emit passLogMsg(tr("log.gatheringAttributesData"));
 
-    fillAttributesData();
+    grpDataPrep->fillAttributesData(&attributes);
 
-    int simMatrixSize = settings->objectsNumber;
-
-    std::vector<simData> simMatrix;
-
-    int i = settings->objectsNumber - settings->stopCondition;
+    // Clusters are initialized here, so they wont be deleted after prep method finishes.
+    clusters = new cluster*[settings->objectsNumber];
 
     emit passLogMsg(tr("log.placingObjectsInClusters"));
 
-    clusterRules();
+    grpDataPrep->clusterObjects(clusters, &attributes);
+
+    grpDataPrep->fillNumericAttributesValues(&attributes, clusters);
+
+    emit passLogMsg(tr("log.creatingSimMatrix"));
+
+    std::vector<simData> simMatrix;
+    fillSimMatrix(&simMatrix, settings->objectsNumber);
 
     emit passLogMsg(tr("log.groupingProcessStarted"));
 
-    fillSimMatrix(&simMatrix, simMatrixSize);
-
     groupingProgress->show();
 
-    while(i != 0)
+    for(int i = 0; i < settings->objectsNumber - settings->stopCondition; ++i)
     {
-        groupingProgress->setValue(settings->objectsNumber-simMatrixSize+settings->stopCondition);
+        groupingProgress->setValue(i);
 
         QApplication::processEvents();
 
@@ -112,45 +147,42 @@ void groupingThread::groupRSESRules()
         {
             groupingProgress->close();
             creatingSimMatrixProgress->close();
-            stopGrouping();
+            emit passLogMsg(tr("log.groupingCancelled"));
+            emit passLogMsg(tr("log.visualizationImpossible"));
             return;
         }
 
-        joinMostSimilarClusters(&simMatrix);
-
-        --simMatrixSize;
-
-        if(groupingSettings->findBestClustering)
+        if(grpSettings->findBestClustering)
         {
-            //Count indexes each time, so we can find best one.
-            countMDI(simMatrixSize);
-            countMDBI(simMatrixSize);
+            // Count indexes each time, so we can find best one.
+            countMDI(simMatrix.size());
+            countMDBI(simMatrix.size());
 
-            if(MDI > maxMDI)
+            if(minMDI == -1)
+                minMDI = MDI;
+
+            if((MDI > -1) && (MDI < minMDI))
             {
-                maxMDI = MDI;
-                maxMDIClustersNumber = simMatrixSize;
+                minMDI = MDI;
+                minMDIClustersNumber = simMatrix.size();
             }
 
             if(MDBI > maxMDBI)
             {
                 maxMDBI = MDBI;
-                maxMDBIClustersNumber = simMatrixSize;
+                maxMDBIClustersNumber = simMatrix.size();
             }
         }
 
-        --i;
+        joinMostSimilarClusters(&simMatrix);
 
-        if(simMatrix.size() == 0)
-            break;
-        else
-            updateSimMatrix(&simMatrix);
+        updateSimMatrix(&simMatrix);
     }
 
-    if(!groupingSettings->findBestClustering)
+    if(!grpSettings->findBestClustering)
     {
-        countMDI(simMatrixSize);
-        countMDBI(simMatrixSize);
+        countMDI(simMatrix.size());
+        countMDBI(simMatrix.size());
     }
 
     groupingProgress->close();
@@ -172,167 +204,9 @@ void groupingThread::groupRSESRules()
 
     emit passLogMsg(tr("log.groupingFinished"));
     emit passLogMsg(tr("log.sendingResultatntStructure"));
-    emit passMDIData(MDI, maxMDI, maxMDIClustersNumber);
+    emit passMDIData(MDI, minMDI, minMDIClustersNumber);
     emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
     emit passClusters(clusters);
-}
-
-void groupingThread::fillAttributesData()
-{
-    groupingSettings->attributesNumber =
-        RSESSettings->getRSESRulesAttributeNumber(groupingSettings->objectBaseInfo);
-
-    attributes = new RSESAttribute[groupingSettings->attributesNumber];
-
-    QString line;
-
-    int i = 0;
-
-    bool fillAttributesData = false;
-    bool fillAttributesValues = false;
-
-    QFile KB(groupingSettings->objectBaseInfo.absoluteFilePath());
-
-    if(KB.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&KB);
-
-        while(!in.atEnd())
-        {
-            line = in.readLine();
-
-            if(fillAttributesValues)
-            {
-                for(i = 0; i < groupingSettings->attributesNumber; i++)
-                {
-                    if(attributes[i].type != "symbolic")
-                    {
-                        if(line.contains(attributes[i].name+"="))
-                        {
-                            QString additionalLine = line;
-
-                            QStringList transformationAssistant =
-                                    additionalLine.split(attributes[i].name+"=");
-
-                            additionalLine = transformationAssistant.at(1);
-
-                            additionalLine.resize(additionalLine.indexOf(")"));
-
-                            if(additionalLine.contains("["))
-                                additionalLine.resize(additionalLine.indexOf("["));
-
-
-                            qreal value = additionalLine.toDouble();
-
-                            if(attributes[i].value == "")
-                            {
-                                attributes[i].value = "set";
-                                attributes[i].maxValue = value;
-                                attributes[i].minValue = value;
-                            }
-
-                            if(attributes[i].maxValue < value)
-                                attributes[i].maxValue = value;
-
-                            if(attributes[i].minValue > value)
-                                attributes[i].minValue = value;
-                        }
-                        else
-                        {
-                        }
-                    }
-                    else
-                    {
-                    }
-
-                }
-            }
-
-            if(line.startsWith("ATTRIBUTES "))
-            {
-                fillAttributesData = true;
-            }
-
-            if(fillAttributesData)
-            {
-                line = in.readLine();
-
-                while(line.startsWith(" "))
-                {
-                    line.remove(0,1);
-                    QStringList data = line.split(" ");
-                    attributes[i].name = data.at(0);
-                    attributes[i].type = data.at(1);
-                    attributes[i].value = "";
-                    i++;
-                    line = in.readLine();
-                }
-
-                fillAttributesData = false;
-            }
-
-            if(line.startsWith("RULES "))
-            {
-                fillAttributesValues = true;
-            }
-        }
-    }
-}
-
-void groupingThread::clusterRules()
-{
-    clusters = new cluster*[settings->objectsNumber];
-
-    QString line;
-
-    int i = 0;
-
-    bool startClustering = false;
-
-    QFile KB(groupingSettings->objectBaseInfo.absoluteFilePath());
-
-    if(KB.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&KB);
-
-        while(!in.atEnd())
-        {
-            line = in.readLine();
-
-            if(startClustering)
-            {
-                QString rule = line.split("[")[0];
-                rule += ")";
-
-                ruleCluster* temp = new ruleCluster(i+1, rule);
-
-                QStringList splitedRule = line.split("=>");
-
-                temp->support = splitedRule[1].split(" ")[1].toInt();
-
-                for(int j = 0; j < groupingSettings->attributesNumber; j++)
-                {
-                    QString aName = attributes[j].name;
-
-                    if(splitedRule[0].contains(aName))
-                        temp->conclusionAttributes << aName;
-
-                    if(splitedRule[1].contains(aName))
-                        temp->decisionAttributes << aName;
-                }
-
-                temp->dispersion = 0;
-
-                clusters[i] = temp;
-
-                i++;
-                continue;
-            }
-
-            if(line.startsWith("RULES "))
-                startClustering = true;
-        }
-    }
 }
 
 void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize)
@@ -355,7 +229,7 @@ void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatri
             }
             else
             {
-                qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j]));
+                qreal simValue = getClustersSimilarityValue(clusters[i], clusters[j]);
                 simMatrix->at(i)->push_back(qreal_ptr(new qreal(simValue)));
             }
         }
@@ -404,7 +278,7 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
         }
         else
         {
-            qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[newClusterIdx]),((ruleCluster*)clusters[i]));
+            qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
             simMatrix->at(newClusterIdx)->push_back(qreal_ptr(new qreal(simValue)));
         }
     }
@@ -412,274 +286,163 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
     //Then, the row is filled.
     for(unsigned int i = (newClusterIdx + 1); i <= (simMatrix->size() - 1) ; ++i)
     {
-        qreal simValue = countRSESClustersSimilarityValue(((ruleCluster*)clusters[newClusterIdx]),((ruleCluster*)clusters[i]));
+        qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
         simMatrix->at(i)->insert(simMatrix->at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
     }
 }
 
-qreal groupingThread::countRSESClustersSimilarityValue(ruleCluster *c1, ruleCluster *c2)
+//TODO: Consides placing similarity counting in another class.
+
+qreal groupingThread::getClustersSimilarityValue(cluster *c1, cluster *c2)
 {
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->CENTROID_LINK_ID)
-    {
-        // For some reason if function is returned the value is 0. Hence variable was used.
-        qreal result = countRSESRulesSimilarityValue(c1->representative,c2->representative);
+    //In case average link is selected
+    if(grpSettings->interClusterSimMeasureID == AverageLinkId)
+        return getClustersAverageLinkValue(c1, c2);
 
-        return  result;
+    //In case both clusters are objects or centroid link is selected
+    if( grpSettings->interClusterSimMeasureID == CentroidLinkId ||
+        (c1->size()+c2->size()) == 2 )
+        return getObjectsSimValue(c1, c2);
+
+    //Otherwise
+    if(!(c1->hasBothNodes())) std::swap(c1, c2);
+
+    switch(grpSettings->interClusterSimMeasureID)
+    {
+    case SingleLinkId:
+        return qMax(getClustersSimilarityValue(c1->leftNode,c2),
+                    getClustersSimilarityValue(c1->rightNode,c2));
+        break;
+    case CompleteLinkId:
+        return qMin(getClustersSimilarityValue(c1->leftNode,c2),
+                    getClustersSimilarityValue(c1->rightNode,c2));
+        break;
+    default:
+        return -1;
     }
+}
 
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->AVERAGE_LINK_ID)
+qreal groupingThread::getClustersAverageLinkValue(cluster *c1, cluster *c2)
+{
+    qreal result = 0, denumerator;
+    QList<cluster*> c1Objects, c2Objects;
+
+    c1Objects = c1->getObjects();
+    c2Objects = c2->getObjects();
+
+    denumerator = c1->size() * c2->size();
+
+    for(QList<cluster*>::iterator i = c1Objects.begin();
+        i != c1Objects.end(); ++i)
     {
-        QStringList c1Rules = c1->getRules();
-        QStringList c2Rules = c2->getRules();
-
-        qreal similaritySum = 0;
-
-        int denumerator = c1->size() * c2->size();
-
-        for(int i = 0; i < c1Rules.size(); ++i)
+        for(QList<cluster*>::iterator j = c2Objects.begin();
+            j != c2Objects.end(); ++j)
         {
-            for(int j = 0; j < c2Rules.size(); ++j)
-            {
-                similaritySum += countRSESRulesSimilarityValue(c1Rules[i],c2Rules[j]);
-            }
-        }
-
-        // For some reason if function is returned the value is 0. Hence variable was used.
-        qreal result = similaritySum / denumerator;
-
-        return result;
-    }
-
-    if(c1->rule != "")
-        return countRSESClusterRuleSimilarityValue(c1->rule, c2);
-
-    if(c2->rule != "")
-        return countRSESClusterRuleSimilarityValue(c2->rule, c1);
-
-
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->SINGLE_LINK_ID)
-        return qMax(countRSESClustersSimilarityValue(((ruleCluster*) c1->leftNode), c2),
-                    countRSESClustersSimilarityValue(((ruleCluster*) c1->rightNode), c2));
-
-
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->COMPLETE_LINK_ID)
-        return qMin(countRSESClustersSimilarityValue(((ruleCluster*) c1->leftNode), c2),
-                    countRSESClustersSimilarityValue(((ruleCluster*) c1->rightNode), c2));
-
-    return -1;
-}
-
-qreal groupingThread::countRSESClusterRuleSimilarityValue(QString r, ruleCluster *c)
-{
-    if(c->rule !="")
-        return countRSESRulesSimilarityValue(r, c->rule);
-
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->SINGLE_LINK_ID)
-        return qMax(countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),
-                    countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->rightNode)));
-
-    if(groupingSettings->interclusterDistanceMeasureID == groupingSettings->COMPLETE_LINK_ID)
-        return qMin(countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),
-                    countRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->rightNode)));
-
-    return -1;
-}
-
-qreal groupingThread::countRSESRulesSimilarityValue(QString r1, QString r2)
-{
-    switch(groupingSettings->interobjectDistanceMeasureID)
-    {
-        case groupingSettings_General::GOWERS_MEASURE_ID:
-            return countRSESRulesGowersMeasureValue(r1,r2);
-
-        case groupingSettings_General::SIMPLE_SIMILARITY_ID:
-            return countRSESRulesSimpleSimilarityValue(r1,r2);
-
-        case groupingSettings_General::WEIGHTED_SIMILARITY_ID:
-            return countRSESRulesWeightedSimilarityValue(r1,r2);
-
-        default:
-            break;
-    }
-
-    return 0;
-}
-
-qreal groupingThread::countRSESRulesGowersMeasureValue(QString r1, QString r2)
-{
-    QStringList r1GroupedPart = getRuleGroupedPart(r1);
-    QStringList r2GroupedPart = getRuleGroupedPart(r2);
-
-    QStringList prepR1Argument;
-    QStringList prepR2Argument;
-
-    bool isNumber = false;
-
-    int wager = 0;
-    qreal sim = 0;
-
-    qreal result = 0;
-
-    for(int i=0; i < r1GroupedPart.length(); i++)
-    {
-        prepR1Argument = prepareAttribute(r1GroupedPart.at(i));
-
-        for(int j=0; j < r2GroupedPart.length(); j++)
-        {
-            prepR2Argument = prepareAttribute(r2GroupedPart.at(j));
-
-            if(prepR1Argument.at(0) == prepR2Argument.at(0))
-            {
-                isNumber = false;
-
-                for(int k = 0; k < groupingSettings->attributesNumber; ++k)
-                {
-                    if(prepR1Argument.at(0) == attributes[k].name)
-                    {
-                        if(attributes[k].type == "symbolic")
-                            isNumber = false;
-                        else
-                            isNumber = true;
-                        break;
-                    }
-                }
-
-
-                if(isNumber)
-                {
-                    qreal r1Value = (double)prepR1Argument.at(1).toDouble();
-
-                    qreal val = (double) qAbs(r1Value - prepR2Argument.at(1).toDouble());
-
-                    qreal denumerator = 0;
-
-                    for(int k = 0; k < groupingSettings->attributesNumber; k++)
-                    {
-                        if(attributes[k].name == prepR1Argument.at(0))
-                        {
-                            denumerator = (double)
-                                    attributes[k].maxValue -
-                                    attributes[k].minValue;
-                            break;
-                        }
-                    }
-
-                    if(denumerator == 0)
-                        val = 1;
-                    else
-                    {
-                        val = ((qreal) val/denumerator);
-                        val = ((qreal)1 - val);
-                    }
-
-
-                    sim += val;
-
-                    wager++;
-                }
-                else
-                {
-                    if(prepR1Argument.at(0) == prepR2Argument.at(0))
-                    {
-                        wager++;
-                        sim++;
-                    }
-                }
-            }
-
-            if(r1GroupedPart.at(i) == r2GroupedPart.at(j))
-            {
-                result++;
-                break;
-            }
+            result += getObjectsSimValue(*i, *j);
         }
     }
 
-    if(wager == 0)
-        return 0;
-
-    result = (double) sim/wager;
-
-    return (double)result;
-}
-
-int groupingThread::countRSESRulesSimpleSimilarityValue(QString r1, QString r2)
-{
-    QStringList r1GroupedPart = getRuleGroupedPart(r1);
-    QStringList r2GroupedPart = getRuleGroupedPart(r2);
-
-    int similarityValue = 0;
-
-    for(int i = 0; i < r1GroupedPart.length(); i++)
-    {
-        for(int j = 0; j < r2GroupedPart.length(); j++)
-        {
-            if(r1GroupedPart[i] == r2GroupedPart[j])
-                similarityValue++;
-        }
-    }
-
-    return similarityValue;
-}
-
-qreal groupingThread::countRSESRulesWeightedSimilarityValue(QString r1, QString r2)
-{
-    QSet<QString> argumentsConsidered;
-
-    QStringList r1GroupedPart = getRuleGroupedPart(r1);
-    QStringList r2GroupedPart = getRuleGroupedPart(r2);
-
-    foreach(QString part, r1GroupedPart)
-    {
-        argumentsConsidered.insert(prepareAttribute(part)[0]);
-    }
-
-    foreach(QString part, r2GroupedPart)
-    {
-        argumentsConsidered.insert(prepareAttribute(part)[0]);
-    }
-
-    // For some reason it cannot be returned in one line. Dunno why.
-    qreal result = countRSESRulesSimpleSimilarityValue(r1,r2);
-    result /= argumentsConsidered.size();
+    result /= denumerator;
 
     return result;
 }
 
-QStringList groupingThread::getRuleGroupedPart(QString r)
+qreal groupingThread::getObjectsSimValue(cluster *c1, cluster *c2)
 {
-    QStringList ruleParts = r.split("=>");
-
-    if(RSESSettings->groupingPartID == RSESSettings->CONCLUSION_ID)
+    switch(grpSettings->interObjectSimMeasureID)
     {
-        QStringList conclusion;
-        conclusion.append(ruleParts.at(1));
-        return conclusion;
+        case GowersMeasureId:
+            return getObjectsGowersSimValue(c1, c2);
+            break;
+        case SMCId:
+            return getObjectsSMCValue(c1, c2);
+            break;
+        case WSMCId:
+            return getObjectsWSMCValue(c1, c2);
+            break;
+        default:
+            return -1;
+    }
+}
+
+qreal groupingThread::getObjectsGowersSimValue(cluster *c1, cluster *c2)
+{
+    qreal result = 0, denumerator, addend;
+
+    QHash<QString, QString> c1Attributes, c2Attributes;
+    c1Attributes =
+            c1->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
+    c2Attributes =
+            c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
+
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
+    {
+        if(c2Attributes.contains(i.key()))
+        {
+            if(     (attributes.value(i.key())->type == "symbolic"
+                 && (c2->attributesValues.value(i.key()) == c1->attributesValues.value(i.key())))
+                ||
+                (   attributes.value(i.key())->type == "numeric"
+                 && static_cast<numericAttributeData*>(attributes[i.key()])->areMinMaxEqual()))
+            {
+                ++result;
+                continue;
+            }
+
+            if(attributes.value(i.key())->type == "numeric")
+            {
+                denumerator = static_cast<numericAttributeData*>(attributes[i.key()])->getMaxMinAbsDiff();
+                addend = qAbs(c1->attributesValues.value(i.key()).toDouble() -
+                              c2->attributesValues.value(i.key()).toDouble());
+                addend = 1 - addend/denumerator;
+
+                result += addend;
+            }
+        }
     }
 
-    QStringList conditions = ruleParts.at(0).split("&");
-
-    return conditions;
+    return result;
 }
 
-QStringList groupingThread::prepareAttribute(QString a)
+qreal groupingThread::getObjectsSMCValue(cluster *c1, cluster *c2)
 {
-    QString attribute = removeBraces(a);
+    qreal result = 0;
 
-    return attribute.split("=");
+    QHash<QString, QString> c1Attributes, c2Attributes;
+    c1Attributes =
+            c1->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
+    c2Attributes =
+            c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
+
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
+        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
+            ++result;
+
+    return result;
 }
 
-QString groupingThread::removeBraces(QString a)
+qreal groupingThread::getObjectsWSMCValue(cluster *c1, cluster *c2)
 {
-    QString attribute = a;
+    qreal result = 0;
+    QList<QString> allAttributes;
+    QHash<QString, QString> c1Attributes, c2Attributes;
 
-    if(a.at(0) == ' ')
-        attribute.remove(0,1);
+    c1Attributes =
+            c1->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
+    c2Attributes =
+            c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
 
-    attribute.remove(0,1);
-    attribute.remove(attribute.length()-1,1);
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
+        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
+            ++result;
 
-    return attribute;
+
+    allAttributes = c1Attributes.keys() + c2Attributes.keys();
+    allAttributes.removeDuplicates();
+
+    int denumerator = allAttributes.size();
+
+    return result/denumerator;
 }
 
 void groupingThread::joinMostSimilarClusters(std::vector<simData> *simMatrix)
@@ -695,7 +458,7 @@ void groupingThread::joinMostSimilarClusters(std::vector<simData> *simMatrix)
 
     // This is used in updating matrix.
     newClusterIdx = j;
-;
+
     /*
      *  Order is important!
      *
@@ -734,36 +497,89 @@ void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ, st
 
 cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
 {
-    ruleCluster* temp = new ruleCluster();
+    QStringList atrNames;
+    ruleCluster* newGrp = new ruleCluster(++nextClusterID);
 
-    temp->leftNode = c1;
-    temp->rightNode = c2;
 
-    temp->longestRule =  getLongerRule  (((ruleCluster*) c1)->longestRule,
-                                        ((ruleCluster*) c2)->longestRule);
-    temp->shortestRule = getShorterRule (((ruleCluster*) c1)->shortestRule,
-                                        ((ruleCluster*) c2)->shortestRule);
+    newGrp->leftNode = c1;
+    newGrp->rightNode = c2;
 
-    temp->decisionAttributes
+    newGrp->decisionAttributes
             .unite(((ruleCluster*) c1)->decisionAttributes);
-    temp->decisionAttributes
+    newGrp->decisionAttributes
             .unite(((ruleCluster*) c2)->decisionAttributes);
 
-    temp->conclusionAttributes
-            .unite(((ruleCluster*) c1)->conclusionAttributes);
-    temp->conclusionAttributes
-            .unite(((ruleCluster*) c2)->conclusionAttributes);
+    newGrp->premiseAttributes
+            .unite(((ruleCluster*) c1)->premiseAttributes);
+    newGrp->premiseAttributes
+            .unite(((ruleCluster*) c2)->premiseAttributes);
 
-    temp->representative = createAverageRule(temp);
+    newGrp->support =
+            static_cast<ruleCluster*>(c1)->support +
+            static_cast<ruleCluster*>(c2)->support;
 
-    temp->dispersion =
-            countClusterDispersion(temp, temp->representative);
+    newGrp->attributes = c1->attributes;
+    atrNames = c2->attributes.keys();
 
-    temp->support = ((ruleCluster*) c1)->support + ((ruleCluster*) c2)->support;
+    for(int i = 0; i < atrNames.length(); ++i)
+    {
+        if(c1->attributes.keys().contains(atrNames.at(i)))
+            continue;
 
-    temp->clusterID = ++nextClusterID;
+        newGrp->attributes.insert(atrNames.at(i), c2->attributes.value(atrNames.at(i)));
+    }
 
-    return temp;
+    newGrp->fillRepresentativesAttributesValues(grpSettings->repTreshold);
+
+    newGrp->compactness = countClustersCompactness(newGrp);
+
+    return newGrp;
+}
+
+qreal groupingThread::countClustersCompactness(cluster* c)
+{
+    /*
+     *  In this application cluster compactness is average similarity
+     *  of all the objects to clusters representative. It has to be
+     *  count in grouping thread as only grouping thread has knowledge
+     *  about similarity measures (countSim methods).
+     */
+
+    qreal result, addend;
+    QList<cluster*> objects = c->getObjects();
+
+    // Clusters compactness of object is equal to 0
+    if(c->size() == 1)
+        return 0;
+
+    /*
+     * As similarity value of objects is count by
+     * getClustersSimilarityValue(cluster *c1, cluster *c2)
+     * which requires 2 cluster_pointers a dirty trick was
+     * used (created temp cluster* with representatives
+     * attributes;
+     */
+
+    cluster* temp = new cluster();
+
+    temp->representativeAttributesValues = c->representativeAttributesValues;
+    temp->attributesValues = c->representativeAttributesValues;
+
+    for(int i = 0; i < objects.length(); ++i)
+    {
+        addend = getClustersSimilarityValue(temp, objects.at(i));
+
+        // Punish joining nonsimilar clusters
+        // TODO: consider ading weight? Changing it? Maybe divide?
+        if(addend == 0)
+            addend = -1;
+
+        result += addend;
+    }
+
+    result /= objects.length();
+
+    return result;
 }
 
 void groupingThread::deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix)
@@ -790,321 +606,107 @@ void groupingThread::deleteClusterSimilarityData(unsigned int clusterId, std::ve
     simMatrix->erase(simMatrix->begin()+clusterId);
 }
 
-QString groupingThread::getLongerRule(QString r1, QString r2)
+//TODO: Consides some kind of cluster validator in other file.
+
+void groupingThread::countMDI(int clustersNum)
 {
-    if(getRuleAttributesNumber(r1) > getRuleAttributesNumber(r2))
-            return r1;
+    /* MDI == -1 means that two clusters with 0 similarity
+     * were joined. There's no smaller similarity value than
+     * 0 hence it'd return -1 anyway.
+     */
 
-    if(getRuleAttributesNumber(r1) < getRuleAttributesNumber(r2))
-            return r2;
+    if(MDI == -1) return;
 
-    if(getRuleAttributesNumber(r1) == getRuleAttributesNumber(r2))
+    qreal minIntraClusterSim, maxInterClusterSim;
+
+    minIntraClusterSim = getMinIntraClusterSimilarity(clustersNum);
+
+    maxInterClusterSim = getMaxInterClusterSimilarity(clustersNum);
+
+    //TODO: Reconsider what to do in this case.
+    if(minIntraClusterSim == 0)
     {
-        if(r1.length() > r2.length())
-            return r1;
-        else
-            return r2;
+        MDI = -1;
+        return;
     }
 
-    return "a";
+    MDI = qreal(maxInterClusterSim/minIntraClusterSim);
 }
 
-int groupingThread::getRuleAttributesNumber(QString r)
+qreal groupingThread::getMaxInterClusterSimilarity(int clustersNum)
 {
-    return 1 + r.count('&');
-}
-
-QString groupingThread::getShorterRule(QString r1, QString r2)
-{
-    if(getRuleAttributesNumber(r1) > getRuleAttributesNumber(r2))
-            return r2;
-
-    if(getRuleAttributesNumber(r1) < getRuleAttributesNumber(r2))
-            return r1;
-
-    if(getRuleAttributesNumber(r1) == getRuleAttributesNumber(r2))
-    {
-        if(r1.length() > r2.length())
-           return r2;
-        else
-            return r1;
-    }
-
-    return "a";
-}
-
-QString groupingThread::createAverageRule(ruleCluster *c)
-{
-    QString result = "average Rule";
-    QString splitter;
-    QString rule;
-    QString ruleValue;
-    QString atr;
-
-    QStringList cRules = c->getRules();
-
-    int unusedAtr = 0;
-    int numericAtrNumber = 0;
-    int symbolicAtrNumber = 0;
-    int numericAtrIndex = 0;
-    int symbolicAtrIndex = 0;
-    int clusterSize = c->size();
-
-    qreal* averageNumericAtrValues;
-    QStringList* symbolicAtrValues;
-    QString* mostCommonSymbolicAtrValue;
-    QStringList symbolicAtrValuesSet;
-
-
-    for(int i = 0; i < groupingSettings->attributesNumber; i++)
-    {
-        if(attributes[i].type == "numeric")
-            numericAtrNumber++;
-        else
-            symbolicAtrNumber++;
-    }
-
-    averageNumericAtrValues = new qreal[numericAtrNumber];
-    symbolicAtrValues = new QStringList[symbolicAtrNumber];
-    mostCommonSymbolicAtrValue = new QString[symbolicAtrNumber];
-
-    for(int i = 0; i < numericAtrNumber; i++)
-        averageNumericAtrValues[i] = 0;
-
-    for(int i = 0; i < cRules.length(); i++)
-    {
-        rule = cRules[i];
-
-        symbolicAtrIndex = 0;
-        numericAtrIndex = 0;
-
-        for(int j = 0; j < groupingSettings->attributesNumber; j++)
-        {                        
-            splitter = attributes[j].name + "=";
-
-            if(rule.contains(splitter))
-            {
-                ruleValue = rule.split(splitter)[1];
-
-                ruleValue = ruleValue.split(")")[0];
-
-                if(ruleValue.contains("["))
-                    ruleValue = ruleValue.split("[")[0];
-
-                if(attributes[j].type == "numeric")
-                {
-                    averageNumericAtrValues[numericAtrIndex]
-                            += ruleValue.toFloat();
-                }
-                else
-                    symbolicAtrValues[symbolicAtrIndex]
-                            .append(ruleValue);
-
-            }
-
-            if(attributes[j].type == "numeric")
-                numericAtrIndex++;
-            else
-                symbolicAtrIndex++;
-
-        }
-    }
-
-    for(int i = 0; i < numericAtrNumber; i++)
-        averageNumericAtrValues[i] /= clusterSize;
-
-    for(int i = 0; i < symbolicAtrNumber; i++)
-    {
-        symbolicAtrValuesSet = symbolicAtrValues[i].toSet().toList();
-
-
-        if(symbolicAtrValuesSet.isEmpty())
-            mostCommonSymbolicAtrValue[i] = "";
-        else
-            mostCommonSymbolicAtrValue[i] = symbolicAtrValuesSet[0];
-
-
-        for(int j = 1; j < symbolicAtrValuesSet.size(); j++)
-        {
-            if(symbolicAtrValues[i].count(symbolicAtrValuesSet[j])
-                    > symbolicAtrValues[i].count(mostCommonSymbolicAtrValue[i]))
-                mostCommonSymbolicAtrValue[i] = symbolicAtrValuesSet[j];
-        }
-    }
-
-    symbolicAtrIndex = 0;
-    numericAtrIndex = 0;
-    result = "";
-
-    for(int i = 0; i < groupingSettings->attributesNumber; i++)
-    {
-        if(!c->conclusionAttributes.contains(attributes[i].name) &&
-           !c->decisionAttributes.contains(attributes[i].name))
-        {
-            unusedAtr++;
-
-
-            if(attributes[i].type == "numeric")
-                numericAtrIndex++;
-            else
-                symbolicAtrIndex++;
-
-            continue;
-        }
-
-        if(result != "")
-            atr = "&";
-        else
-            atr = "";
-
-        if(i == groupingSettings->attributesNumber-1)
-            atr = "=>";
-
-        atr += "(" + attributes[i].name + "=";
-
-        if(attributes[i].type == "numeric")
-        {
-            atr += QString::number(averageNumericAtrValues[numericAtrIndex]);
-            numericAtrIndex++;
-        }
-        else
-        {
-            atr += mostCommonSymbolicAtrValue[symbolicAtrIndex];
-            symbolicAtrIndex++;
-        }
-
-        atr += ")";
-
-        result += atr;
-    }
-
-    return result;
-}
-
-qreal groupingThread::countClusterDispersion(ruleCluster *c, QString aRule)
-{
-    if(c->hasBothNodes())
-    {
-        qreal result =
-                countClusterDispersion(((ruleCluster*) c->leftNode), aRule)
-                +countClusterDispersion(((ruleCluster*) c->rightNode), aRule);
-
-        if(std::abs(result)<1e-4)
-            return 0.0;
-
-        return result;
-    }
-
-    if((c->rule == aRule))
+    // Return 0 if only 1 objects is left.
+    if(clustersNum == 1)
         return 0;
 
-    return countRSESRulesSimilarityValue(aRule, c->rule);
-}
+    qreal maxInterSim, potentialMax;
 
-void groupingThread::stopGrouping()
-{
-    emit passLogMsg(tr("log.groupingCancelled"));
-    emit passLogMsg(tr("log.visualizationImpossible"));
-}
+    maxInterSim = getClustersSimilarityValue(clusters[0], clusters[1]);
 
-void groupingThread::countMDI(int size)
-{
-    qreal minInsideSimilarity = -1;
-    qreal maxOutsideSimilarity = 0;
-    qreal currentSimilarity = 0;
-
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < clustersNum; ++i)
     {
-        for(int j = i+1; j < size; j++)
+        for(int j = 0; j < i; ++j)
         {
-            currentSimilarity = ((qreal)countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j])));
+            potentialMax = getClustersSimilarityValue(clusters[i], clusters[j]);
 
-            if(currentSimilarity > maxOutsideSimilarity)
-                maxOutsideSimilarity = currentSimilarity;
+            if(potentialMax > maxInterSim)
+                maxInterSim = potentialMax;
         }
     }
 
-    for(int i = 0; i < size; i++)
-    {
-        if(clusters[i]->size() == 1)
-            continue;
-
-        currentSimilarity = ((qreal) countLowestRSESInterclusterSimilarity(
-                    ((ruleCluster*)clusters[i]->leftNode), ((ruleCluster*)clusters[i]->rightNode)));
-
-        if(minInsideSimilarity == -1)
-            minInsideSimilarity = currentSimilarity;
-
-
-        if(currentSimilarity < minInsideSimilarity)
-            minInsideSimilarity = currentSimilarity;
-    }
-
-    if(minInsideSimilarity == 0)
-    {
-        MDI = 0;
-        return;
-    }
-
-    MDI = maxOutsideSimilarity / minInsideSimilarity;
+    return maxInterSim;
 }
 
-qreal groupingThread::countLowestRSESInterclusterSimilarity(ruleCluster *c1, ruleCluster *c2)
+qreal groupingThread::getMinIntraClusterSimilarity(int clustersNum)
 {
-    if(c1->rule != "")
-        return countLowestRSESClusterRuleSimilarityValue(c1->rule, c2);
+    // Return 1 so MDI is not negative if all clusters are objects.
+    if(clustersNum == settings->objectsNumber)
+        return 1;
 
-    return qMin(countLowestRSESInterclusterSimilarity(((ruleCluster*) c1->leftNode),c2),
-                countLowestRSESInterclusterSimilarity(((ruleCluster*) c1->rightNode),c2));
+    qreal minIntraSim = -1, potentialMin;
+    QList<cluster*> objects;
 
-    return -1;
-}
-
-qreal groupingThread::countLowestRSESClusterRuleSimilarityValue(QString r, ruleCluster *c)
-{
-    if(c->rule !="")
-        return (double) countRSESRulesSimilarityValue(r, c->rule);    
-
-    return qMin(countLowestRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->leftNode)),
-                countLowestRSESClusterRuleSimilarityValue(r,((ruleCluster*) c->rightNode)));
-
-    return -1;
-}
-
-void groupingThread::countMDBI(int size)
-{
-    qreal similaritySum = countSimilaritySum(size);
-
-    if(std::abs(similaritySum)<= 1e-4)
+    for(int i = 0; i < clustersNum; ++i)
     {
-        MDBI = 0.0;
-        return;
-    }
+        objects = clusters[i]->getObjects();
 
-    MDBI = (qreal)(similaritySum/size);
-}
-
-qreal groupingThread::countSimilaritySum(int size)
-{
-    qreal sum = 0;
-
-    for(int i = 0; i < size; i++)
-    {
-        for(int j = i+1; j < size; j++)
+        for(int j = 0; j < objects.length(); ++j)
         {
-            qreal clustersSim =
-                countRSESClustersSimilarityValue(((ruleCluster*)clusters[i]),((ruleCluster*)clusters[j]));
+            for(int k = 0; k < j; ++k)
+            {
+                potentialMin = getClustersSimilarityValue(objects.at(j), objects.at(k));
 
-            if(std::abs(clustersSim)<= 1e-4)
-                continue;
-
-            qreal sumPart = ((ruleCluster*)clusters[i])->dispersion + ((ruleCluster*)clusters[j])->dispersion;
-
-            sumPart /= clustersSim;
-
-            sum += sumPart;
+                if((potentialMin < minIntraSim) || (minIntraSim == -1))
+                    minIntraSim = potentialMin;
+            }
         }
     }
 
-    return sum;
+    return minIntraSim;
+}
+
+void groupingThread::countMDBI(int clustersNum)
+{
+    MDBI = 0;
+
+    if(settings->objectsNumber == clustersNum)
+        return;
+
+    qreal addend, clustersSim;
+
+    for(int i = 0; i < clustersNum; ++i)
+    {
+        for(int j = 0; j < i; ++j)
+        {
+            addend = clusters[i]->compactness + clusters[j]->compactness;
+            clustersSim = getClustersSimilarityValue(clusters[i], clusters[j]);
+
+            if(clustersSim == 0)
+                clustersSim = 1;
+
+            MDBI += addend/clustersSim;
+        }
+    }
+
+    MDBI = qreal(MDBI/clustersNum);
 }

@@ -35,7 +35,10 @@ SOURCES += main.cpp\
     generalsettings.cpp \
     visualizationsettings_rsesrules.cpp \
     clusterinfo_rsesrules.cpp \
-    customgraphicellipseobject.cpp
+    customgraphicellipseobject.cpp \
+    groupingsettings.cpp \
+    groupingdatapreparator_rsesrules.cpp \
+    groupingdatapreparator.cpp
 
 TRANSLATIONS += polish.ts\
                 english.ts
@@ -56,7 +59,20 @@ HEADERS  += mainwindow.h \
     visualizationsettings_rsesrules.h \
     clusterinfo_rsesrules.h \
     customgraphicellipseobject.h \
-    clusterinfoincludes.h
+    clusterinfoincludes.h \
+    enum_interclustersimilaritymeasures.h \
+    enum_interobjectsimilaritymeasure.h \
+    enum_visualizationalgorithms.h \
+    attributedata.h \
+    enum_rulesparts.h \
+    enum_reporttypes.h \
+    enum_languages.h \
+    enum_datatype.h \
+    enum_groupingalgorithms.h \
+    groupingsettings_detailed.h \
+    groupingsettings.h \
+    groupingdatapreparator.h \
+    groupingdatapreparator_rsesrules.h
 
 FORMS    += mainwindow.ui \
     about.ui \

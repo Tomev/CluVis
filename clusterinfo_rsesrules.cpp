@@ -16,33 +16,25 @@ clusterInfo_RSESRules::clusterInfo_RSESRules(ruleCluster* c) :
     ui->setupUi(this);
     this->c = *c;
 
-    QString title = tr("clusterInfo.clusterInfo");
-
-    if(c->rule == "")
-        title += " J";
-    else
-        title += " O";
-
-    title += QString::number(c->clusterID);
+    QString title = tr("clusterInfo.clusterInfo") + c->name();
 
     this->setWindowTitle(title);
 
     ui->labelRulesNumberValue->setText("<b>" + QString::number(c->size())+ "</b>");
-    ui->labelGroupRepresentativeValue->setText("<b>" + c->getClusterRepresentativeString()
-                                               .replace(")&(", ") & (")
-                                               .replace(")=>(", ") => (") + "</b>");
 
-    QStringList cAttributes = c->conclusionAttributes.toList();
+    ui->labelGroupRepresentativeValue->setText("<b>" + c->representative()+ "</b>");
+
+    QStringList cAttributes = c->premiseAttributes.toList();
 
     ui->labelConditionAttributesValue->setText("<b>" + cAttributes.join(", ")+ "</b>");
 
     QStringList dAttributes = c->decisionAttributes.toList();
 
     ui->labelDecisionAttributesValue->setText("<b>" + dAttributes.join(", ")+ "</b>");
-    ui->labelLongestRuleValue->setText("<b>" + c->longestRule
-                                       .replace(")&(", ") & (")
-                                       .replace(")=>(", ") => (") + "</b>");
-    ui->labelShortestRuleValue->setText("<b>" + c->shortestRule+ "</b>");
+    ui->labelLongestRuleValue->setText("<b>" + c->getLongestRule()
+                                       .replace("&", " & ")
+                                       .replace("=>", " => ") + "</b>");
+    ui->labelShortestRuleValue->setText("<b>" + c->getShortestRule()+ "</b>");
     ui->labelMostCommonDecisionValue->setText("<b>" + c->getMostCommonDecision()+ "</b>");
     ui->labelLeastCommonDecisionValue->setText("<b>" + c->getLeastCommonDecision()+ "</b>");
 

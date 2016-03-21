@@ -1,0 +1,12 @@
+#ifndef ENUM_INTEROBJECTSIMILARITYMEASURE
+#define ENUM_INTEROBJECTSIMILARITYMEASURE
+
+enum interObjectSimilarityMeasureId
+{
+    GowersMeasureId = 0,
+    SMCId = 1,
+    WSMCId = 2
+};
+
+#endif // ENUM_INTEROBJECTSIMILARITYMEASURE
+

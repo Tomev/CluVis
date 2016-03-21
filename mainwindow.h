@@ -13,6 +13,12 @@
 
 #include "clusterinfoincludes.h"
 
+#include "enum_languages.h"
+#include "enum_datatype.h"
+#include "enum_reporttypes.h"
+
+//typedef boost::shared_ptr<cluster> cluster_ptr;
+
 namespace Ui {
 class MainWindow;
 }
@@ -25,7 +31,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-private slots:
+private slots:  
     //File
     void on_actionLoadObjectBase_triggered();
     void on_actionSaveVisualization_triggered();
@@ -64,12 +70,6 @@ private slots:
 private:
     QTranslator* translator;
 
-    enum Constants
-    {
-        REPORT_TYPE_XML = 0,
-        REPORT_TYPE_TXT = 1
-    };
-
     Ui::MainWindow *ui;
 
     QString raportMessage;
@@ -83,7 +83,8 @@ private:
 
     generalSettings* settings;
     groupingSettings_General* gSettings;
-    groupingSettings_RSESRules* gSettings_RSES;
+    groupingSettings_Detailed* dGrpSettings;
+
     visualizationSettings_general* vSettings;
     visualizationSettings_RSESRules* vSettings_RSES;
 
@@ -133,6 +134,7 @@ private:
         int countUngroupedObjects();
         ruleCluster* findBiggestCluster();
         ruleCluster* findSmallestCluster();
+        void translate(int lang);
 
     //Rest
     //Functions

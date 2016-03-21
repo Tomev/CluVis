@@ -25,7 +25,7 @@ void visualizationThread::visualize(ruleCluster *c)
 {
     switch(settings->dataTypeID)
     {
-        case 0: //settings->RSES_RULES_ID:
+        case RSESRulesId:
 
             emit passLogMsg(tr("log.rsesVisualizationStarted"));
 
@@ -42,10 +42,10 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
 {
     switch(vSettings->visualizationAlgorithmID)
     {
-        case visualizationSettings_general::RT_SLICE_AND_DICE_ID:
+        case SliceAndDiceRTId:
             RSES_RTSAD(vSettings->sceneRect,c);
             break;
-        case visualizationSettings_general::CIRCULAR_TREEMAP_ID:
+        case CircularTreemapId:
             RSES_CircularTreemap(vSettings->sceneRect,c);
             break;
         default:

@@ -7,11 +7,6 @@ class generalSettings
 {
 public:
     //Members
-        //Constans
-            //Data type ID
-
-    const static int RSES_RULES_ID = 0;
-
         //Variables
 
     int dataTypeID;

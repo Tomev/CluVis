@@ -3,33 +3,20 @@
 
 #include <QFileInfo>
 
-struct RSESAttribute
-{
-    QString name;
-    QString type;
-    QString value;
+#include "groupingsettings_detailed.h"
 
-    qreal maxValue;
-    qreal minValue;
-
-};
-
-class groupingSettings_RSESRules
+class groupingSettings_RSESRules : public groupingSettings_Detailed
 {
 public:
     //Members
-        //Constant
-            //Grouping Part IDs
-    static const int CONDITION_ID = 0;
-    static const int CONCLUSION_ID = 1;
         //Variables
 
-    int groupingPartID;
+    int groupedPartID;
 
     //Methods
 
-    int getRSESRulesNumber(QFileInfo KBInfo);
-    int getRSESRulesAttributeNumber(QFileInfo KBInfo);
+    static int getRSESRulesNumber(QFileInfo KBInfo);
+    static int getRSESRulesAttributeNumber(QFileInfo KBInfo);
 
     groupingSettings_RSESRules();
     ~groupingSettings_RSESRules();
