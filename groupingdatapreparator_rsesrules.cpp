@@ -14,6 +14,7 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
     QString line, atrName;
     QStringList atrData;
     QFile KB(grpSet->objectBaseInfo.absoluteFilePath());
+    grpSet->attributesNumber = 0;
 
     if(KB.open(QIODevice::ReadOnly))
     {
@@ -30,6 +31,8 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
              * Hence line split(" ") will produce QStringList list like following:
              * lines(0) = "", lines(1) = atr_name, lines(2) atr_type
              */
+
+            ++(grpSet->attributesNumber);
 
             atrData = line.split(" ");
             atrName = atrData.at(1);

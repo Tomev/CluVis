@@ -603,6 +603,8 @@ QString MainWindow::createXMLFileTableHeader()
     result += createXMLFileTableCell(tr("report.clustersSimilarityMeasure"), true);
     result += createXMLFileTableCell(tr("report.groupedRulePart"), true);
     result += createXMLFileTableCell(tr("report.biggestCluster"), true);
+    result += createXMLFileTableCell(tr("report.biggestClusterSize"), true);
+    result += createXMLFileTableCell(tr("report.biggestClusterRepLength"), true);
     result += createXMLFileTableCell(tr("report.smallestCluster"), true);
     result += createXMLFileTableCell(tr("report.ungroupedRules"), true);
     result += createXMLFileTableCell(tr("report.MDI"), true);
@@ -656,6 +658,8 @@ QString MainWindow::createXMLFileTableContent()
     result += createXMLFileTableCell(ui->comboBoxRuleGroupedPart->currentText(), false);
     //Overall result data
     result += createXMLFileTableCell(findBiggestCluster()->name(), false);
+    result += createXMLFileTableCell(QString::number(findBiggestCluster()->size()), false);
+    result += createXMLFileTableCell(QString::number(countRuleLength(findBiggestCluster()->representative())), false);
     result += createXMLFileTableCell(findSmallestCluster()->name(), false);
     result += createXMLFileTableCell(QString::number(countUngroupedObjects()), false);
     //Indexes data
