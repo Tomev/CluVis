@@ -433,6 +433,54 @@ ruleCluster* MainWindow::findSmallestCluster()
     return smallest;
 }
 
+int MainWindow::getBiggestRepresentativeLength()
+{
+    int biggestRepSize = 0;
+    ruleCluster* c;
+
+    for(int i = 0; i < settings->stopCondition; ++i)
+    {
+        c = static_cast<ruleCluster*>(clusters[i]);
+
+        if(biggestRepSize < countRuleLength(c->representative()));
+            biggestRepSize = countRuleLength(c->representative());
+    }
+
+    return biggestRepSize;
+}
+
+int MainWindow::getSmallestRepresentativeLength()
+{
+    int smallestRepSize = 0;
+    ruleCluster* c;
+
+    for(int i = 0; i < settings->stopCondition; ++i)
+    {
+        c = static_cast<ruleCluster*>(clusters[i]);
+
+        if(smallestRepSize > countRuleLength(c->representative()));
+            smallestRepSize = countRuleLength(c->representative());
+    }
+
+    return smallestRepSize;
+}
+
+qreal MainWindow::getAverageRepresentativeLength()
+{
+    qreal averageRepSize = 0;
+    ruleCluster* c;
+
+    for(int i = 0; i < settings->stopCondition; ++i)
+    {
+        c = static_cast<ruleCluster*>(clusters[i]);
+        averageRepSize += countRuleLength(c->representative());
+    }
+
+    averageRepSize /= settings->stopCondition;
+
+    return averageRepSize;
+}
+
 ruleCluster* MainWindow::findBiggestCluster()
 {
     ruleCluster* biggest = ((ruleCluster*)clusters[0]);
@@ -607,6 +655,9 @@ QString MainWindow::createXMLFileTableHeader()
     result += createXMLFileTableCell(tr("report.biggestClusterRepLength"), true);
     result += createXMLFileTableCell(tr("report.smallestCluster"), true);
     result += createXMLFileTableCell(tr("report.ungroupedRules"), true);
+    result += createXMLFileTableCell(tr("report.biggestRepSize"), true);
+    result += createXMLFileTableCell(tr("report.smallestRepSize"), true);
+    result += createXMLFileTableCell(tr("report.averageRepSize"), true);
     result += createXMLFileTableCell(tr("report.MDI"), true);
     result += createXMLFileTableCell(tr("report.MDBI"), true);
     result += createXMLFileTableCell(tr("report.minMDI"), true);
@@ -662,6 +713,10 @@ QString MainWindow::createXMLFileTableContent()
     result += createXMLFileTableCell(QString::number(countRuleLength(findBiggestCluster()->representative())), false);
     result += createXMLFileTableCell(findSmallestCluster()->name(), false);
     result += createXMLFileTableCell(QString::number(countUngroupedObjects()), false);
+    // Representatives info
+    result += createXMLFileTableCell(QString::number(getBiggestRepresentativeLength()), false);
+    result += createXMLFileTableCell(QString::number(getSmallestRepresentativeLength()), false);
+    result += createXMLFileTableCell(QString::number(getAverageRepresentativeLength()), false);
     //Indexes data
     result += createXMLFileTableCell(QString::number(MDI), false);
     result += createXMLFileTableCell(QString::number(MDBI), false);

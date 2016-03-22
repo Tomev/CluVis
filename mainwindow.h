@@ -134,6 +134,9 @@ private:
         int countUngroupedObjects();
         ruleCluster* findBiggestCluster();
         ruleCluster* findSmallestCluster();
+        int getBiggestRepresentativeLength();
+        int getSmallestRepresentativeLength();
+        qreal getAverageRepresentativeLength();
         void translate(int lang);
 
     //Rest

@@ -432,15 +432,17 @@ qreal groupingThread::getObjectsWSMCValue(cluster *c1, cluster *c2)
     c2Attributes =
             c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
 
-    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
-        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
-            ++result;
-
-
     allAttributes = c1Attributes.keys() + c2Attributes.keys();
     allAttributes.removeDuplicates();
 
     int denumerator = allAttributes.size();
+
+    if(denumerator == 0)
+        return 0;
+
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
+        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
+            ++result;
 
     return result/denumerator;
 }
