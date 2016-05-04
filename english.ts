@@ -29,7 +29,7 @@
     <message>
         <location filename="mainwindow.ui" line="29"/>
         <source>CluVis - Wizualizator Skupień</source>
-        <translation>CluVis - Cluster Visualizator</translation>
+        <translation>CluVis - Cluster Visualizer</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="40"/>

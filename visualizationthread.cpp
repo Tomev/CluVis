@@ -93,8 +93,8 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
             emit passGraphicsRectObject(vRect);
 
             if(vSettings->visualizeAllHierarchyLevels &&
-                    height > 0 &&
-                    width > 0 &&
+                    height > 2*rectPadding &&
+                    width > 2*rectPadding &&
                     vSettings_RSES->clusteredRules[i]->size() > 1)
                 RSES_RTSAD(&smallerRect, vSettings_RSES->clusteredRules[i]);
 
@@ -137,8 +137,8 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
             emit passGraphicsRectObject(vRect);;
 
             if(vSettings->visualizeAllHierarchyLevels &&
-                    height > 0 &&
-                    width > 0 &&
+                    height > 2*rectPadding &&
+                    width > 2*rectPadding &&
                     clusters[i]->size() > 1)
                 RSES_RTSAD(&smallerRect, clusters[i]);
 
@@ -186,8 +186,8 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
             emit passGraphicsRectObject(vRect);
 
             if(vSettings->visualizeAllHierarchyLevels &&
-                    height > 6 &&
-                    width > 6 &&
+                    height > 2*rectPadding &&
+                    width > 2*rectPadding &&
                     vSettings_RSES->clusteredRules[i]->size() > 1)
                 RSES_RTSAD(&smallerRect, vSettings_RSES->clusteredRules[i]);
 
@@ -231,8 +231,8 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
             emit passGraphicsRectObject(vRect);
 
             if(vSettings->visualizeAllHierarchyLevels &&
-                    height > 6 &&
-                    width > 6 &&
+                    height > 2*rectPadding &&
+                    width > 2*rectPadding &&
                     clusters[i]->size() > 1)
                 RSES_RTSAD(&smallerRect, clusters[i]);
 

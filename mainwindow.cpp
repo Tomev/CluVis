@@ -442,7 +442,7 @@ int MainWindow::getBiggestRepresentativeLength()
     {
         c = static_cast<ruleCluster*>(clusters[i]);
 
-        if(biggestRepSize < countRuleLength(c->representative()));
+        if(biggestRepSize < countRuleLength(c->representative()))
             biggestRepSize = countRuleLength(c->representative());
     }
 
@@ -458,7 +458,7 @@ int MainWindow::getSmallestRepresentativeLength()
     {
         c = static_cast<ruleCluster*>(clusters[i]);
 
-        if(smallestRepSize > countRuleLength(c->representative()));
+        if(smallestRepSize > countRuleLength(c->representative()))
             smallestRepSize = countRuleLength(c->representative());
     }
 
@@ -526,7 +526,10 @@ int MainWindow::countCoverageSum()
 
 int MainWindow::countRuleLength(QString rule)
 {
-    return std::count(rule.begin(), rule.end(), '&')+1;
+    if(rule.startsWith('='))
+        return 0;
+
+    return rule.count(")&(")+1;
 }
 
 // TODO: Add additional classes for report generation.

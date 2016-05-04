@@ -415,8 +415,7 @@ qreal groupingThread::getObjectsSMCValue(cluster *c1, cluster *c2)
             c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
 
     for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
-        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()])
-            ++result;
+        if( c2Attributes.contains(i.key()) && c1Attributes[i.key()] == c2Attributes[i.key()]) ++result;
 
     return result;
 }
