@@ -3,13 +3,12 @@
 
 //Grouping settings
 
-#include "groupingsettingsincludes.h"
+#include "..\Clustering\groupingsettingsincludes.h"
 
 //Graphic Objects
 
 #include "customgraphicsrectobject.h"
 #include "customgraphicellipseobject.h"
-
 
 //Settings
 

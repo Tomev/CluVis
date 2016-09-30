@@ -2,7 +2,7 @@
 #define CLUSTERINFO_RSESRULES_H
 
 #include <QDialog>
-#include "clusters.h"
+#include "Clustering/clusters.h"
 
 namespace Ui {
 class clusterInfo_RSESRules;

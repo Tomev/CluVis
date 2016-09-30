@@ -1,7 +1,7 @@
 #ifndef VISUALIZATIONSETTINGS_RSESRULES_H
 #define VISUALIZATIONSETTINGS_RSESRULES_H
 
-#include "clusters.h"
+#include "Clustering\clusters.h"
 
 class visualizationSettings_RSESRules
 {

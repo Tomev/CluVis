@@ -6,18 +6,16 @@
 #include <QGraphicsScene>
 #include <QTimer>
 
-#include "generalsettings.h"
+#include "../generalsettings.h"
 
-#include "groupingthread.h"
-#include "visualizationthread.h"
+#include "../Clustering/groupingthread.h"
+#include "../Visualization/visualizationthread.h"
 
-#include "clusterinfoincludes.h"
+#include "../Clustering/clusterinfoincludes.h"
 
 #include "enum_languages.h"
 #include "enum_datatype.h"
 #include "enum_reporttypes.h"
-
-//typedef boost::shared_ptr<cluster> cluster_ptr;
 
 namespace Ui {
 class MainWindow;

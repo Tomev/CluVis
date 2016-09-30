@@ -3,7 +3,7 @@
 
 #include "generalsettings.h"
 
-#include "clusters.h"
+#include "Clustering\clusters.h"
 
 #endif // GENERALINCLUDES
 

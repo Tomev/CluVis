@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QDebug>
 
-#include "clusters.h"
+#include "Clustering\clusters.h"
 
 class customGraphicsRectObject : public QGraphicsObject
 {

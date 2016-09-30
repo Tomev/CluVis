@@ -10,7 +10,6 @@
 #include "enum_interclustersimilaritymeasures.h"
 
 
-
 struct cluster
 {
     public:

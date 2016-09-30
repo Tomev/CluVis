@@ -12,8 +12,6 @@
 #include "enum_interclustersimilaritymeasures.h"
 #include "enum_interobjectsimilaritymeasure.h"
 
-#include "objectsclusterer_rsesrules.h"
-
 groupingThread::groupingThread(groupingSettings_Detailed *dGrpSettings,
                                groupingSettings_General *groupingSettings,
                                generalSettings* settings)

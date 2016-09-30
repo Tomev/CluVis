@@ -3,7 +3,7 @@
 
 #include <QtCore>
 #include <QProgressDialog>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "groupingsettingsincludes.h"
 #include "generalincludes.h"
@@ -15,11 +15,9 @@
 
 #include "enum_datatype.h"
 
-typedef boost::shared_ptr<qreal> qreal_ptr;
+typedef std::shared_ptr<qreal> qreal_ptr;
 typedef std::vector<qreal_ptr> clusterSimilarityData;
-typedef boost::shared_ptr<clusterSimilarityData> simData;
-
-
+typedef std::shared_ptr<clusterSimilarityData> simData;
 
 class groupingThread : public QThread
 {

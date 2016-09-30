@@ -2,13 +2,13 @@
 #define GROUPINGDATAPREPARATOR_RSESRULES_H
 
 #include <QObject>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "groupingdatapreparator.h"
 #include "groupingsettings.h"
 #include "groupingsettings_rsesrules.h"
 
-typedef boost::shared_ptr<ruleCluster> ruleCluster_ptr;
+typedef std::shared_ptr<ruleCluster> ruleCluster_ptr;
 
 class groupingDataPreparator_RSESRules : public QObject, public groupingDataPreparator
 {
