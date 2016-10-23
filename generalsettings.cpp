@@ -7,7 +7,4 @@ generalSettings::generalSettings()
     stopCondition = 1;
 }
 
-generalSettings::~generalSettings()
-{
-}
-
+generalSettings::~generalSettings(){}

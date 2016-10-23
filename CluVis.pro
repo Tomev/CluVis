@@ -8,42 +8,65 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = DaVis
+QMAKE_CXXFLAGS += -std=c++11 -Wall -Wextra -pedantic
+
+TARGET = CluVis
+
 TEMPLATE = app
 
+SOURCES +=      Forms/about.cpp \
+                Forms/clusterinfo_rsesrules.cpp \
+                Forms/mainwindow.cpp \
+                Visualization/visualizationthread.cpp \
+                Visualization/visualizationsettings_general.cpp \
+                Visualization/visualizationsettings_rsesrules.cpp \
+                Visualization/customgraphicellipseobject.cpp \
+                Visualization/customgraphicsrectobject.cpp \
+                Clustering/groupingthread.cpp \
+                Clustering/groupingdatapreparator.cpp \
+                Clustering/groupingdatapreparator_rsesrules.cpp \
+                Clustering/groupingsettings.cpp \
+                Clustering/groupingsettings_general.cpp \
+                Clustering/groupingsettings_rsesrules.cpp \
+                main.cpp \
+                enum_interobjectsimilaritymeasures.cpp \
+                generalsettings.cpp
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    about.cpp \
-    customgraphicsrectobject.cpp \
-    groupingthread.cpp \
-    groupingsettings_general.cpp \
-    visualizationthread.cpp \
-    groupingsettings_rsesrules.cpp \
-    visualizationsettings_general.cpp \
-    generalsettings.cpp \
-    visualizationsettings_rsesrules.cpp \
-    clusterinfo_rsesrules.cpp \
-    customgraphicellipseobject.cpp
 
-HEADERS  += mainwindow.h \
-    about.h \
-    customgraphicsrectobject.h \
-    groupingthread.h \
-    groupingsettings_general.h \
-    groupingsettingsincludes.h \
-    visualizationthread.h \
-    groupingsettings_rsesrules.h \
-    visualizationsettings_general.h \
-    clusters.h \
-    generalsettings.h \
-    visualizationincludes.h \
-    generalincludes.h \
-    visualizationsettings_rsesrules.h \
-    clusterinfo_rsesrules.h \
-    customgraphicellipseobject.h \
-    clusterinfoincludes.h
+HEADERS  +=     Forms/about.h \
+                Forms/clusterinfo_rsesrules.h \
+                Forms/mainwindow.h \
+                enum_interclustersimilaritymeasures.h \
+                enum_interobjectsimilaritymeasure.h \
+                enum_visualizationalgorithms.h \
+                enum_rulesparts.h \
+                enum_reporttypes.h \
+                enum_languages.h \
+                enum_datatype.h \
+                enum_groupingalgorithms.h \
+                Visualization/customgraphicsrectobject.h \
+                Visualization/visualizationthread.h \
+                Visualization/visualizationsettings_general.h \
+                Visualization/customgraphicellipseobject.h \
+                Visualization/visualizationincludes.h \
+                Visualization/visualizationsettings_rsesrules.h \
+                Clustering/groupingthread.h \
+                Clustering/groupingsettings_general.h \
+                Clustering/groupingsettingsincludes.h \
+                Clustering/attributedata.h \
+                Clustering/clusterinfoincludes.h \
+                Clustering/clusters.h \
+                Clustering/groupingdatapreparator.h \
+                Clustering/groupingdatapreparator_rsesrules.h \
+                Clustering/groupingsettings.h \
+                Clustering/groupingsettings_detailed.h \
+                Clustering/groupingsettings_rsesrules.h \
+                generalsettings.h \
+                generalincludes.h \
 
-FORMS    += mainwindow.ui \
-    about.ui \
-    clusterinfo_rsesrules.ui
+FORMS    +=     Forms/about.ui \
+                Forms/clusterinfo_rsesrules.ui \
+                Forms/mainwindow.ui
+
+TRANSLATIONS += polish.ts\
+                english.ts

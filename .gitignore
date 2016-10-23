@@ -1,5 +1,6 @@
 #Katalogi do ignorowania
 Logs/
+
 #Ignoruj plik usera
-CluVis.pro.user
-CluVis.pro.user.c538354
+CluVis.pro.user.*
+
