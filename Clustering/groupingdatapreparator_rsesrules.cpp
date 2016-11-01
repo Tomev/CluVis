@@ -14,6 +14,7 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
     QString line, atrName;
     QStringList atrData;
     QFile KB(grpSet->objectBaseInfo.absoluteFilePath());
+
     grpSet->attributesNumber = 0;
 
     if(KB.open(QIODevice::ReadOnly))
@@ -29,7 +30,7 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
              * RSES Knowledge bases stores attributes data in lines like:
              * <spacebar>atr_name<spacebar>atr_type
              * Hence line split(" ") will produce QStringList list like following:
-             * lines(0) = "", lines(1) = atr_name, lines(2) atr_type
+             * lines(0) = "", lines(1) = atr_name, lines(2) = atr_type
              */
 
             ++(grpSet->attributesNumber);
@@ -40,7 +41,7 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
             if(atrData.at(2) == "numeric")
                 attributes->insert(atrData.at(1), new numericAttributeData());
             else
-                attributes->insert(atrData.at(1), new attributeData());
+                attributes->insert(atrData.at(1), new categoricalAttributeData());
 
             attributes->value(atrName)->name = atrData.at(1);
             attributes->value(atrName)->type = atrData.at(2);
@@ -124,7 +125,7 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
     c->fillRepresentativesAttributesValues(grpSet->repTreshold);
 }
 
-void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString, attributeData*> *attributes, cluster** clusters)
+void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attributeData*> *attributes, cluster** clusters)
 {
     QStringList keys;
     QString atrName, atrMaxVal, atrMinVal;
@@ -137,43 +138,56 @@ void groupingDataPreparator_RSESRules::fillNumericAttributesValues(QHash<QString
         {
             atrName = keys.at(j);
 
-            // Omit symbolic attributes.
             if(attributes->value(atrName)->type == "symbolic")
-                continue;
-
-            atrMaxVal = static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue;
-
-            // If atrMaxValue = "" then so does minValue. Set them and continue.
-            if(atrMaxVal == "")
             {
-                QString newValue = clusters[i]->attributesValues.value(atrName);
+                categoricalAttributeData* currentAttribute =
+                        static_cast<categoricalAttributeData*>(attributes->value(atrName));
 
-                // TODO: Reconsider what to do if numeric value is "MISSING"
-                if(newValue == "MISSING")
-                    newValue = "0";
+                QString attributesValue = clusters[i]->attributesValues.value(atrName);
 
-                static_cast<numericAttributeData*>(attributes->value(atrName))
-                    ->setMaxValue(newValue);
+                if(currentAttribute->valuesFrequency.contains(attributesValue))
+                    currentAttribute->valuesFrequency[attributesValue] += 1;
+                else
+                    currentAttribute->valuesFrequency.insert(attributesValue, 1);
 
-                static_cast<numericAttributeData*>(attributes->value(atrName))
-                    ->setMinValue(newValue);
-
-                continue;
+                ++(currentAttribute->numberOfRulesWithGivenAttribute);
             }
-
-            // It's not near max to save time in case no values were set to attribute.
-            atrMinVal = static_cast<numericAttributeData*>(attributes->value(atrName))->minValue;
-
-            if(atrMaxVal.toDouble() < clusters[i]->attributesValues.value(atrName).toDouble())
+            else
             {
-                static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue =
-                    clusters[i]->attributesValues.value(atrName);
-            }
+                atrMaxVal = static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue;
 
-            if(atrMinVal.toDouble() > clusters[i]->attributesValues.value(atrName).toDouble())
-            {
-                static_cast<numericAttributeData*>(attributes->value(atrName))->minValue =
-                    clusters[i]->attributesValues.value(atrName);
+                // If atrMaxValue = "" then so does minValue. Set them and continue.
+                if(atrMaxVal == "")
+                {
+                    QString newValue = clusters[i]->attributesValues.value(atrName);
+
+                    // TODO: Reconsider what to do if numeric value is "MISSING"
+                    if(newValue == "MISSING")
+                        newValue = "0";
+
+                    static_cast<numericAttributeData*>(attributes->value(atrName))
+                        ->setMaxValue(newValue);
+
+                    static_cast<numericAttributeData*>(attributes->value(atrName))
+                        ->setMinValue(newValue);
+
+                    continue;
+                }
+
+                // It's not near max to save time in case no values were set to attribute.
+                atrMinVal = static_cast<numericAttributeData*>(attributes->value(atrName))->minValue;
+
+                if(atrMaxVal.toDouble() < clusters[i]->attributesValues.value(atrName).toDouble())
+                {
+                    static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue =
+                        clusters[i]->attributesValues.value(atrName);
+                }
+
+                if(atrMinVal.toDouble() > clusters[i]->attributesValues.value(atrName).toDouble())
+                {
+                    static_cast<numericAttributeData*>(attributes->value(atrName))->minValue =
+                        clusters[i]->attributesValues.value(atrName);
+                }
             }
         }
     }

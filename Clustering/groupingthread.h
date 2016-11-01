@@ -82,7 +82,15 @@ private:
             qreal getObjectsSimValue(cluster* c1, cluster* c2);
                 qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);
                 qreal getObjectsSMCValue(cluster* c1, cluster* c2);
-                 qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
+                qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
+                qreal getObjectsOFSimValue(cluster* c1, cluster* c2);
+                qreal getObjectsIOFSimValue(cluster* c1, cluster* c2);
+                qreal getObjectsGoodall1SimValue(cluster* c1, cluster* c2);
+                    qreal countSampleProbabilityOfAttributesValue(QString attribute, QString value);
+                    qreal countSecondSampleProbabilityOfAttributesValue(QString attribute, QString value);
+                qreal getObjectsGoodall2SimValue(cluster* c1, cluster* c2);
+                qreal getObjectsGoodall3SimValue(cluster* c1, cluster* c2);
+                qreal getObjectsGoodall4SimValue(cluster* c1, cluster* c2);
 
         qreal countClustersCompactness(cluster *c);
 

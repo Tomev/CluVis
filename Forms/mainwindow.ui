@@ -249,6 +249,36 @@
                      <string>Weighted Similarity</string>
                     </property>
                    </item>
+                   <item>
+                    <property name="text">
+                     <string>OF</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>IOF</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Goodall1</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Goodall2</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Goodall3</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Goodall4</string>
+                    </property>
+                   </item>
                   </widget>
                  </item>
                  <item>

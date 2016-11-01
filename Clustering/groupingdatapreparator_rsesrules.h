@@ -20,7 +20,7 @@ public:
 
     void fillAttributesData(QHash<QString, attributeData *> *attributes);
     void clusterObjects(cluster** clusters, QHash<QString, attributeData *> *attributes);
-    void fillNumericAttributesValues(QHash<QString, attributeData*>* attributes, cluster **clusters);
+    void fillAttributesValues(QHash<QString, attributeData*>* attributes, cluster **clusters);
 
 private:
 

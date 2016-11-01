@@ -2,6 +2,7 @@
 #define ATTRIBUTEDATA
 
 #include <QString>
+#include <QHash>
 
 struct attributeData
 {
@@ -53,6 +54,30 @@ struct numericAttributeData : attributeData
 
         return qAbs(result);
     }
+};
+
+struct categoricalAttributeData: attributeData
+{
+    categoricalAttributeData(){}
+
+    categoricalAttributeData(attributeData data)
+    {
+        this->name = data.name;
+        this->type = data.type;
+    }
+
+    QHash<QString, unsigned int> valuesFrequency;
+
+    unsigned int numberOfRulesWithGivenAttribute = 0;
+
+    unsigned int getValuesFrequency(QString value)
+    {
+        if(valuesFrequency.contains(value))
+            return valuesFrequency.value(value);
+        else
+            return 0;
+    }
+
 };
 
 #endif // ATTRIBUTEDATA

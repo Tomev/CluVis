@@ -802,7 +802,7 @@ QString MainWindow::createXMLFileClustersDataContent()
 
 void MainWindow::on_actionExit_triggered()
 {
-    QApplication::quit();
+    QCoreApplication::quit();
 }
 
 //View
