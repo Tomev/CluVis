@@ -35,535 +35,573 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Ustawienia</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBoxSettingsGeneral">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>120</y>
+          <width>281</width>
+          <height>241</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Ustawienia ogólne grupowania</string>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLabel" name="labelAlgorithmGrouping">
+           <property name="text">
+            <string>Algorytm grupowania:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelAlgorithmGroupingValue">
+           <property name="text">
+            <string>&lt;b&gt;Klasyczny hierarchiczny algorytm grupowania&lt;/b&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelInterObjectSimMeasure">
+           <property name="text">
+            <string>Miara odległości między obiektami:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutInterObjectSimMeasure">
+           <item>
+            <widget class="QComboBox" name="comboBoxInterObjectSimMeasure">
+             <property name="minimumSize">
+              <size>
+               <width>157</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Miara Gowera</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Simple Similarity</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Weighted Similarity</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>OF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>IOF</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Goodall1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Goodall2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Goodall3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Goodall4</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelInterClusterSimMeasure">
+           <property name="text">
+            <string>Miara odległości międzyklastrowej:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutInterClusterSimMeasure">
+           <item>
+            <widget class="QComboBox" name="comboBoxInterClusterSimMeasure">
+             <item>
+              <property name="text">
+               <string>Pojedynczego połączenia</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Całkowitego połączenia</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Średniej grupowej</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Środków ciężkości</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>100</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelStopCondition">
+           <property name="text">
+            <string>Na ilu skupieniach zakończyć grupowanie?
+Liczba skupień musi być mniejsza lub równa
+liczbie obiektów w bazie.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutStopCondition">
+           <item>
+            <widget class="QSpinBox" name="spinBoxStopConditionValue">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>16777215</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>100</width>
+               <height>28</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>300</x>
+          <y>260</y>
+          <width>291</width>
+          <height>74</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Ustawienia wizualizacji</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="labelAlgorithmVisualization">
+           <property name="text">
+            <string>Algorytm wizualizacji:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutAlgorithmVisualization">
+           <item>
+            <widget class="QComboBox" name="comboBoxAlgorithmVisualization">
+             <item>
+              <property name="text">
+               <string>RT Slice And Dice</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Circular Treemap</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>100</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>300</x>
+          <y>10</y>
+          <width>291</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Ustawienia reprezentanta</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Strategia tworzenia reprezentanta</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Procent obiektów, zawierających atrybut, aby był on brany pod uwagę przy tworzeniu reprezentanta:</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutRepresentativeAttributePercent">
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QSpinBox" name="spinBoxRepresentativeAttributePercent">
+             <property name="minimumSize">
+              <size>
+               <width>157</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>30</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>370</y>
+          <width>281</width>
+          <height>121</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Ustawienia szczegółowe</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <widget class="QLabel" name="labelObjectType">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Typ grupowanych obiektów:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelObjectTypeValue">
+           <property name="text">
+            <string>&lt;b&gt;RSES LEM2 Rules&lt;/b&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelRuleGroupingMethod">
+           <property name="text">
+            <string>Grupowanie reguł ze względu na:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutGroupedPart">
+           <item>
+            <widget class="QComboBox" name="comboBoxRuleGroupedPart">
+             <item>
+              <property name="text">
+               <string>Warunki</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Konkluzje</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>100</width>
+               <height>28</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>281</width>
+          <height>105</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Informacje o bazie</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <widget class="QLabel" name="labelObjectBase">
+           <property name="text">
+            <string>Baza reguł:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayoutBaseName">
+           <item>
+            <widget class="QLabel" name="labelObjectBaseName">
+             <property name="text">
+              <string>&lt;b&gt;Nie wczytano.&lt;/b&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="labelIsBaseGrouped">
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;(Niepogrupowana) &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelObjectsNumber">
+           <property name="text">
+            <string>Liczba reguł w bazie:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelObjectsNumberValue">
+           <property name="text">
+            <string>&lt;b&gt;0.&lt;/b&gt;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>390</y>
+          <width>265</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayoutButtons">
+         <item>
+          <widget class="QPushButton" name="pushButtonGroup">
+           <property name="text">
+            <string>Grupuj</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButtonVisualize">
+           <property name="text">
+            <string>Wizualizuj</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxVisualizeAllHierarchyLevels">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>280</y>
+          <width>261</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Wizualizuj wszystkie poziomy hierarchii.</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxSearchForBestIndexes">
+        <property name="geometry">
+         <rect>
+          <x>630</x>
+          <y>310</y>
+          <width>261</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Szukaj optymalnych grupowań.</string>
+        </property>
+       </widget>
+      </widget>
       <widget class="QWidget" name="tab">
        <attribute name="title">
         <string>Wizualizacja</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <widget class="QStackedWidget" name="stackedWidgetSettings">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>303</width>
-              <height>600</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>303</width>
-              <height>600</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="currentIndex">
-             <number>0</number>
-            </property>
-            <widget class="QWidget" name="pageGeneral">
-             <widget class="QGroupBox" name="groupBoxSettingsGeneral">
-              <property name="geometry">
-               <rect>
-                <x>9</x>
-                <y>9</y>
-                <width>285</width>
-                <height>590</height>
-               </rect>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize">
-               <size>
-                <width>285</width>
-                <height>590</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>241</width>
-                <height>590</height>
-               </size>
-              </property>
-              <property name="title">
-               <string>Ustawienia ogólne</string>
-              </property>
-              <property name="flat">
-               <bool>false</bool>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <item>
-                <widget class="QLabel" name="labelObjectType">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="text">
-                  <string>Typ grupowanych obiektów:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelObjectTypeValue">
-                 <property name="text">
-                  <string>&lt;b&gt;RSES LEM2 Rules&lt;/b&gt;</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelAlgorithmGrouping">
-                 <property name="text">
-                  <string>Algorytm grupowania:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelAlgorithmGroupingValue">
-                 <property name="text">
-                  <string>&lt;b&gt;Klasyczny hierarchiczny algorytm grupowania&lt;/b&gt;</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelObjectBase">
-                 <property name="text">
-                  <string>Baza reguł:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutBaseName">
-                 <item>
-                  <widget class="QLabel" name="labelObjectBaseName">
-                   <property name="text">
-                    <string>&lt;b&gt;Nie wczytano.&lt;/b&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="labelIsBaseGrouped">
-                   <property name="text">
-                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;(Niepogrupowana) &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelObjectsNumber">
-                 <property name="text">
-                  <string>Liczba reguł w bazie:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelObjectsNumberValue">
-                 <property name="text">
-                  <string>&lt;b&gt;0.&lt;/b&gt;</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelRuleGroupingMethod">
-                 <property name="text">
-                  <string>Grupowanie reguł ze względu na:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutGroupedPart">
-                 <item>
-                  <widget class="QComboBox" name="comboBoxRuleGroupedPart">
-                   <item>
-                    <property name="text">
-                     <string>Warunki</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Konkluzje</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_2">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Fixed</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>100</width>
-                     <height>28</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelInterObjectSimMeasure">
-                 <property name="text">
-                  <string>Miara odległości między obiektami:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutInterObjectSimMeasure">
-                 <item>
-                  <widget class="QComboBox" name="comboBoxInterObjectSimMeasure">
-                   <property name="minimumSize">
-                    <size>
-                     <width>157</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <item>
-                    <property name="text">
-                     <string>Miara Gowera</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Simple Similarity</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Weighted Similarity</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>OF</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>IOF</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Goodall1</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Goodall2</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Goodall3</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Goodall4</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelInterClusterSimMeasure">
-                 <property name="text">
-                  <string>Miara odległości międzyklastrowej:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutInterClusterSimMeasure">
-                 <item>
-                  <widget class="QComboBox" name="comboBoxInterClusterSimMeasure">
-                   <item>
-                    <property name="text">
-                     <string>Pojedynczego połączenia</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Całkowitego połączenia</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Średniej grupowej</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Środków ciężkości</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Fixed</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelStopCondition">
-                 <property name="text">
-                  <string>Na ilu skupieniach zakończyć grupowanie?
-Liczba skupień musi być mniejsza lub równa
-liczbie obiektów w bazie.</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutStopCondition">
-                 <item>
-                  <widget class="QSpinBox" name="spinBoxStopConditionValue">
-                   <property name="minimum">
-                    <number>1</number>
-                   </property>
-                   <property name="maximum">
-                    <number>16777215</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_3">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Fixed</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>100</width>
-                     <height>28</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_2">
-                 <property name="text">
-                  <string>Procent obiektów, zawierających atrybut, aby był on brany pod uwagę przy tworzeniu reprezentanta:</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutRepresentativeAttributePercent">
-                 <property name="topMargin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QSpinBox" name="spinBoxRepresentativeAttributePercent">
-                   <property name="minimumSize">
-                    <size>
-                     <width>157</width>
-                     <height>0</height>
-                    </size>
-                   </property>
-                   <property name="minimum">
-                    <number>1</number>
-                   </property>
-                   <property name="maximum">
-                    <number>100</number>
-                   </property>
-                   <property name="value">
-                    <number>30</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_6">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QLabel" name="labelAlgorithmVisualization">
-                 <property name="text">
-                  <string>Algorytm wizualizacji:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutAlgorithmVisualization">
-                 <item>
-                  <widget class="QComboBox" name="comboBoxAlgorithmVisualization">
-                   <item>
-                    <property name="text">
-                     <string>RT Slice And Dice</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>Circular Treemap</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_4">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType">
-                    <enum>QSizePolicy::Fixed</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>100</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxVisualizeAllHierarchyLevels">
-                 <property name="text">
-                  <string>Wizualizuj wszystkie poziomy hierarchii.</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="checkBoxSearchForBestIndexes">
-                 <property name="text">
-                  <string>Szukaj optymalnych grupowań.</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayoutButtons">
-                 <item>
-                  <widget class="QPushButton" name="pushButtonGroup">
-                   <property name="text">
-                    <string>Grupuj</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButtonVisualize">
-                   <property name="text">
-                    <string>Wizualizuj</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-            <widget class="QWidget" name="pageDetails">
-             <layout class="QVBoxLayout" name="verticalLayout_2">
-              <item>
-               <widget class="QGroupBox" name="groupBoxSpecificSettings">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>285</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>241</width>
-                  <height>158</height>
-                 </size>
-                </property>
-                <property name="title">
-                 <string>Ustawienia szczegółowe</string>
-                </property>
-                <property name="flat">
-                 <bool>false</bool>
-                </property>
-                <property name="checkable">
-                 <bool>false</bool>
-                </property>
-                <layout class="QVBoxLayout" name="verticalLayout_3"/>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>30</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
         <item>
          <widget class="QGraphicsView" name="graphicsView">
           <property name="minimumSize">
