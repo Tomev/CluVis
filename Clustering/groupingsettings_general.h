@@ -7,6 +7,12 @@
 #include "enum_interclustersimilaritymeasures.h"
 #include "enum_interobjectsimilaritymeasure.h"
 
+enum representativeCreationStrategy
+{
+    THRESHOLD,
+
+};
+
 class groupingSettings_General
 {
 public:
@@ -26,6 +32,7 @@ public:
     int attributesNumber;
     int attributesFrequencyPercent;
     int coverSum;
+    unsigned int repCreationStrategyID;
     int repTreshold;
 
     bool findBestClustering;

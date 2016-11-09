@@ -82,7 +82,23 @@ struct cluster
             return result;
         }
 
-        void fillRepresentativesAttributesValues(int treshold)
+        // TODO: It's written horribly. To be rewritten as soon as work is done.
+
+        void fillRepresentativesAttributesValues(unsigned int strategyID, int threshold)
+        {
+            switch(strategyID)
+            {
+                case 0: //Threshold
+                    fillThresholdRepresentativesAttributesValues(threshold);
+                    break;
+                case 1:
+                default:
+                    fillTFIDFRepresentativesAttributesValues();
+            }
+
+        }
+
+        void fillThresholdRepresentativesAttributesValues(int treshold)
         {
             QStringList repAttributes = getRepresentativesAttributesList(treshold);
             QString atrName;
@@ -92,6 +108,11 @@ struct cluster
                 atrName = repAttributes.at(i);
                 representativeAttributesValues.insert(atrName, getAttributesAverageValue(atrName));
             }
+        }
+
+        void fillTFIDFRepresentativesAttributesValues()
+        {
+
         }
 
         virtual QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
@@ -215,6 +236,7 @@ struct ruleCluster : cluster
         {
             support = 0;
         }
+
         ruleCluster(int id) : cluster(id)
         {
             support = 0;

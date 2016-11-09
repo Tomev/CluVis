@@ -451,7 +451,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
-            <widget class="QComboBox" name="comboBox">
+            <widget class="QComboBox" name="comboBoxRepresentativeCreationStrategy">
              <property name="enabled">
               <bool>true</bool>
              </property>

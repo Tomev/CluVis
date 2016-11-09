@@ -33,8 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->labelIsBaseGrouped->setText("");
 
-    addLogMessage(tr("log.applicationStart"));
-
     ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -58,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     translator = new QTranslator();
     translate(english);
+
+    addLogMessage(tr("log.applicationStart"));
 }
 
 MainWindow::~MainWindow()
@@ -811,6 +811,8 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionAngielski_triggered()
 {
+    qDebug() << "tr to eng";
+
     translate(english);
 }
 
@@ -821,7 +823,8 @@ void MainWindow::on_actionPolski_triggered()
 
 void MainWindow::translate(int lang)
 {
-    delete translator;
+    if(translator != NULL) delete translator;
+
     translator = new QTranslator();
 
     QString transName = QApplication::applicationDirPath();
@@ -918,6 +921,7 @@ void MainWindow::setGroupingSettings()
             ui->checkBoxSearchForBestIndexes->isChecked();
     gSettings->repTreshold =
             ui->spinBoxRepresentativeAttributePercent->value();
+    gSettings->repCreationStrategyID = ui->comboBoxRepresentativeCreationStrategy->currentIndex();
 
     addLogMessage(tr("log.generalSettingsLoaded"));
 
@@ -991,10 +995,12 @@ bool MainWindow::areSettingsCorrect()
 bool MainWindow::isBaseLoaded()
 {
     if(gSettings->objectBaseInfo.exists())
+    {
         return true;
+    }
     else
     {
-        QString logText = tr("log.failedAttemptOfGrouping") + " ";
+        QString logText = QObject::tr("log.failedAttemptOfGrouping") + " ";
         logText+= tr("log.baseNotSelected");
 
         addLogMessage(logText);

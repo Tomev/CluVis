@@ -122,7 +122,7 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
             c->premiseAttributes.insert(attributeValue.at(0));
     }
 
-    c->fillRepresentativesAttributesValues(grpSet->repTreshold);
+    c->fillRepresentativesAttributesValues(grpSet->repCreationStrategyID ,grpSet->repTreshold);
 }
 
 void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attributeData*> *attributes, cluster** clusters)

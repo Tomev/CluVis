@@ -903,7 +903,7 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
         newGrp->attributes.insert(atrNames.at(i), c2->attributes.value(atrNames.at(i)));
     }
 
-    newGrp->fillRepresentativesAttributesValues(grpSettings->repTreshold);
+    newGrp->fillRepresentativesAttributesValues(grpSettings->repCreationStrategyID, grpSettings->repTreshold);
 
     newGrp->compactness = countClustersCompactness(newGrp);
 
@@ -944,7 +944,7 @@ qreal groupingThread::countClustersCompactness(cluster* c)
         addend = getClustersSimilarityValue(temp, objects.at(i));
 
         // Punish joining nonsimilar clusters
-        // TODO: consider ading weight? Changing it? Maybe divide?
+        // TODO: consider adding weight? Changing it? Maybe divide?
         if(addend == 0)
             addend = -1;
 
