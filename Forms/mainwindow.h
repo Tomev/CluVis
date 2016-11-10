@@ -65,6 +65,20 @@ private slots:
 
     void on_actionPolski_triggered();
 
+    void on_checkBoxVisualizeAllHierarchyLevels_clicked();
+
+    void on_comboBoxAlgorithmVisualization_currentIndexChanged(int index);
+
+    void on_pushButtonVisualizeVisualizator_clicked();
+
+    void on_checkBoxVisualizeAllHierarchyLevelsVisualizator_clicked();
+
+    void on_comboBoxAlgorithmVisualizationVisualizator_currentIndexChanged(int index);
+
+    void on_spinBoxInterObjectMarginVisualizator_valueChanged(int arg1);
+
+    void on_spinBoxInterObjectMargin_valueChanged(int arg1);
+
 private:
     QTranslator* translator;
 

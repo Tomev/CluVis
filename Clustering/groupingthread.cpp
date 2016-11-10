@@ -265,7 +265,6 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
      *                                                             #
      */
 
-
     //First column which would represent new cluster is added.
     simMatrix->insert(simMatrix->begin()+newClusterIdx,simData(new clusterSimilarityData()));
 
@@ -279,6 +278,7 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
         else
         {
             qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
+
             simMatrix->at(newClusterIdx)->push_back(qreal_ptr(new qreal(simValue)));
         }
     }
@@ -390,7 +390,7 @@ qreal groupingThread::getObjectsGowersSimValue(cluster *c1, cluster *c2)
         if(c2Attributes.contains(i.key()))
         {
             if(     (attributes.value(i.key())->type == "symbolic"
-                 && (c2->attributesValues.value(i.key()) == c1->attributesValues.value(i.key())))
+                 && (c2Attributes.value(i.key()) == c1Attributes.value(i.key())))
                 ||
                 (   attributes.value(i.key())->type == "numeric"
                  && static_cast<numericAttributeData*>(attributes[i.key()])->areMinMaxEqual()))
@@ -402,8 +402,8 @@ qreal groupingThread::getObjectsGowersSimValue(cluster *c1, cluster *c2)
             if(attributes.value(i.key())->type == "numeric")
             {
                 denumerator = static_cast<numericAttributeData*>(attributes[i.key()])->getMaxMinAbsDiff();
-                addend = qAbs(c1->attributesValues.value(i.key()).toDouble() -
-                              c2->attributesValues.value(i.key()).toDouble());
+                addend = qAbs(c1Attributes.value(i.key()).toDouble() -
+                              c2Attributes.value(i.key()).toDouble());
                 addend = 1 - addend/denumerator;
 
                 result += addend;
@@ -481,11 +481,11 @@ qreal groupingThread::getObjectsOFSimValue(cluster* c1, cluster* c2)
                 {
                     qreal denumerator =
                         log2(settings->objectsNumber / static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                             ->valuesFrequency.value(c1->attributesValues.value(i.key())));
+                             ->valuesFrequency.value(c1Attributes.value(i.key())));
 
                     denumerator *=
                         log2(settings->objectsNumber / static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                             ->valuesFrequency.value(c1->attributesValues.value(i.key())));
+                             ->valuesFrequency.value(c2Attributes.value(i.key())));
 
                     ++denumerator;
 
@@ -502,8 +502,8 @@ qreal groupingThread::getObjectsOFSimValue(cluster* c1, cluster* c2)
                 {
                     denumerator = static_cast<numericAttributeData*>(attributes[i.key()])->getMaxMinAbsDiff();
 
-                    addend = qAbs(c1->attributesValues.value(i.key()).toDouble() -
-                                  c2->attributesValues.value(i.key()).toDouble());
+                    addend = qAbs(c1Attributes.value(i.key()).toDouble() -
+                                  c2Attributes.value(i.key()).toDouble());
                     addend = 1 - addend/denumerator;
 
                     result += addend / attributes.size();
@@ -532,7 +532,7 @@ qreal groupingThread::getObjectsIOFSimValue(cluster* c1, cluster* c2)
         {
             if(attributes.value(i.key())->type == "symbolic")
             {
-                if(c1->attributesValues.value(i.key()) == c2->attributesValues.value(i.key()))
+                if(c1Attributes.value(i.key()) == c2Attributes.value(i.key()))
                 {
                     ++result;
                 }
@@ -540,11 +540,11 @@ qreal groupingThread::getObjectsIOFSimValue(cluster* c1, cluster* c2)
                 {
                     qreal denumerator =
                         log2(static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                             ->valuesFrequency.value(c1->attributesValues.value(i.key())));
+                             ->valuesFrequency.value(c1Attributes.value(i.key())));
 
                     denumerator *=
                         log2(static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                             ->valuesFrequency.value(c1->attributesValues.value(i.key())));
+                             ->valuesFrequency.value(c2Attributes.value(i.key())));
 
                     ++denumerator;
 
@@ -561,8 +561,8 @@ qreal groupingThread::getObjectsIOFSimValue(cluster* c1, cluster* c2)
                 {
                     denumerator = static_cast<numericAttributeData*>(attributes[i.key()])->getMaxMinAbsDiff();
 
-                    addend = qAbs(c1->attributesValues.value(i.key()).toDouble() -
-                                  c2->attributesValues.value(i.key()).toDouble());
+                    addend = qAbs(c1Attributes.value(i.key()).toDouble() -
+                                  c2Attributes.value(i.key()).toDouble());
                     addend = 1 - addend/denumerator;
 
                     result += addend / attributes.size();
@@ -587,7 +587,7 @@ qreal groupingThread::getObjectsGoodall1SimValue(cluster* c1, cluster* c2)
 
     QList<QString> attributesOfBothObjects;
 
-    for(QHash<QString, attributeData*>::iterator i = c1->attributes.begin(); i != c1->attributes.end(); ++i)
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
         if(c2Attributes.contains(i.key())) attributesOfBothObjects.append(i.key());
 
     for(QList<QString>::iterator i = attributesOfBothObjects.begin();
@@ -595,7 +595,7 @@ qreal groupingThread::getObjectsGoodall1SimValue(cluster* c1, cluster* c2)
     {
         if(attributes.value(*i)->type == "symbolic")
         {
-            if(c1->attributesValues.value(*i) == c2->attributesValues.value(*i))
+            if(c1Attributes.value(*i) == c2Attributes.value(*i))
             {
                 addend = 1;
 
@@ -604,7 +604,7 @@ qreal groupingThread::getObjectsGoodall1SimValue(cluster* c1, cluster* c2)
                     j != static_cast<categoricalAttributeData*>(attributes.value(*i))->valuesFrequency.end(); ++j)
                 {
                     if(countSampleProbabilityOfAttributesValue(*i, j.key()) <=
-                       countSampleProbabilityOfAttributesValue(*i, c2->attributesValues.value(*i)))
+                       countSampleProbabilityOfAttributesValue(*i, c2Attributes.value(*i)))
                     {
                         addend -= countSecondSampleProbabilityOfAttributesValue(*i, j.key());
                     }
@@ -623,8 +623,8 @@ qreal groupingThread::getObjectsGoodall1SimValue(cluster* c1, cluster* c2)
             {
                 denumerator = static_cast<numericAttributeData*>(attributes[*i])->getMaxMinAbsDiff();
 
-                addend = qAbs(c1->attributesValues.value(*i).toDouble() -
-                              c2->attributesValues.value(*i).toDouble());
+                addend = qAbs(c1Attributes.value(*i).toDouble() -
+                              c2Attributes.value(*i).toDouble());
                 addend = 1 - addend/denumerator;
 
                 result += addend / attributes.size();
@@ -665,7 +665,7 @@ qreal groupingThread::getObjectsGoodall2SimValue(cluster* c1, cluster* c2)
 
     QList<QString> attributesOfBothObjects;
 
-    for(QHash<QString, attributeData*>::iterator i = c1->attributes.begin(); i != c1->attributes.end(); ++i)
+    for(QHash<QString, QString>::iterator i = c1Attributes.begin(); i != c1Attributes.end(); ++i)
         if(c2Attributes.contains(i.key())) attributesOfBothObjects.append(i.key());
 
     for(QList<QString>::iterator i = attributesOfBothObjects.begin();
@@ -673,7 +673,7 @@ qreal groupingThread::getObjectsGoodall2SimValue(cluster* c1, cluster* c2)
     {
         if(attributes.value(*i)->type == "symbolic")
         {
-            if(c1->attributesValues.value(*i) == c2->attributesValues.value(*i))
+            if(c1Attributes.value(*i) == c2Attributes.value(*i))
             {
                 addend = 1;
 
@@ -682,7 +682,7 @@ qreal groupingThread::getObjectsGoodall2SimValue(cluster* c1, cluster* c2)
                     j != static_cast<categoricalAttributeData*>(attributes.value(*i))->valuesFrequency.end(); ++j)
                 {
                     if(countSampleProbabilityOfAttributesValue(*i, j.key()) >=
-                       countSampleProbabilityOfAttributesValue(*i, c1->attributesValues.value(*i)))
+                       countSampleProbabilityOfAttributesValue(*i, c1Attributes.value(*i)))
                     {
                         addend -= countSecondSampleProbabilityOfAttributesValue(*i, j.key());
                     }
@@ -701,8 +701,8 @@ qreal groupingThread::getObjectsGoodall2SimValue(cluster* c1, cluster* c2)
             {
                 denumerator = static_cast<numericAttributeData*>(attributes[*i])->getMaxMinAbsDiff();
 
-                addend = qAbs(c1->attributesValues.value(*i).toDouble() -
-                              c2->attributesValues.value(*i).toDouble());
+                addend = qAbs(c1Attributes.value(*i).toDouble() -
+                              c2Attributes.value(*i).toDouble());
                 addend = 1 - addend/denumerator;
 
                 result += addend / attributes.size();
@@ -732,12 +732,7 @@ qreal groupingThread::getObjectsGoodall3SimValue(cluster* c1, cluster* c2)
             {
                 if(c1->attributesValues.value(i.key()) == c2->attributesValues.value(i.key()))
                 {
-                    qreal addend = static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                            ->getValuesFrequency(c1->attributesValues.value(i.key()));
-                    addend *= static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                               ->getValuesFrequency(c1->attributesValues.value(i.key())) - 1;
-                    addend /= settings->objectsNumber;
-                    addend /= settings->objectsNumber - 1;
+                    qreal addend = countSecondSampleProbabilityOfAttributesValue(i.key(), c1Attributes.value(i.key()));
 
                     addend = 1 - addend;
 
@@ -754,8 +749,8 @@ qreal groupingThread::getObjectsGoodall3SimValue(cluster* c1, cluster* c2)
                 {
                     denumerator = static_cast<numericAttributeData*>(attributes[i.key()])->getMaxMinAbsDiff();
 
-                    addend = qAbs(c1->attributesValues.value(i.key()).toDouble() -
-                                  c2->attributesValues.value(i.key()).toDouble());
+                    addend = qAbs(c1Attributes.value(i.key()).toDouble() -
+                                  c2Attributes.value(i.key()).toDouble());
                     addend = 1 - addend/denumerator;
 
                     result += addend / attributes.size();
@@ -784,14 +779,9 @@ qreal groupingThread::getObjectsGoodall4SimValue(cluster* c1, cluster* c2)
         {
             if(attributes.value(i.key())->type == "symbolic")
             {
-                if(c1->attributesValues.value(i.key()) == c2->attributesValues.value(i.key()))
+                if(c1Attributes.value(i.key()) == c2Attributes.value(i.key()))
                 {
-                    qreal addend = static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                            ->getValuesFrequency(c1->attributesValues.value(i.key()));
-                    addend *= static_cast<categoricalAttributeData*>(attributes.value(i.key()))
-                               ->getValuesFrequency(c1->attributesValues.value(i.key())) - 1;
-                    addend /= settings->objectsNumber;
-                    addend /= settings->objectsNumber - 1;
+                    qreal addend = countSecondSampleProbabilityOfAttributesValue(i.key(), c1Attributes.value(i.key()));
 
                     result += addend;
                 }
@@ -806,8 +796,8 @@ qreal groupingThread::getObjectsGoodall4SimValue(cluster* c1, cluster* c2)
                 {
                     denumerator = static_cast<numericAttributeData*>(attributes[i.key()])->getMaxMinAbsDiff();
 
-                    addend = qAbs(c1->attributesValues.value(i.key()).toDouble() -
-                                  c2->attributesValues.value(i.key()).toDouble());
+                    addend = qAbs(c1Attributes.value(i.key()).toDouble() -
+                                  c2Attributes.value(i.key()).toDouble());
                     addend = 1 - addend/denumerator;
 
                     result += addend / attributes.size();

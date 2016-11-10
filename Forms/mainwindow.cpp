@@ -811,8 +811,6 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_actionAngielski_triggered()
 {
-    qDebug() << "tr to eng";
-
     translate(english);
 }
 
@@ -1249,4 +1247,69 @@ void MainWindow::resizeEvent(QResizeEvent *e)
             ui->graphicsView->fitInView(scene->itemsBoundingRect(),Qt::KeepAspectRatio);
         }
     }
+}
+
+// New buttons
+
+void MainWindow::on_checkBoxVisualizeAllHierarchyLevels_clicked()
+{
+    ui->checkBoxVisualizeAllHierarchyLevelsVisualizator->setCheckState
+            (ui->checkBoxVisualizeAllHierarchyLevels->checkState());
+}
+
+void MainWindow::on_checkBoxVisualizeAllHierarchyLevelsVisualizator_clicked()
+{
+    ui->checkBoxVisualizeAllHierarchyLevels->setCheckState
+            (ui->checkBoxVisualizeAllHierarchyLevelsVisualizator->checkState());
+}
+
+void MainWindow::on_comboBoxAlgorithmVisualization_currentIndexChanged(int index)
+{
+    ui->comboBoxAlgorithmVisualizationVisualizator->setCurrentIndex(index);
+}
+
+void MainWindow::on_comboBoxAlgorithmVisualizationVisualizator_currentIndexChanged(int index)
+{
+    ui->comboBoxAlgorithmVisualization->setCurrentIndex(index);
+}
+
+void MainWindow::on_pushButtonVisualizeVisualizator_clicked()
+{
+    if(areObjectsClustered)
+    {
+        addLogMessage(tr("log.loadingVisualizationSettings"));
+
+        setVisualizationSettings();
+
+        scene->clear();
+        connect(vThread,SIGNAL(passGraphicsRectObject(customGraphicsRectObject*)),
+                this,SLOT(getGraphicsRectObject(customGraphicsRectObject*)));
+        connect(vThread,SIGNAL(passGraphicsEllipseObject(customGraphicEllipseObject*)),
+                this,SLOT(getGraphicsEllipseObject(customGraphicEllipseObject*)));
+        connect(vThread,SIGNAL(passLogMsg(QString)),
+                this,SLOT(gotLogText(QString)));
+        connect(vThread,SIGNAL(passMainEllipseRect(QRect*)),
+                this,SLOT(gotMainEllipseRect(QRect*)));
+
+        addLogMessage(tr("log.visualizationSettingsLoaded"));
+
+        visualize();
+    }
+    else
+    {
+        QString logText = tr("log.visualizationGenerationFailed") + " ";
+        logText+= tr("log.objectsNotGrouped");
+
+        addLogMessage(logText);
+    }
+}
+
+void MainWindow::on_spinBoxInterObjectMarginVisualizator_valueChanged(int arg1)
+{
+    ui->spinBoxInterObjectMargin->setValue(arg1);
+}
+
+void MainWindow::on_spinBoxInterObjectMargin_valueChanged(int arg1)
+{
+    ui->spinBoxInterObjectMarginVisualizator->setValue(arg1);
 }

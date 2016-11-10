@@ -32,7 +32,7 @@
         <translation>CluVis - Wizualizator skupień</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="761"/>
+        <location filename="Forms/mainwindow.ui" line="764"/>
         <source>Wizualizacja</source>
         <translation>Wizualizacja</translation>
     </message>
@@ -41,12 +41,12 @@
         <translation type="vanished">Ustawienia ogólne</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="586"/>
+        <location filename="Forms/mainwindow.ui" line="589"/>
         <source>Typ grupowanych obiektów:</source>
         <translation>Typ grupowanych obiektów:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="593"/>
+        <location filename="Forms/mainwindow.ui" line="596"/>
         <source>&lt;b&gt;RSES LEM2 Rules&lt;/b&gt;</source>
         <translation>Reguły RSES LEM2</translation>
     </message>
@@ -60,42 +60,42 @@
         <translation type="vanished">&lt;b&gt;Klasyczny hierarchiczny algorytm grupowania&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="681"/>
+        <location filename="Forms/mainwindow.ui" line="684"/>
         <source>Baza reguł:</source>
         <translation>Baza obiektów:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="690"/>
+        <location filename="Forms/mainwindow.ui" line="693"/>
         <source>&lt;b&gt;Nie wczytano.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Nie wczytano.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="697"/>
+        <location filename="Forms/mainwindow.ui" line="700"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;(Niepogrupowana) &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;(Niepogrupowana) &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="706"/>
+        <location filename="Forms/mainwindow.ui" line="709"/>
         <source>Liczba reguł w bazie:</source>
         <translation>Liczba obiektów:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="713"/>
+        <location filename="Forms/mainwindow.ui" line="716"/>
         <source>&lt;b&gt;0.&lt;/b&gt;</source>
         <translation>&lt;b&gt; 0.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="600"/>
+        <location filename="Forms/mainwindow.ui" line="603"/>
         <source>Grupowanie reguł ze względu na:</source>
         <translation>Grupowanie ze względu na:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="616"/>
+        <location filename="Forms/mainwindow.ui" line="619"/>
         <source>Warunki</source>
         <translation>Warunki</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="621"/>
+        <location filename="Forms/mainwindow.ui" line="624"/>
         <source>Konkluzje</source>
         <translation>Konkluzje</translation>
     </message>
@@ -157,46 +157,46 @@ liczbie obiektów w bazie.</translation>
         <translation type="vanished">Procent obiektów zawierających atrybut, aby był on brany pod uwagę przy tworzeniu reprezentanta:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="332"/>
-        <location filename="Forms/mainwindow.ui" line="785"/>
+        <location filename="Forms/mainwindow.ui" line="325"/>
+        <location filename="Forms/mainwindow.ui" line="788"/>
         <source>Algorytm wizualizacji:</source>
         <translation>Algorytm wizualizacji:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="348"/>
+        <location filename="Forms/mainwindow.ui" line="341"/>
         <source>RT Slice And Dice</source>
         <translation>RT Slice And Dice</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="353"/>
-        <location filename="Forms/mainwindow.ui" line="804"/>
+        <location filename="Forms/mainwindow.ui" line="346"/>
+        <location filename="Forms/mainwindow.ui" line="807"/>
         <source>Circular Treemap</source>
         <translation>Circular Treemap</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="278"/>
+        <location filename="Forms/mainwindow.ui" line="409"/>
         <source>Wizualizuj wszystkie poziomy hierarchii.</source>
         <translation>Wizualizuj wszystkie poziomy hierarchii.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="285"/>
+        <location filename="Forms/mainwindow.ui" line="278"/>
         <source>Szukaj optymalnych grupowań.</source>
         <oldsource>Szukaj optymalnych grupowań</oldsource>
         <translation>Szukaj optymalnych grupowań.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="745"/>
+        <location filename="Forms/mainwindow.ui" line="748"/>
         <source>Grupuj</source>
         <translation>Grupuj</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="752"/>
-        <location filename="Forms/mainwindow.ui" line="833"/>
+        <location filename="Forms/mainwindow.ui" line="755"/>
+        <location filename="Forms/mainwindow.ui" line="847"/>
         <source>Wizualizuj</source>
         <translation>Wizualizuj</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="574"/>
+        <location filename="Forms/mainwindow.ui" line="577"/>
         <source>Ustawienia szczegółowe</source>
         <translation>Ustawienia zaawansowane</translation>
     </message>
@@ -213,7 +213,7 @@ liczbie obiektów w bazie.</translation>
     <message>
         <location filename="Forms/mainwindow.ui" line="92"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Klasyczny AHC&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Klasyczny AHC&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;b&gt;Klasyczny AHC&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="Forms/mainwindow.ui" line="130"/>
@@ -251,63 +251,69 @@ liczbie obiektów w bazie.</translation>
         <translation>Oczekiwana liczba skupień:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="326"/>
-        <location filename="Forms/mainwindow.ui" line="779"/>
+        <location filename="Forms/mainwindow.ui" line="319"/>
+        <location filename="Forms/mainwindow.ui" line="782"/>
         <source>Ustawienia wizualizacji</source>
         <translation>Ustawienia wizualizacji</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="379"/>
         <source>Margines prostokątów (px):</source>
-        <translation>Margines prostokątów (px):</translation>
+        <translation type="vanished">Margines prostokątów (px):</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="441"/>
+        <location filename="Forms/mainwindow.ui" line="444"/>
         <source>Ustawienia reprezentanta</source>
         <translation>Ustawienia reprezentanta</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="447"/>
+        <location filename="Forms/mainwindow.ui" line="450"/>
         <source>Strategia tworzenia reprezentanta:</source>
         <translation>Strategia tworzenia reprezentanta:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="469"/>
+        <location filename="Forms/mainwindow.ui" line="472"/>
         <source>Progowa</source>
         <translation>Progowa</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="474"/>
+        <location filename="Forms/mainwindow.ui" line="477"/>
         <source>TFIDF</source>
         <translation>TFIDF</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="497"/>
+        <location filename="Forms/mainwindow.ui" line="500"/>
         <source>Występowanie atrybutu (%):</source>
         <translation>Występowanie atrybutu (%):</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="675"/>
+        <location filename="Forms/mainwindow.ui" line="678"/>
         <source>Informacje o bazie</source>
         <translation>Informacje o bazie</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="799"/>
+        <location filename="Forms/mainwindow.ui" line="802"/>
         <source>RT Slice and Dice</source>
         <translation>RT Slice and Dice</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="812"/>
+        <location filename="Forms/mainwindow.ui" line="372"/>
+        <location filename="Forms/mainwindow.ui" line="815"/>
         <source>Margines obiektów (px):</source>
         <translation>Margines obiektów (px):</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="873"/>
+        <location filename="Forms/mainwindow.ui" line="839"/>
+        <source>Wizualizuj wszystkie 
+ poziomy hierarchii.</source>
+        <translation>Wzualizuj wszystkie poziomy hierarchii.</translation>
+    </message>
+    <message>
+        <location filename="Forms/mainwindow.ui" line="887"/>
         <source>Dziennik zdarzeń</source>
         <translation>Dziennik zdarzeń</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="879"/>
+        <location filename="Forms/mainwindow.ui" line="893"/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -321,57 +327,57 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="904"/>
+        <location filename="Forms/mainwindow.ui" line="918"/>
         <source>Plik</source>
         <translation>Plik</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="915"/>
+        <location filename="Forms/mainwindow.ui" line="929"/>
         <source>Pomoc</source>
         <translation>Pomoc</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="921"/>
+        <location filename="Forms/mainwindow.ui" line="935"/>
         <source>Widok</source>
         <translation>Widok</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="925"/>
+        <location filename="Forms/mainwindow.ui" line="939"/>
         <source>Język</source>
         <translation>Język</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="941"/>
+        <location filename="Forms/mainwindow.ui" line="955"/>
         <source>Wczytaj bazę obiektów</source>
         <translation>Wczytaj bazę obiektów</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="946"/>
+        <location filename="Forms/mainwindow.ui" line="960"/>
         <source>Zakończ program</source>
         <translation>Zakończ</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="951"/>
+        <location filename="Forms/mainwindow.ui" line="965"/>
         <source>Informacje o programie</source>
         <translation>O programie</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="956"/>
+        <location filename="Forms/mainwindow.ui" line="970"/>
         <source>Zapisz wizualizację</source>
         <translation>Zapisz wizualizację</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="961"/>
+        <location filename="Forms/mainwindow.ui" line="975"/>
         <source>Generuj raport</source>
         <translation>Generuj raport</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="966"/>
+        <location filename="Forms/mainwindow.ui" line="980"/>
         <source>Angielski</source>
         <translation>Angielski</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="971"/>
+        <location filename="Forms/mainwindow.ui" line="985"/>
         <source>Polski</source>
         <translation>Polski</translation>
     </message>
@@ -716,198 +722,202 @@ p, li { white-space: pre-wrap; }
         <translation>Długość reprezentanta skupienia</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="856"/>
+        <location filename="Forms/mainwindow.cpp" line="854"/>
         <source>log.programmeInformationOpened</source>
         <translation>Otworzono informacje o programie.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="862"/>
+        <location filename="Forms/mainwindow.cpp" line="860"/>
         <source>log.loadingGroupingSettings</source>
         <translation>Wczytuję ustawienia grupowania...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="866"/>
+        <location filename="Forms/mainwindow.cpp" line="864"/>
         <source>log.validatingSettings</source>
         <translation>Sprawdzam poprawność wczytanych ustawień...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="870"/>
+        <location filename="Forms/mainwindow.cpp" line="868"/>
         <source>log.settingsCorrect</source>
         <translation>Ustawienia poprawne.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="880"/>
+        <location filename="Forms/mainwindow.cpp" line="878"/>
+        <location filename="Forms/mainwindow.cpp" line="1280"/>
         <source>log.loadingVisualizationSettings</source>
         <translation>Wczytuję ustawienia wizualizacji...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="894"/>
+        <location filename="Forms/mainwindow.cpp" line="892"/>
+        <location filename="Forms/mainwindow.cpp" line="1294"/>
         <source>log.visualizationSettingsLoaded</source>
         <translation>Wczytano ustawienia wizualizacji.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="900"/>
+        <location filename="Forms/mainwindow.cpp" line="898"/>
+        <location filename="Forms/mainwindow.cpp" line="1300"/>
         <source>log.visualizationGenerationFailed</source>
         <translation>Nie udało się wygenerować wizualizacji.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="901"/>
+        <location filename="Forms/mainwindow.cpp" line="899"/>
+        <location filename="Forms/mainwindow.cpp" line="1301"/>
         <source>log.objectsNotGrouped</source>
         <translation>Obiekty nie są poprawnie pogrupowane.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="926"/>
-        <location filename="Forms/mainwindow.cpp" line="971"/>
+        <location filename="Forms/mainwindow.cpp" line="924"/>
+        <location filename="Forms/mainwindow.cpp" line="969"/>
         <source>log.generalSettingsLoaded</source>
         <translation>Wczytano ustawienia ogólne.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="950"/>
+        <location filename="Forms/mainwindow.cpp" line="948"/>
         <source>log.rsesRules.detailedSettingsLoaded</source>
         <translation>Wczytano ustawienia szczegółowe reguł RSES.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="981"/>
+        <location filename="Forms/mainwindow.cpp" line="979"/>
         <source>report.detailedSettingsLoaded</source>
         <translation>Wczytano ustawienia szczegółowe.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1022"/>
-        <location filename="Forms/mainwindow.cpp" line="1032"/>
+        <location filename="Forms/mainwindow.cpp" line="1020"/>
+        <location filename="Forms/mainwindow.cpp" line="1030"/>
         <source>log.failedAttemptOfGrouping</source>
         <translation>Nieudana próba grupowania.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1004"/>
+        <location filename="Forms/mainwindow.cpp" line="1002"/>
         <source>log.baseNotSelected</source>
         <translation>Nie wybrano bazy obiektów.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1023"/>
+        <location filename="Forms/mainwindow.cpp" line="1021"/>
         <source>log.stopConditionToHigh</source>
         <translation>Warunek stopu nie może być większy od liczby obiektów w bazie.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1033"/>
+        <location filename="Forms/mainwindow.cpp" line="1031"/>
         <source>log.stopConditionToSmall</source>
         <translation>Warunek stopu nie może być mniejszy od jedynki.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1048"/>
+        <location filename="Forms/mainwindow.cpp" line="1046"/>
         <source>log.groupingStarted</source>
         <translation>Rozpoczęto grupowanie.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1050"/>
-        <location filename="Forms/mainwindow.cpp" line="1110"/>
+        <location filename="Forms/mainwindow.cpp" line="1048"/>
+        <location filename="Forms/mainwindow.cpp" line="1108"/>
         <source>log.blockingButtonsForOperation</source>
         <translation>Blokuję przyciski na czas operacji...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1057"/>
+        <location filename="Forms/mainwindow.cpp" line="1055"/>
         <source>log.groupingThreadStarted</source>
         <translation>Rozpoczęto wątek grupujący.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1064"/>
+        <location filename="Forms/mainwindow.cpp" line="1062"/>
         <source>log.groupingThreadFinishedIn</source>
         <translation>Wątek grupujący zakończony w czasie %1 ms.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1072"/>
-        <location filename="Forms/mainwindow.cpp" line="1138"/>
+        <location filename="Forms/mainwindow.cpp" line="1070"/>
+        <location filename="Forms/mainwindow.cpp" line="1136"/>
         <source>log.buttonsUnlocked</source>
         <translation>Odblokowano przyciski.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1079"/>
+        <location filename="Forms/mainwindow.cpp" line="1077"/>
         <source>FD.clustersNumber</source>
         <translation>Liczba otrzymanych skupień</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1082"/>
+        <location filename="Forms/mainwindow.cpp" line="1080"/>
         <source>FD.clustersMDI</source>
         <translation>MDI otrzymanych skupień</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1085"/>
+        <location filename="Forms/mainwindow.cpp" line="1083"/>
         <source>FD.clustersMDBI</source>
         <translation>MDBI otrzymanych skupień</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1089"/>
+        <location filename="Forms/mainwindow.cpp" line="1087"/>
         <source>FD.visualizeGrouping</source>
         <translation>Czy chcesz wygenerować wizualizację struktury grup?</translation>
     </message>
     <message>
+        <location filename="Forms/mainwindow.cpp" line="1090"/>
         <location filename="Forms/mainwindow.cpp" line="1092"/>
-        <location filename="Forms/mainwindow.cpp" line="1094"/>
         <source>FD.groupingFinished</source>
         <translation>Grupowanie zakończone</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1097"/>
+        <location filename="Forms/mainwindow.cpp" line="1095"/>
         <source>FD.yes</source>
         <translation>Tak</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1098"/>
+        <location filename="Forms/mainwindow.cpp" line="1096"/>
         <source>FD.no</source>
         <translation>Nie</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1108"/>
+        <location filename="Forms/mainwindow.cpp" line="1106"/>
         <source>log.visualizationStarted</source>
         <translation>Rozpoczęto wizualizowanie.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1115"/>
+        <location filename="Forms/mainwindow.cpp" line="1113"/>
         <source>log.visualizationThreadStarted</source>
         <translation>Rozpoczęto wątek wizualizujący.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1121"/>
+        <location filename="Forms/mainwindow.cpp" line="1119"/>
         <source>log.visualizationThreadFinishedIn</source>
         <translation>Wątek wizualizujący zakończony w czasie %1 ms.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1132"/>
+        <location filename="Forms/mainwindow.cpp" line="1130"/>
         <source>log.visualizationCentered</source>
         <translation>Wizualizacja wycentrowana.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1142"/>
+        <location filename="Forms/mainwindow.cpp" line="1140"/>
         <source>FD.visualizationFinished.title</source>
         <translation>Wizualizowanie zakończone</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1143"/>
+        <location filename="Forms/mainwindow.cpp" line="1141"/>
         <source>FD.visualizationFinished.msg</source>
         <oldsource>log.visualizationFinished.msg</oldsource>
         <translation>Wizualizowanie zakończone!</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1152"/>
+        <location filename="Forms/mainwindow.cpp" line="1150"/>
         <source>log.groupedObjectsReceived</source>
         <translation>Otrzymano pogrupowane obiekty.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1154"/>
+        <location filename="Forms/mainwindow.cpp" line="1152"/>
         <source>log.visualizationAvailable</source>
         <translation>Można przystąpić do wizualizacji.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1160"/>
+        <location filename="Forms/mainwindow.cpp" line="1158"/>
         <source>bold.grouped</source>
         <translation>&lt;b&gt;(Pogrupowana)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1202"/>
+        <location filename="Forms/mainwindow.cpp" line="1200"/>
         <source>log.clusterSelectedForVisualization</source>
         <translation>Wybrano skupienie do wizualizacji. Wizualizuję...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1214"/>
+        <location filename="Forms/mainwindow.cpp" line="1212"/>
         <source>log.showClustersInfo</source>
         <translation> Wyświetlam informacje dotyczące wybranego skupienia.</translation>
     </message>
@@ -915,9 +925,9 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1003"/>
+        <location filename="Forms/mainwindow.cpp" line="1001"/>
         <source>log.failedAttemptOfGrouping</source>
-        <translation type="unfinished">Nieudana próba grupowania.</translation>
+        <translation>Nieudana próba grupowania.</translation>
     </message>
 </context>
 <context>
