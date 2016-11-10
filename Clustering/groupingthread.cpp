@@ -1049,6 +1049,9 @@ qreal groupingThread::getMinIntraClusterSimilarity(int clustersNum)
     return minIntraSim;
 }
 
+
+// TODO: Sometime it is < 0. Investigate.
+
 void groupingThread::countMDBI(int clustersNum)
 {
     MDBI = 0;
