@@ -83,7 +83,13 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionLoadObjectBase_triggered()
 {
     QFileInfo KB = selectObjectBase();
-    QString OBName = KB.completeBaseName();
+
+    loadObjectsBase(KB);
+}
+
+void MainWindow::loadObjectsBase(QFileInfo OB)
+{
+    QString OBName = OB.completeBaseName();
 
     if(OBName == "")
     {
@@ -95,7 +101,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
         return;
     }
 
-    if(isRuleSet(KB) == false)
+    if(isRuleSet(OB) == false)
     {
         QString logText = tr("log.failedToLoadObjBase") + " ";
         logText+= tr("log.selectedFileIsNotKnowledgeBase");
@@ -111,7 +117,7 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     ui->labelIsBaseGrouped->setText(tr("bold.ungrouped"));
     areObjectsClustered = false;
 
-    gSettings->objectBaseInfo = KB;
+    gSettings->objectBaseInfo = OB;
 
     OBName += "."+gSettings->objectBaseInfo.suffix();
     settings->objectsNumber = getObjectsNumber();
@@ -184,16 +190,23 @@ int MainWindow::getObjectsNumber()
 void MainWindow::on_actionSaveVisualization_triggered()
 {
     QFileDialog FD;
-    QString savePath = "C:\\ANB\\";
 
-    QString fileName = FD.getSaveFileName(
+    QString savePath = "C:/";
+
+    QString filePath = FD.getSaveFileName(
         this,
         tr("FD.save"),   // Zapisz
         savePath,
         tr("FD.png")      // *.png
      );
 
-    if(fileName == "")
+    saveVisualization(filePath);
+
+}
+
+void MainWindow::saveVisualization(QString path)
+{
+    if(path == "")
     {
         QString logText = tr("log.failedToSaveVisualization") + " ";
         logText+= tr("log.fileNameNotSelected");
@@ -203,10 +216,8 @@ void MainWindow::on_actionSaveVisualization_triggered()
         return;
     }
 
-    // Add .png to ensure proper format.
-    // TODO: Add if to check if format is already added.
-
-    fileName += ".png";
+    if(path.right(4) != ".png")
+        path += ".png";
 
     QRect sceneRect(ui->graphicsView->frameGeometry().left() + 15,
                     ui->graphicsView->frameGeometry().top() + 55,
@@ -215,11 +226,11 @@ void MainWindow::on_actionSaveVisualization_triggered()
 
 
     QPixmap pixMap = QWidget::grab(sceneRect);
-    pixMap.save(fileName);
+    pixMap.save(path);
 
     addLogMessage(
         QString(tr("log.visualizationSavedWithName"))
-        .arg(fileName)
+        .arg(path)
     );
 }
 
@@ -228,9 +239,14 @@ void MainWindow::on_actionGenerateReport_triggered()
     generateReport();
 }
 
-void MainWindow::generateReport()
+void MainWindow::generateReport(QString path)
 {
-    QString filePath = getFilePath();
+    QString filePath = path;
+
+    if(path == "")
+         filePath = getFilePath();
+    else
+        filePath = path;
 
     if(filePath == "")
     {
@@ -869,6 +885,37 @@ void MainWindow::on_pushButtonGroup_clicked()
 
         groupObjects();
     }
+
+    if(areObjectsClustered)
+    {
+        QMessageBox mb;
+        QString infoText;
+
+        infoText = tr("FD.clustersNumber") + ": "
+                + QString::number(settings->stopCondition) + ".\n";
+        // Liczba otrzymanych skupień
+        infoText += tr("FD.clustersMDI") + ": "
+                + QString::number(MDI) + ".\n";
+        // MDI otrzymanych skupień
+        infoText += tr("FD.clustersMDBI") + ": "
+                + QString::number(MDBI) + ".\n";
+        // MDBI otrzymanych skupień
+
+        infoText += tr("FD.visualizeGrouping");
+        // Czy chcesz wygenerować wizualizację struktury grup?
+
+        mb.setWindowTitle(tr("FD.groupingFinished"));
+        // Grupowanie zakończone
+        mb.setText(tr("FD.groupingFinished") + ".");
+        mb.setInformativeText(infoText);
+        mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        mb.setButtonText(QMessageBox::Yes, tr("FD.yes"));
+        mb.setButtonText(QMessageBox::No, tr("FD.no"));
+        mb.setDefaultButton(QMessageBox::Yes);
+
+        if(mb.exec() == QMessageBox::Yes)
+            on_pushButtonVisualize_clicked();
+    }
 }
 
 void MainWindow::on_pushButtonVisualize_clicked()
@@ -1068,37 +1115,6 @@ void MainWindow::groupObjects()
     ui->pushButtonGroup->setEnabled(true);
 
     addLogMessage(tr("log.buttonsUnlocked"));
-
-    if(areObjectsClustered)
-    {
-        QMessageBox mb;
-        QString infoText;
-
-        infoText = tr("FD.clustersNumber") + ": "
-                + QString::number(settings->stopCondition) + ".\n";
-        // Liczba otrzymanych skupień
-        infoText += tr("FD.clustersMDI") + ": "
-                + QString::number(MDI) + ".\n";
-        // MDI otrzymanych skupień
-        infoText += tr("FD.clustersMDBI") + ": "
-                + QString::number(MDBI) + ".\n";
-        // MDBI otrzymanych skupień
-
-        infoText += tr("FD.visualizeGrouping");
-        // Czy chcesz wygenerować wizualizację struktury grup?
-
-        mb.setWindowTitle(tr("FD.groupingFinished"));
-        // Grupowanie zakończone
-        mb.setText(tr("FD.groupingFinished") + ".");
-        mb.setInformativeText(infoText);
-        mb.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        mb.setButtonText(QMessageBox::Yes, tr("FD.yes"));
-        mb.setButtonText(QMessageBox::No, tr("FD.no"));
-        mb.setDefaultButton(QMessageBox::Yes);
-
-        if(mb.exec() == QMessageBox::Yes)
-            on_pushButtonVisualize_clicked();
-    }
 }
 
 void MainWindow::visualize()
@@ -1135,11 +1151,6 @@ void MainWindow::visualize()
 
     addLogMessage(tr("log.buttonsUnlocked"));
     //Przyciski odblokowane.   
-
-    QMessageBox::information(this,
-                            tr("FD.visualizationFinished.title"),
-                            tr("FD.visualizationFinished.msg"), // Wizualizowanie zakończone!
-                            QMessageBox::Ok);
 
     ui->actionSaveVisualization->setEnabled(true);
     ui->actionGenerateReport->setEnabled(true);
@@ -1312,4 +1323,149 @@ void MainWindow::on_spinBoxInterObjectMarginVisualizator_valueChanged(int arg1)
 void MainWindow::on_spinBoxInterObjectMargin_valueChanged(int arg1)
 {
     ui->spinBoxInterObjectMarginVisualizator->setValue(arg1);
+}
+
+void MainWindow::on_pushButtonStandard_clicked()
+{
+    // TODO: Change for editable dir.
+    QString baseDir = "C:/ANB/",
+            targetDir,
+            kbsDirPath;
+
+    QStringList kbNames;
+
+    // Get dir path of KBs folder
+    kbsDirPath = QFileDialog::getExistingDirectory
+                (
+                    this,
+                    tr("Select directory"),
+                    "C:/",
+                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+                );
+
+    // Return if no dir was selected
+    if(kbsDirPath == "")
+    {
+        // Log that no dir path was selected.
+        return;
+    }
+
+    // Get KB names from that dir (only bases like *.rul are considered KBs)
+    QDir kbsDir(kbsDirPath);
+    kbNames = kbsDir.entryList({"*.rul"});
+
+    // Change tab to visualization to ensure that
+    ui->tabWidget->setCurrentIndex(1);
+
+    // Check hierarchy levels checkbox
+    ui->checkBoxVisualizeAllHierarchyLevels->setChecked(true);
+    ui->checkBoxVisualizeAllHierarchyLevelsVisualizator->setChecked(true);
+
+    // For each KB on the list
+    for(int kbi = 0; kbi < kbNames.length(); ++kbi)
+    {
+        //
+        QFileInfo KB(kbsDirPath + "/" + kbNames.at(kbi));
+
+        qDebug() << kbsDirPath + "/" + kbNames.at(kbi);
+
+        loadObjectsBase(KB);
+
+        // Set targetDir to point at current KB folder
+        targetDir = baseDir + kbNames.at(kbi);
+
+        // Check if folder with the same name  as KB doesn't exist.
+        QDir kbFolder(targetDir);
+
+        if(! kbFolder.exists())
+        {
+            // If so create folder with name same as KB name.
+            kbFolder.mkdir(targetDir);
+        }
+        else
+        {
+            // Communicate that folder exists.
+        }
+
+        // For each inter object similarity measure
+        for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
+        {
+            // Reset target dir.
+            targetDir = baseDir + kbNames.at(kbi);
+
+            // Change index of object similarity measure combobox
+            ui->comboBoxInterObjectSimMeasure->setCurrentIndex(osm);
+
+            // Update dir to point inside folder of this similarity measure.
+            targetDir += "/" + ui->comboBoxInterObjectSimMeasure->currentText();
+
+            // Check if folder with the same name doesn't exist.
+            QDir objectSimFolder(targetDir);
+
+            if(! objectSimFolder.exists())
+            {
+                // If so create folder with name same as KB name.
+                objectSimFolder.mkdir(targetDir);
+            }
+            else
+            {
+                // Communicate that folder exists.
+            }
+
+            // For each inter cluster similarity measure
+            for(int csm = 0; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
+            {
+                // Change index of object similarity measure combobox
+                ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
+
+                // Perform grouping for 1/10 of KB size clusters with default settings.
+                ui->spinBoxStopConditionValue->setValue(qCeil(settings->objectsNumber / 10));
+
+                setGroupingSettings();
+                groupObjects();
+
+                // Generate report of this grouping in dir.
+                int reportNum = 1 + 4 * csm;
+                generateReport(targetDir + "/" + QString::number(reportNum) + ".xml");
+
+                // For each treemap
+                for(int vai = 0; vai < ui->comboBoxAlgorithmVisualization->count(); ++vai)
+                {
+                    // Set visualization algorithm to algorithm with current index.
+                    ui->comboBoxAlgorithmVisualization->setCurrentIndex(vai);
+
+                    // Generate visualization.
+                    ui->pushButtonVisualize->click();
+
+                    // Save result.
+                    int visualizationNumber = 1 + vai + 4 * csm;
+                    saveVisualization(targetDir + "/" + QString::number(visualizationNumber) + ".png");
+                }
+
+                // Perform grouping for min(10, no. of objects) clusters with default settings.
+                ui->spinBoxStopConditionValue->setValue(qMin(10, settings->objectsNumber));
+
+                setGroupingSettings();
+                groupObjects();
+
+                // Generate report of this grouping in dir.
+                reportNum = 3 + 4 * csm;
+                generateReport(targetDir + "/" + QString::number(reportNum) + ".xml");
+
+                // For each treemap
+                for(int vai = 0; vai < ui->comboBoxAlgorithmVisualization->count(); ++vai)
+                {
+                    // Set visualization algorithm to algorithm with current index.
+                    ui->comboBoxAlgorithmVisualization->setCurrentIndex(vai);
+
+                    // Generate visualization.
+                    ui->pushButtonVisualize->click();
+
+                    // Save result.
+                    int visualizationNumber = 3 + vai + 4 * csm;
+                    saveVisualization(targetDir + "/" + QString::number(visualizationNumber) + ".png");
+                }
+            }
+        }
+    }
 }

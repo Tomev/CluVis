@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>519</height>
+    <height>526</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -45,7 +45,7 @@
           <x>10</x>
           <y>130</y>
           <width>245</width>
-          <height>321</height>
+          <height>290</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -735,13 +735,20 @@
        <widget class="QWidget" name="layoutWidget">
         <property name="geometry">
          <rect>
-          <x>260</x>
-          <y>420</y>
-          <width>241</width>
+          <x>140</x>
+          <y>430</y>
+          <width>361</width>
           <height>25</height>
          </rect>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayoutButtons">
+         <item>
+          <widget class="QPushButton" name="pushButtonStandard">
+           <property name="text">
+            <string>Standard</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="pushButtonGroup">
            <property name="text">
