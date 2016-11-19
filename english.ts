@@ -616,7 +616,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="Forms/mainwindow.cpp" line="658"/>
         <source>report.biggestClusterRepLength</source>
-        <translation>Biggest representative length</translation>
+        <translation>Biggest cluster representative length</translation>
     </message>
     <message>
         <location filename="Forms/mainwindow.cpp" line="661"/>
