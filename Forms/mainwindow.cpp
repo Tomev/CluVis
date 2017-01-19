@@ -1407,20 +1407,22 @@ void MainWindow::on_pushButtonStandard_clicked()
             // For each inter cluster similarity measure
             for(int csm = 0; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
             {
-                // Change index of object similarity measure combobox
+                // Change index of cluster similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
 
                 unsigned int rulesNumberSqrt = qCeil(qSqrt(settings->objectsNumber));
                 unsigned int rulesNumberOnePercent = qCeil(settings->objectsNumber/100.0);
+                unsigned int desiredClustersNumber = rulesNumberSqrt;
+                QString reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
 
                 // Perform grouping for given clusters number with default settings.
-                ui->spinBoxStopConditionValue->setValue(rulesNumberSqrt);
+                ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
 
                 setGroupingSettings();
                 groupObjects();
 
                 // Generate report of this grouping in dir.
-                generateReport(targetDir + "/" + QString::number(rulesNumberSqrt) + ".xml");
+                generateReport(targetDir + "/" + reportName + ".xml");
 
                 for(
                         unsigned int i = 1;
@@ -1431,14 +1433,20 @@ void MainWindow::on_pushButtonStandard_clicked()
                         ++i
                     )
                 {
+                    desiredClustersNumber = rulesNumberSqrt - i * rulesNumberOnePercent;
+                    reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
+
                     // Perform grouping for given clusters number with default settings.
-                    ui->spinBoxStopConditionValue->setValue(rulesNumberSqrt - i * rulesNumberOnePercent);
+                    ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
 
                     setGroupingSettings();
                     groupObjects();
 
                     // Generate report of this grouping in dir.
-                    generateReport(targetDir + "/" + QString::number(rulesNumberSqrt - i * rulesNumberOnePercent) + ".xml");
+                    generateReport(targetDir + "/" + reportName + ".xml");
+
+                    desiredClustersNumber = rulesNumberSqrt + i * rulesNumberOnePercent;
+                    reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
 
                     // Perform grouping for given clusters number with default settings.
                     ui->spinBoxStopConditionValue->setValue(rulesNumberSqrt + i * rulesNumberOnePercent);
@@ -1447,7 +1455,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                     groupObjects();
 
                     // Generate report of this grouping in dir.
-                    generateReport(targetDir + "/" + QString::number(rulesNumberSqrt + i * rulesNumberOnePercent) + ".xml");
+                    generateReport(targetDir + "/" + reportName + ".xml");
 
 
                 }
