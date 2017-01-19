@@ -1324,6 +1324,7 @@ void MainWindow::on_spinBoxInterObjectMargin_valueChanged(int arg1)
 void MainWindow::on_pushButtonStandard_clicked()
 {
     // TODO: Change for editable dir.
+    // TODO: C:/ANB/ must exists for this to work. Eliminate this problem.
     QString baseDir = "C:/ANB/",
             targetDir,
             kbsDirPath;
@@ -1342,28 +1343,19 @@ void MainWindow::on_pushButtonStandard_clicked()
     // Return if no dir was selected
     if(kbsDirPath == "")
     {
-        // Log that no dir path was selected.
+        // TODO: Log that no dir path was selected.
         return;
     }
 
-    // Get KB names from that dir (only bases like *.rul are considered KBs)
+    // Get KB names from that dir (only bases with extensions .rul are considered KBs)
     QDir kbsDir(kbsDirPath);
     kbNames = kbsDir.entryList({"*.rul"});
-
-    // Change tab to visualization to ensure that
-    ui->tabWidget->setCurrentIndex(1);
-
-    // Check hierarchy levels checkbox
-    ui->checkBoxVisualizeAllHierarchyLevels->setChecked(true);
-    ui->checkBoxVisualizeAllHierarchyLevelsVisualizator->setChecked(true);
 
     // For each KB on the list
     for(int kbi = 0; kbi < kbNames.length(); ++kbi)
     {
         //
         QFileInfo KB(kbsDirPath + "/" + kbNames.at(kbi));
-
-        qDebug() << kbsDirPath + "/" + kbNames.at(kbi);
 
         loadObjectsBase(KB);
 
@@ -1376,11 +1368,13 @@ void MainWindow::on_pushButtonStandard_clicked()
         if(! kbFolder.exists())
         {
             // If so create folder with name same as KB name.
+            qDebug() << "creating folder " + targetDir;
             kbFolder.mkdir(targetDir);
         }
         else
         {
-            // Communicate that folder exists.
+            // TODO: Communicate that folder exists.
+            qDebug() << "NOT creating folder";
         }
 
         // For each inter object similarity measure
@@ -1401,11 +1395,13 @@ void MainWindow::on_pushButtonStandard_clicked()
             if(! objectSimFolder.exists())
             {
                 // If so create folder with name same as KB name.
+                qDebug() << "creating folder " + targetDir;
                 objectSimFolder.mkdir(targetDir);
             }
             else
             {
                 // Communicate that folder exists.
+                qDebug() << "NOT creating folder";
             }
 
             // For each inter cluster similarity measure
@@ -1414,52 +1410,16 @@ void MainWindow::on_pushButtonStandard_clicked()
                 // Change index of object similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
 
-                // Perform grouping for 1/10 of KB size clusters with default settings.
-                ui->spinBoxStopConditionValue->setValue(qCeil(settings->objectsNumber / 10));
-
-                setGroupingSettings();
-                groupObjects();
-
-                // Generate report of this grouping in dir.
-                int reportNum = 1 + 4 * csm;
-                generateReport(targetDir + "/" + QString::number(reportNum) + ".xml");
-
-                // For each treemap
-                for(int vai = 0; vai < ui->comboBoxAlgorithmVisualization->count(); ++vai)
+                for(unsigned int clustersNumber = qCeil(qSqrt(settings->objectsNumber)); clustersNumber > 0; --clustersNumber)
                 {
-                    // Set visualization algorithm to algorithm with current index.
-                    ui->comboBoxAlgorithmVisualization->setCurrentIndex(vai);
+                    // Perform grouping for given clusters number with default settings.
+                    ui->spinBoxStopConditionValue->setValue(clustersNumber);
 
-                    // Generate visualization.
-                    ui->pushButtonVisualize->click();
+                    setGroupingSettings();
+                    groupObjects();
 
-                    // Save result.
-                    int visualizationNumber = 1 + vai + 4 * csm;
-                    saveVisualization(targetDir + "/" + QString::number(visualizationNumber) + ".png");
-                }
-
-                // Perform grouping for min(10, no. of objects) clusters with default settings.
-                ui->spinBoxStopConditionValue->setValue(qMin(10, settings->objectsNumber));
-
-                setGroupingSettings();
-                groupObjects();
-
-                // Generate report of this grouping in dir.
-                reportNum = 3 + 4 * csm;
-                generateReport(targetDir + "/" + QString::number(reportNum) + ".xml");
-
-                // For each treemap
-                for(int vai = 0; vai < ui->comboBoxAlgorithmVisualization->count(); ++vai)
-                {
-                    // Set visualization algorithm to algorithm with current index.
-                    ui->comboBoxAlgorithmVisualization->setCurrentIndex(vai);
-
-                    // Generate visualization.
-                    ui->pushButtonVisualize->click();
-
-                    // Save result.
-                    int visualizationNumber = 3 + vai + 4 * csm;
-                    saveVisualization(targetDir + "/" + QString::number(visualizationNumber) + ".png");
+                    // Generate report of this grouping in dir.
+                    generateReport(targetDir + "/" + QString::number(clustersNumber) + ".xml");
                 }
             }
         }
