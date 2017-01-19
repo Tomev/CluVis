@@ -1410,16 +1410,46 @@ void MainWindow::on_pushButtonStandard_clicked()
                 // Change index of object similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
 
-                for(unsigned int clustersNumber = qCeil(qSqrt(settings->objectsNumber)); clustersNumber > 0; --clustersNumber)
+                unsigned int rulesNumberSqrt = qCeil(qSqrt(settings->objectsNumber));
+                unsigned int rulesNumberOnePercent = qCeil(settings->objectsNumber/100.0);
+
+                // Perform grouping for given clusters number with default settings.
+                ui->spinBoxStopConditionValue->setValue(rulesNumberSqrt);
+
+                setGroupingSettings();
+                groupObjects();
+
+                // Generate report of this grouping in dir.
+                generateReport(targetDir + "/" + QString::number(rulesNumberSqrt) + ".xml");
+
+                for(
+                        unsigned int i = 1;
+                        /* when number of clusters is greater than number of rules */
+                        rulesNumberSqrt - i * rulesNumberOnePercent > 0 &&
+                        /* when number of clusters is lower than 0 */
+                        rulesNumberSqrt + i * rulesNumberOnePercent < settings->objectsNumber;
+                        ++i
+                    )
                 {
                     // Perform grouping for given clusters number with default settings.
-                    ui->spinBoxStopConditionValue->setValue(clustersNumber);
+                    ui->spinBoxStopConditionValue->setValue(rulesNumberSqrt - i * rulesNumberOnePercent);
 
                     setGroupingSettings();
                     groupObjects();
 
                     // Generate report of this grouping in dir.
-                    generateReport(targetDir + "/" + QString::number(clustersNumber) + ".xml");
+                    generateReport(targetDir + "/" + QString::number(rulesNumberSqrt - i * rulesNumberOnePercent) + ".xml");
+
+                    // Perform grouping for given clusters number with default settings.
+                    ui->spinBoxStopConditionValue->setValue(rulesNumberSqrt + i * rulesNumberOnePercent);
+
+                    setGroupingSettings();
+                    groupObjects();
+
+                    // Generate report of this grouping in dir.
+                    generateReport(targetDir + "/" + QString::number(rulesNumberSqrt + i * rulesNumberOnePercent) + ".xml");
+
+
                 }
             }
         }
