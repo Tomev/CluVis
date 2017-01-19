@@ -7,4 +7,3 @@ enum dataTypeId
 };
 
 #endif // ENUM_DATATYPE
-
