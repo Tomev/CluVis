@@ -64,16 +64,12 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete scene;
-    delete gThread;
-    delete vThread;
     delete settings;
     delete gSettings;
     delete dGrpSettings;
     delete vSettings;
     delete vSettings_RSES;
     delete[] clusters;
-    delete cInfo;
-    delete tim;
 }
 
 //GUI
@@ -818,7 +814,7 @@ QString MainWindow::createXMLFileClustersDataContent()
 
 void MainWindow::on_actionExit_triggered()
 {
-    QCoreApplication::quit();
+    qApp->exit(0);
 }
 
 //View
