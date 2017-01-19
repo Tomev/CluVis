@@ -145,8 +145,9 @@ void groupingThread::groupObjects()
 
         if(wasGroupingCanceled)
         {
-            groupingProgress->close();
             creatingSimMatrixProgress->close();
+            groupingProgress->close();
+
             emit passLogMsg(tr("log.groupingCancelled"));
             emit passLogMsg(tr("log.visualizationImpossible"));
             return;
@@ -185,8 +186,6 @@ void groupingThread::groupObjects()
         countMDBI(simMatrix.size());
     }
 
-    groupingProgress->close();
-
     emit passLogMsg(
         QString(tr("log.clustersNumber"))
         .arg(QString::number(settings->stopCondition))
@@ -201,6 +200,9 @@ void groupingThread::groupObjects()
         QString(tr("log.mdbiPointer"))
         .arg(QString::number(MDBI))
     );
+
+    creatingSimMatrixProgress->close();
+    groupingProgress->close();
 
     emit passLogMsg(tr("log.groupingFinished"));
     emit passLogMsg(tr("log.sendingResultatntStructure"));

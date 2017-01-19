@@ -79,6 +79,8 @@ private slots:
 
     void on_spinBoxInterObjectMargin_valueChanged(int arg1);
 
+    void on_pushButtonStandard_clicked();
+
 private:
     QTranslator* translator;
 
@@ -115,10 +117,11 @@ private:
     int getObjectsNumber();
 
     //File
+    void loadObjectsBase(QFileInfo OB);
     QFileInfo selectObjectBase();
     bool isRuleSet(QFileInfo base);
 
-    void generateReport();
+    void generateReport(QString path = "");
         QString getFilePath();
         QString getReportDirPath();
         int getFileType(QChar t);
@@ -139,6 +142,7 @@ private:
                 QString createXMLFileClustersData();
                 QString createXMLFileClustersDataHeader();
                 QString createXMLFileClustersDataContent();
+        void saveVisualization(QString path);
         void createPath(QString path);
         int countCoverageSum();
         int countRuleLength(QString rule);
