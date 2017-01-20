@@ -1325,7 +1325,7 @@ void MainWindow::on_pushButtonStandard_clicked()
 {
     // TODO: Change for editable dir.
     // TODO: C:/ANB/ must exists for this to work. Eliminate this problem.
-    QString baseDir = "C:/ANB/",
+    QString baseDir = "D:/ANB/",
             targetDir,
             kbsDirPath;
 
@@ -1360,7 +1360,7 @@ void MainWindow::on_pushButtonStandard_clicked()
         loadObjectsBase(KB);
 
         // Set targetDir to point at current KB folder
-        targetDir = baseDir + kbNames.at(kbi);
+        targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
 
         // Check if folder with the same name  as KB doesn't exist.
         QDir kbFolder(targetDir);
@@ -1381,7 +1381,7 @@ void MainWindow::on_pushButtonStandard_clicked()
         for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
         {
             // Reset target dir.
-            targetDir = baseDir + kbNames.at(kbi);
+            targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
 
             // Change index of object similarity measure combobox
             ui->comboBoxInterObjectSimMeasure->setCurrentIndex(osm);
@@ -1426,10 +1426,13 @@ void MainWindow::on_pushButtonStandard_clicked()
 
                 for(
                         unsigned int i = 1;
-                        /* when number of clusters is greater than number of rules */
-                        rulesNumberSqrt - i * rulesNumberOnePercent > 0 &&
+                        /* TODO: FIX THE CONDITIONS
+                         *  when number of clusters is greater than number of rules */
+                        rulesNumberSqrt - i * rulesNumberOnePercent != 0 &&
+                        rulesNumberSqrt - i * rulesNumberOnePercent <= settings->objectsNumber &&
                         /* when number of clusters is lower than 0 */
-                        rulesNumberSqrt + i * rulesNumberOnePercent < settings->objectsNumber;
+                        rulesNumberSqrt + i * rulesNumberOnePercent <= settings->objectsNumber &&
+                        rulesNumberSqrt + i * rulesNumberOnePercent != 0;
                         ++i
                     )
                 {
