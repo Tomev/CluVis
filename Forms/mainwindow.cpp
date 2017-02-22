@@ -814,6 +814,97 @@ QString MainWindow::createXMLFileClustersDataContent()
     return result;
 }
 
+void MainWindow::on_actionMergeReports_triggered()
+{
+    // Select path to folders with reports
+
+    // TODO: Change for editable dir.
+    // TODO: D:/ANB/ must exists for this to work. Eliminate this problem.
+    QString reportsDirPath;
+
+    // Get dir path of reports folder
+    reportsDirPath = QFileDialog::getExistingDirectory
+                (
+                    this,
+                    tr("Select directory"),
+                    "C:/",
+                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
+                );
+
+    // Return if no dir was selected
+    if(reportsDirPath == "")
+    {
+        // TODO: Log that no dir path was selected.
+        qDebug() << "No directory selected.";
+        return;
+    }
+
+    qDebug() << "Directory selected: " + reportsDirPath + ".";
+
+    // Generate report content
+    // TODO: It's similar to generating XML report. Consider joining both of them.
+    QString reportContent = "";
+
+    reportContent += createXMLFileHeader();
+    reportContent += createXMLFileWorkbook();
+    reportContent += createXMLFileDocumentProperties();
+    reportContent += createXMLFileExcelWorkbook();
+    reportContent += createXMLFileStyles();
+    reportContent += "\t<Worksheet ss:Name=\"Report\">\n";
+    reportContent += "\t\t<Table ss:ExpandedColumnCount=\"2\" ss:ExpandedRowCount=\"5\"\n";
+    reportContent += "\t\t\t x:FullColumns=\"1\" x:FullRows=\"1\">\n";
+    reportContent += "\t\t\t<Row>\n";
+    reportContent += createXMLFileTableHeader();
+    reportContent += "\t\t\t</Row>\n";
+
+    getReportsMainContentFromLocation(reportsDirPath, &reportContent);
+
+    reportContent += "\t\t</Table>\n";
+    reportContent += createXMLFileFooter();
+
+    // Save report
+
+    QFile collectiveReport(reportsDirPath + "/collectiveReport.xml");
+
+    if(!collectiveReport.open(QFile::WriteOnly | QFile::Text) && collectiveReport.exists())
+    {
+        QString reportInfo = tr("log.unableToOpenFileForSaving") + " ";
+        reportInfo += tr("log.operationAborted");
+        addLogMessage(reportInfo);
+
+        return;
+    }
+
+    QTextStream outStream(&collectiveReport);
+    outStream.setCodec("UTF-8");
+    outStream << reportContent;
+
+    collectiveReport.flush();
+    collectiveReport.close();
+
+    qDebug() << "Collective report generated.";
+}
+
+void MainWindow::getReportsMainContentFromLocation(QString reportsDirPath, QString* content)
+{
+    QDir reportsDir(reportsDirPath);
+    // Check if this dir has subdirs
+        // If so recursive call this function for each subdir
+
+
+
+    // Find names of all reports in given dir
+    QStringList reportsNames;
+
+    reportsNames = reportsDir.entryList("*.xml");
+
+    // For each report on the list
+    foreach(const QString reportName, reportsNames)
+    {
+        // TODO: Validate if given xml is indeed report in proper format
+    }
+}
+
 void MainWindow::on_actionExit_triggered()
 {
     qApp->exit(0);
@@ -822,16 +913,16 @@ void MainWindow::on_actionExit_triggered()
 //View
 
 // TODO: There are some minor issues while changing laguague.
-
-void MainWindow::on_actionAngielski_triggered()
+void MainWindow::on_actionEnglish_triggered()
 {
     translate(english);
 }
 
-void MainWindow::on_actionPolski_triggered()
+void MainWindow::on_actionPolish_triggered()
 {
     translate(polish);
 }
+
 
 void MainWindow::translate(int lang)
 {
@@ -1326,7 +1417,7 @@ void MainWindow::on_spinBoxInterObjectMargin_valueChanged(int arg1)
 void MainWindow::on_pushButtonStandard_clicked()
 {
     // TODO: Change for editable dir.
-    // TODO: C:/ANB/ must exists for this to work. Eliminate this problem.
+    // TODO: D:/ANB/ must exists for this to work. Eliminate this problem.
     QString baseDir = "D:/ANB/",
             targetDir,
             kbsDirPath;
@@ -1461,7 +1552,6 @@ void MainWindow::on_pushButtonStandard_clicked()
 
                     // Generate report of this grouping in dir.
                     generateReport(targetDir + "/" + reportName + ".xml");
-
 
                 }
             }

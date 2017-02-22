@@ -34,6 +34,7 @@ private slots:
     void on_actionLoadObjectBase_triggered();
     void on_actionSaveVisualization_triggered();
     void on_actionGenerateReport_triggered();
+    void on_actionMergeReports_triggered();
     void on_actionExit_triggered();
 
     //Help
@@ -61,9 +62,9 @@ private slots:
 
     void gotLogText(QString);
 
-    void on_actionAngielski_triggered();
+    void on_actionPolish_triggered();
 
-    void on_actionPolski_triggered();
+    void on_actionEnglish_triggered();
 
     void on_checkBoxVisualizeAllHierarchyLevels_clicked();
 
@@ -153,6 +154,7 @@ private:
         int getBiggestRepresentativeLength();
         int getSmallestRepresentativeLength();
         qreal getAverageRepresentativeLength();
+        void getReportsMainContentFromLocation(QString reportsDirPath, QString* content);
         void translate(int lang);
 
     //Rest

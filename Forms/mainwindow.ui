@@ -934,10 +934,17 @@ p, li { white-space: pre-wrap; }
     <property name="title">
      <string>Plik</string>
     </property>
+    <widget class="QMenu" name="menuRaporty">
+     <property name="title">
+      <string>Raporty</string>
+     </property>
+     <addaction name="actionGenerateReport"/>
+     <addaction name="actionMergeReports"/>
+    </widget>
     <addaction name="actionLoadObjectBase"/>
     <addaction name="separator"/>
     <addaction name="actionSaveVisualization"/>
-    <addaction name="actionGenerateReport"/>
+    <addaction name="menuRaporty"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -955,8 +962,8 @@ p, li { white-space: pre-wrap; }
      <property name="title">
       <string>Język</string>
      </property>
-     <addaction name="actionAngielski"/>
-     <addaction name="actionPolski"/>
+     <addaction name="actionEnglish"/>
+     <addaction name="actionPolish"/>
     </widget>
     <addaction name="menuJ_zyk"/>
    </widget>
@@ -987,19 +994,24 @@ p, li { white-space: pre-wrap; }
     <string>Zapisz wizualizację</string>
    </property>
   </action>
+  <action name="actionEnglish">
+   <property name="text">
+    <string>Angielski</string>
+   </property>
+  </action>
+  <action name="actionPolish">
+   <property name="text">
+    <string>Polski</string>
+   </property>
+  </action>
   <action name="actionGenerateReport">
    <property name="text">
     <string>Generuj raport</string>
    </property>
   </action>
-  <action name="actionAngielski">
+  <action name="actionMergeReports">
    <property name="text">
-    <string>Angielski</string>
-   </property>
-  </action>
-  <action name="actionPolski">
-   <property name="text">
-    <string>Polski</string>
+    <string>Scal raporty</string>
    </property>
   </action>
  </widget>
