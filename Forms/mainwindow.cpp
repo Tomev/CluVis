@@ -733,7 +733,7 @@ QString MainWindow::createXMLFileTableContent()
     result += createXMLFileTableCell(QString::number(getBiggestRepresentativeLength()), false);
     result += createXMLFileTableCell(QString::number(getSmallestRepresentativeLength()), false);
     result += createXMLFileTableCell(QString::number(getAverageRepresentativeLength()), false);
-    result += createXMLFileTableCell(gSettings->zeroRepresentativeClusterOccurence, false);
+    result += createXMLFileTableCell(QString::number(gSettings->zeroRepresentativeClusterOccurence), false);
     //Indexes data
     result += createXMLFileTableCell(QString::number(MDI), false);
     result += createXMLFileTableCell(QString::number(MDBI), false);

@@ -114,7 +114,7 @@ void groupingThread::groupObjects()
 {   
     // Clear zere representative cluster Occurence
 
-    grpSettings->zeroRepresentativeClusterOccurence = "";
+    grpSettings->zeroRepresentativeClusterOccurence = -1;
 
     emit passLogMsg(tr("log.gatheringAttributesData"));
 
@@ -1100,9 +1100,9 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     newGrp->fillRepresentativesAttributesValues(grpSettings->repCreationStrategyID, grpSettings->repTreshold);
 
     if(newGrp->representativeAttributesValues.keys().size() == 0 &&
-       grpSettings->zeroRepresentativeClusterOccurence == "")
+       grpSettings->zeroRepresentativeClusterOccurence == -1)
     {
-        grpSettings->zeroRepresentativeClusterOccurence = newGrp->name();
+        grpSettings->zeroRepresentativeClusterOccurence = nextClusterID - 1;
     }
 
     newGrp->compactness = countClustersCompactness(newGrp);

@@ -36,7 +36,7 @@ public:
     int coverSum;
     unsigned int repCreationStrategyID;
     int repTreshold;
-    QString zeroRepresentativeClusterOccurence = "";
+    int zeroRepresentativeClusterOccurence;
 
     bool findBestClustering;
 
