@@ -474,7 +474,17 @@
              </item>
              <item>
               <property name="text">
-               <string>TFIDF</string>
+               <string>Dolne przybliżenie</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Górne przybliżenie</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ważone podejście</string>
               </property>
              </item>
             </widget>

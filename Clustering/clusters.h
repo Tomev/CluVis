@@ -4,24 +4,47 @@
 #include <QString>
 #include <QStringList>
 #include <QSet>
+#include <QDebug>
 
 #include "attributedata.h"
 
 #include "enum_interclustersimilaritymeasures.h"
 
+struct descriptor
+{
+    QString attribute;
+    QString value;
+
+    descriptor(QString attribute, QString value)
+    {
+        this->attribute = attribute;
+        this->value = value;
+    }
+
+    bool equals(descriptor comparator) const
+    {
+        return (this->attribute == comparator.attribute &&
+                this->value     == comparator.value);
+    }
+
+    QString toString() const
+    {
+        return "Attribute: " + this->attribute + ", Value: " + this->value;
+    }
+};
 
 struct cluster
 {
     public:
 
         cluster(int id = 0)
-    {
-        this->clusterID = id;
-    }
+        {
+            this->clusterID = id;
+        }
 
     //Members
-        QHash<QString, QString> attributesValues;
-        QHash<QString, QString> representativeAttributesValues;
+        QHash<QString, QStringList*> attributesValues;
+        QHash<QString, QStringList*> representativeAttributesValues;
 
         // Cosists of attributes that are present in cluster.
         QHash<QString, attributeData*> attributes;
@@ -84,7 +107,7 @@ struct cluster
 
         // TODO: It's written horribly. To be rewritten as soon as work is done.
 
-        void fillRepresentativesAttributesValues(unsigned int strategyID, int threshold)
+        void fillRepresentativesAttributesValues(unsigned int strategyID, unsigned int threshold)
         {
             switch(strategyID)
             {
@@ -92,10 +115,17 @@ struct cluster
                     fillThresholdRepresentativesAttributesValues(threshold);
                     break;
                 case 1:
+                    fillLowerEstimationRepresentativeAttributesValues();
+                    break;
+                case 2:
+                    fillHigherEstimationRepresentativeAttributesValues();
+                    break;
+                case 3:
+                    fillThresholdEstimationRepresentativeAttributesValues(threshold);
+                    break;
                 default:
-                    fillTFIDFRepresentativesAttributesValues();
+                    fillThresholdRepresentativesAttributesValues(30); // Default settings
             }
-
         }
 
         void fillThresholdRepresentativesAttributesValues(int treshold)
@@ -103,19 +133,163 @@ struct cluster
             QStringList repAttributes = getRepresentativesAttributesList(treshold);
             QString atrName;
 
+            // For each representative attribute
             for(int i = 0; i < repAttributes.length(); ++i)
             {
                 atrName = repAttributes.at(i);
-                representativeAttributesValues.insert(atrName, getAttributesAverageValue(atrName));
+
+                // Check if this attribute is already in representative
+                if(representativeAttributesValues.keys().contains(atrName))
+                {
+                    // Do nothing if so
+                    continue;
+                }
+                else
+                {
+                    // If not add it with empty QStringList
+                    representativeAttributesValues.insert(atrName, new QStringList());
+                }
+
+                // Add average value of the attribute into the QList of that attribute
+                representativeAttributesValues.value(atrName)->append(getAttributesAverageValue(atrName));
             }
         }
 
-        void fillTFIDFRepresentativesAttributesValues()
+        void fillLowerEstimationRepresentativeAttributesValues()
         {
+            QList<descriptor> representativeCandidate;
+
+            // Get all objects within given cluster
+            QList<cluster*> objects = this->getObjects();
+
+            // For first object descriptors
+            foreach(const QString key, objects.at(0)->attributesValues.keys())
+            {
+                foreach(const QString value, *(objects.at(0)->attributesValues.value(key)))
+                {
+                    // Add descriptor to descriptors list
+                    representativeCandidate.append(descriptor(key,value));
+                }
+            }
+
+            // Remove first object
+            objects.removeAt(0);
+
+            // For all remaining objects
+            foreach(const cluster* object, objects)
+            {
+                // For all descriptors in potential representative
+                for(int descriptorNumber = representativeCandidate.size()-1; descriptorNumber >= 0 ; --descriptorNumber)
+                {
+                    // Check if it's attribute is in set
+                    if(object->attributesValues.keys().contains(representativeCandidate.at(descriptorNumber).attribute))
+                    {
+                        // If so, check if value is the same
+                        if(object->attributesValues
+                                .value(representativeCandidate
+                                .at(descriptorNumber).attribute)
+                                ->contains(representativeCandidate.at(descriptorNumber).value))
+                        {
+                            // If so do nothing
+                            continue;
+                        }
+                        else
+                        {
+                            // If not then remove it from descriptors list
+                            representativeCandidate.removeAt(descriptorNumber);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        // If not then remove it from descriptors list
+                        representativeCandidate.removeAt(descriptorNumber);
+                        continue;
+                    }
+                }
+
+                // Check if there are any descriptors left
+                if(representativeCandidate.size() > 0)
+                {
+                    // If so do nothing
+                    continue;
+                }
+                else
+                {
+                    // If not return
+                    return;
+                }
+            }
+
+            // Return result as representative
+            foreach(const descriptor desc, representativeCandidate)
+            {
+                // If attribute is not already in the hash
+                if(!representativeAttributesValues.keys().contains(desc.attribute))
+                {
+                    // Add it with empty QStringList
+                    representativeAttributesValues.insert(desc.attribute, new QStringList());
+                }
+
+                // Insert value of the descriptor to appropriate
+                representativeAttributesValues.value(desc.attribute)->append(desc.value);
+            }
+        }
+
+        void fillHigherEstimationRepresentativeAttributesValues()
+        {
+            QList<descriptor> representativeCandidate;
+
+            // Get all objects within given cluster
+            QList<cluster*> objects = this->getObjects();
+
+            // For each object
+            foreach(const cluster* object, objects)
+            {
+                // For each descriptor
+                foreach(const QString key, object->attributesValues.keys())
+                {
+                    foreach(const QString value, *(object->attributesValues.value(key)))
+                    {
+                        // Save it to list
+                        representativeCandidate.append(descriptor(key, value));
+                    }
+                }
+            }
+
+            // Save these descriptors to representative
+            foreach(const descriptor desc, representativeCandidate)
+            {
+                // If attribute is not in the hashtable add it with empty QStringList
+                if(!representativeAttributesValues.keys().contains(desc.attribute))
+                {
+                    representativeAttributesValues.insert(desc.attribute, new QStringList());
+                }
+
+                // Add descriptors value to the appropriate list
+                representativeAttributesValues.value(desc.attribute)->append(desc.value);
+            }
+
+            // Remove duplicate values from each QStringList of attribute
+            foreach(QStringList* values, representativeAttributesValues)
+            {
+                values->removeDuplicates();
+            }
 
         }
 
-        virtual QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+        void fillThresholdEstimationRepresentativeAttributesValues(int threshold)
+        {
+            threshold = 3; // For errors warnings
+            // Get all objects within given cluster
+            // For all objects save their descriptors into list
+            // While descriptors list is not empty
+                // Check if it occurs on list number of times given by threshold
+                // If so add it to representive
+            // Remove exmined descriptor from the list
+        }
+
+        virtual QHash<QString, QStringList*> getAttributesForSimilarityCount(int methodId)
         {
             if(methodId == CentroidLinkId)
                 return representativeAttributesValues;
@@ -131,7 +305,7 @@ struct cluster
         {
             /*
              *  If in *treshold* percent rules some attribute occurs
-             *  then it should be used to represent the this cluster.
+             *  then it should be used to represent this cluster.
              */
 
             QList<cluster*> objects = this->getObjects();
@@ -174,50 +348,82 @@ struct cluster
         {
             QList<cluster*> objects = this->getObjects();
             QStringList values, uniqueValues;
-            int mostCommonValueIdx = 0, mostCommonValueOccurences = 0, currentValueOccurences;
+            QString mostCommonValue = "";
 
-            for(int i = 0; i < objects.length(); ++i)
+            // For each object
+            foreach(const cluster* object, objects)
             {
-                if(objects.at(i)->attributesValues.keys().contains(atrName))
+                // If it contains given attribute add it's values to the lists
+                if(object->attributesValues.keys().contains(atrName))
                 {
-                    values.append(objects.at(i)->attributesValues.value(atrName));
-                    uniqueValues.append(objects.at(i)->attributesValues.value(atrName));
+                    foreach(const QString value, *(object->attributesValues.value(atrName)))
+                    {
+                        values.append(value);
+                        uniqueValues.append(value);
+                    }
                 }
             }
 
+            // Remove duplicates to get unique values
             uniqueValues.removeDuplicates();
 
-            for(int i = 0; i < uniqueValues.length(); ++i)
+            // For each unique value
+            foreach(const QString value, uniqueValues)
             {
-                currentValueOccurences = values.count(uniqueValues.at(i));
-
-                if(currentValueOccurences > mostCommonValueOccurences)
+                // If most common value occurs less often than current value
+                if(values.count(mostCommonValue) < values.count(value))
                 {
-                    mostCommonValueIdx = i;
-                    mostCommonValueOccurences = currentValueOccurences;
+                    // Make current value most common value
+                    mostCommonValue = value;
                 }
             }
 
-            return uniqueValues.at(mostCommonValueIdx);
+            return mostCommonValue;
         }
 
         QString getNumericAttributesAverage(QString atrName)
         {
             qreal result = 0;
-            int denumerator = 0;
-
             QList<cluster*> objects = this->getObjects();
 
-            for(int i = 0; i < objects.length(); ++i)
+            // For each object within cluster
+            foreach(const cluster* object, objects)
             {
-                if(objects.at(i)->attributesValues.keys().contains(atrName))
+                // Check if given object contains examined attribute
+                if(object->attributesValues.keys().contains(atrName))
                 {
-                   result += objects.at(i)->attributesValues.value(atrName).toDouble();
-                   ++denumerator;
+                   // If so add it's average value to the result
+
+                   qreal averageValue = 0.0;
+
+                   foreach(const QString value, *(object->attributesValues.value(atrName)))
+                   {
+                       averageValue += value.toDouble();
+                   }
+
+                   result += averageValue / object->attributesValues.value(atrName)->size();
+                }
+                else
+                {
+                    // If not add 'average' value of this attribute
+                    numericAttributeData* atrData = (numericAttributeData*)(this->attributes.value(atrName));
+
+                    // Check if min and max are equal
+                    if(atrData->areMinMaxEqual())
+                    {
+                        // If so add max or min and continue
+                        result += atrData->maxValue.toDouble();
+                    }
+                    else
+                    {
+                        // Otherwise add 'naive average' value of this attribute
+                        result += (atrData->maxValue.toDouble() - atrData->minValue.toDouble())/2.0;
+                    }
                 }
             }
 
-            result /= denumerator;
+            //
+            result /= objects.size();
 
             return QString::number(result);
         }
@@ -244,6 +450,7 @@ struct ruleCluster : cluster
 
         int support;
 
+        // TODO: Add pointer to these (?)
         QSet<QString> decisionAttributes;
         QSet<QString> premiseAttributes;
 
@@ -253,28 +460,48 @@ struct ruleCluster : cluster
 
         QString rule()
         {
+            // If clusters size is higher than 1, then it's not a rule.
+            // Empty QString should be then returned.
             if(this->size() != 1)
                 return "";
 
             QString rule = "";
-            QStringList ruleAttributes = attributesValues.keys();
 
-            for(QSet<QString>::iterator i = premiseAttributes.begin(); i != premiseAttributes.end(); ++i)
+            // For each permise attribute
+            foreach(const QString attribute, premiseAttributes)
             {
-                if(ruleAttributes.contains(*i))
-                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")&";
+                // Check if rule contains this attribute
+                if(this->attributesValues.keys().contains(attribute))
+                {
+                    // If so add it's values to the rule as distinct descriptors
+                    foreach(const QString value, *(this->attributesValues.value(attribute)))
+                    {
+                        rule += "(" + attribute + "=" + value + ")&";
+                    }
+                }
             }
 
+            // Remove descriptors' separator at the end
             rule.remove(rule.length()-1,1);
 
+            // Add rules parts separator
             rule += "=>";
 
-            for(QSet<QString>::iterator i = decisionAttributes.begin(); i != decisionAttributes.end(); ++i)
+            // For each decision attribute
+            foreach(const QString attribute, decisionAttributes)
             {
-                if(ruleAttributes.contains(*i))
-                    rule += "(" + *i + "=" + attributesValues.value(*i) + ")&";
+                // Check if rule contains this attribute
+                if(this->attributesValues.contains(attribute))
+                {
+                    // If so add it's values to the rule
+                    foreach(const QString value, *(this->attributesValues.value(attribute)))
+                    {
+                        rule += "(" + attribute + "=" + value + ")&";
+                    }
+                }
             }
 
+            // Remove descriptors' separator at the end
             rule.remove(rule.length()-1,1);
 
             return rule;
@@ -282,27 +509,47 @@ struct ruleCluster : cluster
 
         QString representative()
         {
+            // If representative is empty return empty QString
             if(representativeAttributesValues.size() == 0)
                 return "";
 
             QString representative = "";
-            QStringList representativeAttributes = representativeAttributesValues.keys();
 
-            for(QSet<QString>::iterator i = premiseAttributes.begin(); i != premiseAttributes.end(); ++i)
+            // For each permise attribute
+            foreach(const QString attribute, premiseAttributes)
             {
-                if(representativeAttributes.contains(*i))
-                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")&";
+                // Check if rule contains this attribute
+                if(this->representativeAttributesValues.keys().contains(attribute))
+                {
+                    // If so add it's values to the rule as distinct descriptors
+                    foreach(const QString value, *(this->representativeAttributesValues.value(attribute)))
+                    {
+                        representative += "(" + attribute + "=" + value + ")&";
+                    }
+                }
             }
 
+            // Remove descriptors' separator at the end
             representative.remove(representative.length()-1,1);
+
+            // Add rules parts separator
             representative += "=>";
 
-            for(QSet<QString>::iterator i = decisionAttributes.begin(); i != decisionAttributes.end(); ++i)
+            // For each decision attribute
+            foreach(const QString attribute, decisionAttributes)
             {
-                if(representativeAttributes.contains(*i))
-                    representative += "(" + *i + "=" + representativeAttributesValues.value(*i) + ")&";
+                // Check if rule contains this attribute
+                if(this->representativeAttributesValues.contains(attribute))
+                {
+                    // If so add it's values to the rule
+                    foreach(const QString value, *(this->representativeAttributesValues.value(attribute)))
+                    {
+                        representative += "(" + attribute + "=" + value + ")&";
+                    }
+                }
             }
 
+            // Remove descriptors' separator at the end
             representative.remove(representative.length()-1,1);
 
             return representative;
@@ -399,9 +646,9 @@ struct ruleCluster : cluster
             this->areDecisionsGrouped = areDecisionsGrouped;
         }
 
-        QHash<QString, QString> getAttributesForSimilarityCount(int methodId)
+        QHash<QString, QStringList*> getAttributesForSimilarityCount(int methodId)
         {
-            QHash<QString, QString> result;
+            QHash<QString, QStringList*> result;
             QSet<QString> attributesToExclude;
 
             if(methodId == CentroidLinkId){result = representativeAttributesValues;}
@@ -410,8 +657,11 @@ struct ruleCluster : cluster
             if(!areDecisionsGrouped){attributesToExclude = decisionAttributes;}
             else                    {attributesToExclude = premiseAttributes;}
 
-            for(QSet<QString>::iterator i = attributesToExclude.begin(); i != attributesToExclude.end(); ++i)
-                result.remove(*i);
+            // Remove attributes from other rules part
+            foreach(const QString attribute, attributesToExclude)
+            {
+                result.remove(attribute);
+            }
 
             return result;
         }
@@ -431,23 +681,27 @@ struct ruleCluster : cluster
         QStringList getClustersDecisionsList()
         {
             QList<cluster*> rules = this->getObjects();
-            QString decision;
             QStringList decisions;
 
-            for(int i = 0; i < rules.length(); ++i)
+            // For each rule
+            foreach(cluster* object, rules)
             {
-                ruleCluster* ruleClu = static_cast<ruleCluster*>(rules[i]);
-                decision = "";
+                ruleCluster* rule = static_cast<ruleCluster*>(object);
 
-                for(    QSet<QString>::iterator j = ruleClu->decisionAttributes.begin();
-                        j != ruleClu->decisionAttributes.end(); ++j)
+                // For each decisional attribute
+                foreach(const QString attribute, rule->decisionAttributes)
                 {
-                    decision += QString("(" + *j + "=" + ruleClu->attributesValues.value(*j) + ")&");
+                    // For each value of this attribute
+                    foreach(const QString value, *(rule->attributesValues.value(attribute)))
+                    {
+                        // Add it's decision to the list
+                        decisions.append(QString("(" + attribute + "=" + value + ")"));
+                    }
                 }
-
-                decision.remove(decision.length()-1,1);
-                decisions.append(decision);
             }
+
+            // Remove duplicates from decisions list
+            decisions.removeDuplicates();
 
             return decisions;
         }

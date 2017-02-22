@@ -673,6 +673,7 @@ QString MainWindow::createXMLFileTableHeader()
     result += createXMLFileTableCell(tr("report.biggestRepSize"), true);
     result += createXMLFileTableCell(tr("report.smallestRepSize"), true);
     result += createXMLFileTableCell(tr("report.averageRepSize"), true);
+    result += createXMLFileTableCell(tr("report.zeroRepresentativeClusterOccurence"), true);
     result += createXMLFileTableCell(tr("report.MDI"), true);
     result += createXMLFileTableCell(tr("report.MDBI"), true);
     result += createXMLFileTableCell(tr("report.minMDI"), true);
@@ -732,13 +733,14 @@ QString MainWindow::createXMLFileTableContent()
     result += createXMLFileTableCell(QString::number(getBiggestRepresentativeLength()), false);
     result += createXMLFileTableCell(QString::number(getSmallestRepresentativeLength()), false);
     result += createXMLFileTableCell(QString::number(getAverageRepresentativeLength()), false);
+    result += createXMLFileTableCell(gSettings->zeroRepresentativeClusterOccurence, false);
     //Indexes data
     result += createXMLFileTableCell(QString::number(MDI), false);
     result += createXMLFileTableCell(QString::number(MDBI), false);
     result += createXMLFileTableCell(QString::number(maxMDI), false);
     result += createXMLFileTableCell(QString::number(maxMDIClustersNumber), false);
     result += createXMLFileTableCell(QString::number(maxMDBI), false);
-    result += createXMLFileTableCell(QString::number(maxMDBIClustersNumber), false);
+    result += createXMLFileTableCell(QString::number(maxMDBIClustersNumber), false);    
 
     return result;
 }
@@ -1425,7 +1427,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                 generateReport(targetDir + "/" + reportName + ".xml");
 
                 for(
-                        unsigned int i = 1;
+                        int i = 1;
                         /* TODO: FIX THE CONDITIONS
                          *  when number of clusters is greater than number of rules */
                         rulesNumberSqrt - i * rulesNumberOnePercent != 0 &&

@@ -81,8 +81,11 @@ private:
             qreal getClustersAverageLinkValue(cluster* c1, cluster* c2);
             qreal getObjectsSimValue(cluster* c1, cluster* c2);
                 qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);
+                    qreal getGowersSimilarityMeasureNumericAttributesSimilarity
+                        (const QString attribute, QHash<QString, QStringList*> c1Attributes, QHash<QString, QStringList*> c2Attributes);
+                        qreal getAttributesNaiveAverageValue(QStringList* values);
                 qreal getObjectsSMCValue(cluster* c1, cluster* c2);
-                qreal getObjectsWSMCValue(cluster* c1, cluster* c2);
+                qreal getObjectsWMCValue(cluster* c1, cluster* c2);
                 qreal getObjectsOFSimValue(cluster* c1, cluster* c2);
                 qreal getObjectsIOFSimValue(cluster* c1, cluster* c2);
                 qreal getObjectsGoodall1SimValue(cluster* c1, cluster* c2);

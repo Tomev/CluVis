@@ -112,7 +112,15 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
     for(int i = 0; i < attributesValues.length(); ++i)
     {
         attributeValue = attributesValues.at(i).split("=");
-        c->attributesValues.insert(attributeValue.at(0), attributeValue.at(1));
+
+        // Check if attribute isn't on attributes values list
+        if(!c->attributesValues.keys().contains(attributeValue.at(0)))
+        {
+            // If so add it with empty QStringList
+            c->attributesValues.insert(attributeValue.at(0), new QStringList());
+        }
+
+        c->attributesValues.value(attributeValue.at(0))->append(attributeValue.at(1));
         c->attributes.insert(attributeValue.at(0), attributes->value(attributeValue.at(0)));
 
         //Last attribute is decisional, hence:
@@ -143,50 +151,88 @@ void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attri
                 categoricalAttributeData* currentAttribute =
                         static_cast<categoricalAttributeData*>(attributes->value(atrName));
 
-                QString attributesValue = clusters[i]->attributesValues.value(atrName);
+                QStringList* attributesValues = clusters[i]->attributesValues.value(atrName);
 
-                if(currentAttribute->valuesFrequency.contains(attributesValue))
-                    currentAttribute->valuesFrequency[attributesValue] += 1;
-                else
-                    currentAttribute->valuesFrequency.insert(attributesValue, 1);
+                foreach(const QString value, *attributesValues)
+                {
+                    if(currentAttribute->valuesFrequency.contains(value))
+                        currentAttribute->valuesFrequency[value] += 1;
+                    else
+                        currentAttribute->valuesFrequency.insert(value, 1);
+                }
 
                 ++(currentAttribute->numberOfRulesWithGivenAttribute);
             }
             else
             {
-                atrMaxVal = static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue;
+                numericAttributeData* atrData =  static_cast<numericAttributeData*>(attributes->value(atrName));
 
-                // If atrMaxValue = "" then so does minValue. Set them and continue.
-                if(atrMaxVal == "")
+                atrMaxVal = atrData->maxValue;
+
+                // If atrMaxValue is equal to "" or "MISSING" then so does minValue. Set them and continue.
+                if(atrMaxVal == "" || atrMaxVal == "MISSING")
                 {
-                    QString newValue = clusters[i]->attributesValues.value(atrName);
+                    QStringList* newValues = clusters[i]->attributesValues.value(atrName);
 
-                    // TODO: Reconsider what to do if numeric value is "MISSING"
-                    if(newValue == "MISSING")
-                        newValue = "0";
+                    // Set initial values
+                    atrData->setMaxValue(newValues->at(0));
+                    atrData->setMinValue(newValues->at(0));
 
-                    static_cast<numericAttributeData*>(attributes->value(atrName))
-                        ->setMaxValue(newValue);
+                    // For each value in values set
+                    foreach(const QString value, *newValues)
+                    {
+                        // Check if value is missing
+                        if(value == "MISSING")
+                        {
+                            // If so continue
+                            continue;
+                        }
 
-                    static_cast<numericAttributeData*>(attributes->value(atrName))
-                        ->setMinValue(newValue);
+                        // Check if maxValue (on thus also minValue) is MISSING
+                        if(atrData->maxValue == "MISSING")
+                        {
+                            // If so set value as new min and max value
+                            atrData->setMaxValue(value);
+                            atrData->setMinValue(value);
+                        }
+                        else
+                        {
+                            // If their values check if new value is maximal of minimal
+                            if(atrData->maxValue.toDouble() < value.toDouble())
+                            {
+                                atrData->setMaxValue(value);
+                            }
+
+                            if(atrData->minValue.toDouble() > value.toDouble())
+                            {
+                                atrData->setMinValue(value);
+                            }
+                        }
+                    }
 
                     continue;
                 }
 
-                // It's not near max to save time in case no values were set to attribute.
-                atrMinVal = static_cast<numericAttributeData*>(attributes->value(atrName))->minValue;
+                // When they're not MISSING nor empty then check for new maximum or minimum
 
-                if(atrMaxVal.toDouble() < clusters[i]->attributesValues.value(atrName).toDouble())
-                {
-                    static_cast<numericAttributeData*>(attributes->value(atrName))->maxValue =
-                        clusters[i]->attributesValues.value(atrName);
-                }
+                atrMinVal = atrData->minValue;
 
-                if(atrMinVal.toDouble() > clusters[i]->attributesValues.value(atrName).toDouble())
+                QStringList* newValues = clusters[i]->attributesValues.value(atrName);
+
+                foreach(const QString value, *newValues)
                 {
-                    static_cast<numericAttributeData*>(attributes->value(atrName))->minValue =
-                        clusters[i]->attributesValues.value(atrName);
+                    if(value != "MISSING")
+                    {
+                        if(atrMaxVal.toDouble() < value.toDouble())
+                        {
+                            atrData->setMaxValue(value);
+                        }
+
+                        if(atrMinVal.toDouble() > value.toDouble())
+                        {
+                            atrData->setMinValue(value);
+                        }
+                    }
                 }
             }
         }

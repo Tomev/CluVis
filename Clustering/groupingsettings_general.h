@@ -10,7 +10,9 @@
 enum representativeCreationStrategy
 {
     THRESHOLD,
-
+    LOWER_ESTIMATE,
+    HIGHER_ESTIMATE,
+    WEIGHTED_ESTIMATE
 };
 
 class groupingSettings_General
@@ -34,6 +36,7 @@ public:
     int coverSum;
     unsigned int repCreationStrategyID;
     int repTreshold;
+    QString zeroRepresentativeClusterOccurence = "";
 
     bool findBestClustering;
 

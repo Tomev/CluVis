@@ -48,6 +48,10 @@ struct numericAttributeData : attributeData
 
     qreal getMaxMinAbsDiff()
     {
+        // Return -1 if they're missing
+        if(maxValue == "MISSING" || minValue =="MISSING")
+            return -1;
+
         qreal result;
 
         result = this->maxValue.toDouble() - this->minValue.toDouble();
