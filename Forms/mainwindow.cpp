@@ -889,19 +889,67 @@ void MainWindow::getReportsMainContentFromLocation(QString reportsDirPath, QStri
 {
     QDir reportsDir(reportsDirPath);
     // Check if this dir has subdirs
+
+    if(reportsDir.count() > 0)
+    {
         // If so recursive call this function for each subdir
+        QStringList subdirs = reportsDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
 
-
+        foreach(const QString subdirName, subdirs)
+            getReportsMainContentFromLocation(reportsDirPath + "/" + subdirName, content);
+    }
 
     // Find names of all reports in given dir
     QStringList reportsNames;
+    QString reportsPath;
 
-    reportsNames = reportsDir.entryList("*.xml");
+    QTextStream in;
+    QString line = "";
+
+    reportsNames = reportsDir.entryList({"*.xml"});
 
     // For each report on the list
     foreach(const QString reportName, reportsNames)
     {
         // TODO: Validate if given xml is indeed report in proper format
+        reportsPath = reportsDirPath + "/" + reportName;
+
+        // Read file line by line until row with data is found
+        QFile reportsFile(reportsPath);
+
+        // Return if file cannot be opened
+        if(!reportsFile.open(QIODevice::ReadOnly))
+        {
+            qDebug() << "Cannot open file for reading.";
+        }
+
+        QTextStream in(&reportsFile);
+
+        line = in.readLine();
+
+        while(!in.atEnd())
+        {
+            if(!line.contains("<Row ss:Index=\"1\">"))
+            {
+                line = in.readLine();
+                continue;
+            }
+            else
+            {
+                // When found add data to content
+                while(!line.contains("</Row>"))
+                {
+                    *content += line + "\n";
+                    line = in.readLine();
+                }
+
+                // Close row
+                *content += line + "\n";
+
+                break;
+            }
+        }
+
     }
 }
 
@@ -922,7 +970,6 @@ void MainWindow::on_actionPolish_triggered()
 {
     translate(polish);
 }
-
 
 void MainWindow::translate(int lang)
 {

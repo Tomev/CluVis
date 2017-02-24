@@ -280,14 +280,98 @@ struct cluster
 
         void fillThresholdEstimationRepresentativeAttributesValues(int threshold)
         {
-            threshold = 3; // For errors warnings
+            QList<descriptor> representativeCandidate;
+
+            // Check if threshold is < 0 or > 100
+            if(threshold > 100 || threshold < 0)
+            {
+                // If so return
+                return;
+            }
+
             // Get all objects within given cluster
-            // For all objects save their descriptors into list
-            // While descriptors list is not empty
+            QList<cluster*> objects = this->getObjects();
+
+            // For each object
+            foreach(const cluster* object, objects)
+            {
+                // For each descriptor
+                foreach(const QString key, object->attributesValues.keys())
+                {
+                    foreach(const QString value, *(object->attributesValues.value(key)))
+                    {
+                        // Save it to list
+                        representativeCandidate.append(descriptor(key, value));
+                    }
+                }
+            }
+
+            // For each descriptor pair
+            int descriptorCouter, descriptorIndex = 0, comparatorIndex;
+            qreal requiredOccurenceNumber = objects.size() * threshold / 100.0;
+
+            while(representativeCandidate.size() > descriptorIndex)
+            {
+                descriptorCouter = 0;
+                comparatorIndex = descriptorIndex;
+
+                while(comparatorIndex < representativeCandidate.size())
+                {
+                    // Check if descriptors are equal
+                    if( representativeCandidate.at(descriptorIndex)
+                        .equals(representativeCandidate.at(comparatorIndex)))
+                    {
+                        // If so increase descriptor counter
+                        ++descriptorCouter;
+                        
+                        // Check if it's the same value
+                        if(descriptorIndex != comparatorIndex)
+                        {
+                            // If not then remove it from the list
+                            representativeCandidate.removeAt(comparatorIndex);
+                            continue;
+                        }
+                    }
+
+                    ++comparatorIndex;
+                }
+
                 // Check if it occurs on list number of times given by threshold
-                // If so add it to representive
-            // Remove exmined descriptor from the list
+                if(descriptorCouter >= requiredOccurenceNumber)
+                {
+                    // If it should be in representative, then increase descriptor index
+                    ++descriptorIndex;
+                }
+                else
+                {
+                    // If not then remove it from the list
+                    representativeCandidate.removeAt(descriptorIndex);
+                }
+
+            }
+
+            // Save these descriptors to representative
+            foreach(const descriptor desc, representativeCandidate)
+            {
+                // If attribute is not in the hashtable add it with empty QStringList
+                if(!representativeAttributesValues.keys().contains(desc.attribute))
+                {
+                    representativeAttributesValues.insert(desc.attribute, new QStringList());
+                }
+
+                // Add descriptors value to the appropriate list
+                representativeAttributesValues.value(desc.attribute)->append(desc.value);
+            }
+
+            // Remove duplicate values from each QStringList of attribute
+            foreach(QStringList* values, representativeAttributesValues)
+            {
+                values->removeDuplicates();
+            }
+
         }
+
+
 
         virtual QHash<QString, QStringList*> getAttributesForSimilarityCount(int methodId)
         {

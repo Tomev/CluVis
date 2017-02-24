@@ -112,7 +112,7 @@ void groupingThread::initializeDataPreparator()
 
 void groupingThread::groupObjects()
 {   
-    // Clear zere representative cluster Occurence
+    // Clear zero representative cluster occurence
 
     grpSettings->zeroRepresentativeClusterOccurence = -1;
 
