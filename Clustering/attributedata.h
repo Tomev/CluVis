@@ -4,6 +4,9 @@
 #include <QString>
 #include <QHash>
 
+// TODO TR: Make it a class
+// TODO TR: Place it in more general directory
+
 struct attributeData
 {
     attributeData(){}

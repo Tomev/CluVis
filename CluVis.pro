@@ -30,7 +30,8 @@ SOURCES +=      Forms/about.cpp \
                 Clustering/groupingsettings_rsesrules.cpp \
                 main.cpp \
                 enum_interobjectsimilaritymeasures.cpp \
-                generalsettings.cpp
+                generalsettings.cpp \
+    Interference/interferencer.cpp
 
 
 HEADERS  +=     Forms/about.h \
@@ -63,6 +64,7 @@ HEADERS  +=     Forms/about.h \
                 Clustering/groupingsettings_rsesrules.h \
                 generalsettings.h \
                 generalincludes.h \
+    Interference/interferencer.h
 
 FORMS    +=     Forms/about.ui \
                 Forms/clusterinfo_rsesrules.ui \
