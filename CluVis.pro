@@ -31,7 +31,10 @@ SOURCES +=      Forms/about.cpp \
                 main.cpp \
                 enum_interobjectsimilaritymeasures.cpp \
                 generalsettings.cpp \
-    Interference/interferencer.cpp
+    Interference/interferencer.cpp \
+    Object/attribute.cpp \
+    Object/numericattribute.cpp \
+    Object/categoricalattribute.cpp
 
 
 HEADERS  +=     Forms/about.h \
@@ -64,7 +67,10 @@ HEADERS  +=     Forms/about.h \
                 Clustering/groupingsettings_rsesrules.h \
                 generalsettings.h \
                 generalincludes.h \
-    Interference/interferencer.h
+    Interference/interferencer.h \
+    Object/attribute.h \
+    Object/numericattribute.h \
+    Object/categoricalattribute.h
 
 FORMS    +=     Forms/about.ui \
                 Forms/clusterinfo_rsesrules.ui \
