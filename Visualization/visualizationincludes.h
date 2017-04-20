@@ -13,7 +13,6 @@
 //Settings
 
 #include "visualizationsettings_general.h"
-#include "visualizationsettings_rsesrules.h"
 
 #endif // VISUALIZATIONINCLUDES
 

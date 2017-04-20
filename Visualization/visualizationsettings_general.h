@@ -1,9 +1,10 @@
 #ifndef VISUALIZATIONSETTINGS_GENERAL_H
 #define VISUALIZATIONSETTINGS_GENERAL_H
 
-#include <QRect>
-
+#include "../Clustering/clusters.h"
 #include "enum_visualizationalgorithms.h"
+
+#include <QRect>
 
 class visualizationSettings_general
 {
@@ -16,6 +17,8 @@ public:
     bool visualizeAllHierarchyLevels;
 
     QRect* sceneRect;
+
+    QVector<cluster*> *clusters;
 
     //Methods
 

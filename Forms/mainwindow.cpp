@@ -20,7 +20,6 @@ MainWindow::MainWindow(QWidget *parent) :
     settings = new generalSettings();
     gSettings = new groupingSettings_General();
     vSettings = new visualizationSettings_general();
-    vSettings_RSES = new visualizationSettings_RSESRules();
     tim = new QTime();
 
     ui->setupUi(this);
@@ -68,8 +67,6 @@ MainWindow::~MainWindow()
     delete gSettings;
     delete dGrpSettings;
     delete vSettings;
-    delete vSettings_RSES;
-    delete[] clusters;
 }
 
 //GUI
@@ -1022,6 +1019,14 @@ void MainWindow::on_pushButtonGroup_clicked()
         groupObjects();
     }
 
+    addLogMessage(tr("log.groupedObjectsReceived"));
+    // Otrzymano pogrupowane obiekty.
+    addLogMessage(tr("log.visualizationAvailable"));
+    // Można przystąpić do wizualizacji.
+
+    areObjectsClustered = true;
+    ui->labelIsBaseGrouped->setText(tr("bold.grouped"));
+
     if(areObjectsClustered)
     {
         QMessageBox mb;
@@ -1155,11 +1160,9 @@ void MainWindow::setVisualizationSettings()
     {
         case RSESRulesId:
 
-        vSettings_RSES->clusteredRules = ((ruleCluster**)clusters);
+            vThread = new visualizationThread(settings, vSettings);
 
-        vThread = new visualizationThread(settings, vSettings, vSettings_RSES);
-
-        addLogMessage(tr("report.detailedSettingsLoaded"));
+            addLogMessage(tr("report.detailedSettingsLoaded"));
 
         break;
 
@@ -1290,19 +1293,6 @@ void MainWindow::visualize()
 
     ui->actionSaveVisualization->setEnabled(true);
     ui->actionGenerateReport->setEnabled(true);
-}
-
-void MainWindow::getClusters(cluster** c)
-{
-    addLogMessage(tr("log.groupedObjectsReceived"));
-    // Otrzymano pogrupowane obiekty.
-    addLogMessage(tr("log.visualizationAvailable"));
-    // Można przystąpić do wizualizacji.
-
-    clusters = c;
-
-    areObjectsClustered = true;
-    ui->labelIsBaseGrouped->setText(tr("bold.grouped"));
 }
 
 void MainWindow::gotMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber)
@@ -1550,9 +1540,9 @@ void MainWindow::on_pushButtonStandard_clicked()
                 // Change index of cluster similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
 
-                unsigned int rulesNumberSqrt = qCeil(qSqrt(settings->objectsNumber));
-                unsigned int rulesNumberOnePercent = qCeil(settings->objectsNumber/100.0);
-                unsigned int desiredClustersNumber = rulesNumberSqrt;
+                int rulesNumberSqrt = qCeil(qSqrt(settings->objectsNumber));
+                int rulesNumberOnePercent = qCeil(settings->objectsNumber/100.0);
+                int desiredClustersNumber = rulesNumberSqrt;
                 QString reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
 
                 // Perform grouping for given clusters number with default settings.

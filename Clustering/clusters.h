@@ -6,9 +6,13 @@
 #include <QSet>
 #include <QDebug>
 
+#include <memory>
+
 #include "attributedata.h"
 
 #include "enum_interclustersimilaritymeasures.h"
+
+typedef std::shared_ptr<cluster> cluster_ptr;
 
 struct descriptor
 {

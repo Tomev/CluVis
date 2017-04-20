@@ -40,16 +40,11 @@ private slots:
     //Help
     void on_actionAbout_triggered();
 
-    //Settings
-    //void on_pushButtonDetails_clicked();
-    //void on_pushButtonGeneral_clicked();
-
     //Main Buttons
     void on_pushButtonGroup_clicked();
     void on_pushButtonVisualize_clicked();
 
     //Rest
-    void getClusters(cluster** c);
     void gotMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber);
     void gotMDBIData(qreal MDBI, qreal maxMDBI, int maxMDBIClustersNumber);
 
@@ -101,9 +96,9 @@ private:
     groupingSettings_Detailed* dGrpSettings;
 
     visualizationSettings_general* vSettings;
-    visualizationSettings_RSESRules* vSettings_RSES;
 
-    cluster** clusters;
+    QVector<cluster*> clusters;
+    //cluster** clusters;
 
     clusterInfo_RSESRules* cInfo;
 

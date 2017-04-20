@@ -5,12 +5,10 @@
 visualizationThread::visualizationThread(){}
 
 visualizationThread::visualizationThread(generalSettings *settings,
-                                         visualizationSettings_general *vSettings,
-                                         visualizationSettings_RSESRules *vSettings_RSES)
+                                         visualizationSettings_general *vSettings)
 {
     this->settings = settings;
     this->vSettings = vSettings;
-    this->vSettings_RSES = vSettings_RSES;
 }
 
 visualizationThread::~visualizationThread(){}
@@ -73,30 +71,27 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
         {
             int top = paintAreaRect.top();
             int left = paintAreaRect.left();
-            float width = widthScaled(vSettings_RSES->clusteredRules[i]->size(),
-                                    rect, settings->objectsNumber);
+            float width = widthScaled(vSettings->clusters->size(), rect, settings->objectsNumber);
             if(width<1)
                 width = 1;
             int height = paintAreaRect.height();
             if(height<1)
                 height =1;
-            QColor sV = getColorFromSize(vSettings_RSES->clusteredRules[i]->size()); // sV -> shadeValue
+            QColor sV = getColorFromSize(vSettings->clusters->at(i)->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
             QRect smallerRect(left+rectPadding, top+rectPadding,
                               width-2*rectPadding,height-2*rectPadding);
 
             customGraphicsRectObject* vRect =
-                    new customGraphicsRectObject(newRect,
-                                                 sV,
-                                                 vSettings_RSES->clusteredRules[i]);
+                    new customGraphicsRectObject(newRect, sV, (ruleCluster*)(vSettings->clusters->at(i)));
             emit passGraphicsRectObject(vRect);
 
             if(vSettings->visualizeAllHierarchyLevels &&
                     height > 2*rectPadding &&
                     width > 2*rectPadding &&
-                    vSettings_RSES->clusteredRules[i]->size() > 1)
-                RSES_RTSAD(&smallerRect, vSettings_RSES->clusteredRules[i]);
+                    vSettings->clusters->at(i)->size() > 1)
+                RSES_RTSAD(&smallerRect, (ruleCluster*)(vSettings->clusters->at(i)));
 
             paintAreaRect.setLeft(paintAreaRect.left() + width);
         }
@@ -170,9 +165,9 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
             int top = paintAreaRect.top();
             int left = paintAreaRect.left();
             int width = paintAreaRect.width();
-            float height = heightScaled(vSettings_RSES->clusteredRules[i]->size(),
+            float height = heightScaled(vSettings->clusters->at(i)->size(),
                                       rect, settings->objectsNumber);
-            QColor sV = getColorFromSize(vSettings_RSES->clusteredRules[i]->size()); // sV -> shadeValue
+            QColor sV = getColorFromSize(vSettings->clusters->at(i)->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
             QRect smallerRect(left+rectPadding, top+rectPadding,
@@ -181,15 +176,15 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
             customGraphicsRectObject* vRect =
                     new customGraphicsRectObject(newRect,
                                                  sV,
-                                                 vSettings_RSES->clusteredRules[i]);
+                                                 (ruleCluster*)(vSettings->clusters->at(i)));
 
             emit passGraphicsRectObject(vRect);
 
             if(vSettings->visualizeAllHierarchyLevels &&
                     height > 2*rectPadding &&
                     width > 2*rectPadding &&
-                    vSettings_RSES->clusteredRules[i]->size() > 1)
-                RSES_RTSAD(&smallerRect, vSettings_RSES->clusteredRules[i]);
+                    vSettings->clusters->at(i)->size() > 1)
+                RSES_RTSAD(&smallerRect, (ruleCluster*)(vSettings->clusters->at(i)));
 
             paintAreaRect.setLeft(paintAreaRect.top() + height);
         }
@@ -287,6 +282,8 @@ QColor visualizationThread::getColorFromSize(int cSize)
         if(shade < minShadeValue) shade = minShadeValue;
         return QColor(shade,0,shade);
     }
+
+    return QColor(0,0,0);
 }
 
 void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
@@ -304,7 +301,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
     {
         if(settings->stopCondition == 1)
         {
-            newC = vSettings_RSES->clusteredRules[0];
+            newC = (ruleCluster*) vSettings->clusters->at(0);
+
 
             QColor sV = getColorFromSize(newC->size());
 
@@ -338,7 +336,9 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
 
         if(settings->stopCondition >= 2)
         {
-            QList<ruleCluster*> sortedRuleClusters = getSortedRuleClusters(vSettings_RSES->clusteredRules);
+            QVector<cluster*> sortedClusters;
+            fillVectorWithClustersSortedBySize(&sortedClusters);
+
             QList<qreal> diameters;
             QList<QRect*> circlesBRects;
 
@@ -352,8 +352,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
 
             qreal directionCoefficient;
 
-            for(int i = 0; i < sortedRuleClusters.size(); i++)
-                diameters.append(mainBRect.width() * sortedRuleClusters[i]->size() / settings->objectsNumber);
+            for(int i = 0; i < sortedClusters.size(); i++)
+                diameters.append(mainBRect.width() * sortedClusters.at(i)->size() / settings->objectsNumber);
 
             emit passMainEllipseRect(&mainBRect);
 
@@ -568,18 +568,18 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
 
             for(int i = 0; i < circlesBRects.size(); i++)
             {
-                QColor sV = getColorFromSize(sortedRuleClusters[i]->size());
+                QColor sV = getColorFromSize(sortedClusters.at(i)->size());
 
                 customGraphicEllipseObject* cRect =
-                    new customGraphicEllipseObject(*circlesBRects[i],sV, sortedRuleClusters[i]);
+                    new customGraphicEllipseObject(*circlesBRects[i],sV, (ruleCluster*)sortedClusters.at(i));
 
                 emit passGraphicsEllipseObject(cRect);
 
-                if(sortedRuleClusters[i]->size() > 1 &&
+                if(sortedClusters.at(i)->size() > 1 &&
                    vSettings->visualizeAllHierarchyLevels)
                 {
-                    qreal d1 = circlesBRects[i]->width() * sortedRuleClusters[i]->leftNode->size() / sortedRuleClusters[i]->size();
-                    qreal d2 = circlesBRects[i]->width() * sortedRuleClusters[i]->rightNode->size() / sortedRuleClusters[i]->size();
+                    qreal d1 = circlesBRects[i]->width() * sortedClusters.at(i)->leftNode->size() / sortedClusters.at(i)->size();
+                    qreal d2 = circlesBRects[i]->width() * sortedClusters.at(i)->rightNode->size() / sortedClusters.at(i)->size();
 
                     qreal top = circlesBRects[i]->center().y() - d1/2;
                     qreal left = circlesBRects[i]->left();
@@ -593,8 +593,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
                     QRect* c2BRect =
                         new QRect(left,top,d2,d2);
 
-                    RSES_CircularTreemap(c1BRect,(ruleCluster*)sortedRuleClusters[i]->leftNode);
-                    RSES_CircularTreemap(c2BRect,(ruleCluster*)sortedRuleClusters[i]->rightNode);
+                    RSES_CircularTreemap(c1BRect,(ruleCluster*)sortedClusters.at(i)->leftNode);
+                    RSES_CircularTreemap(c2BRect,(ruleCluster*)sortedClusters.at(i)->rightNode);
                 }
             }
 
@@ -671,51 +671,68 @@ QRect visualizationThread::getCircleBoundingRect(QRect *rect)
     return bRect;
 }
 
-QList<ruleCluster *> visualizationThread::getSortedRuleClusters(ruleCluster **c)
+void visualizationThread::fillVectorWithClustersSortedBySize(QVector<cluster *> *sortedClusters)
 {
-    QList<ruleCluster*> result;
-    QList<ruleCluster*> clusters;
+    // Bubble sort is implemented.
+    // TODO TR: Implement more sublime sorting algorithm.
 
-    int largestClusterIdx = 0;
-    int largestClusterSize = 1;
+    // Fill temporary vector with unsorted clusters
+    QVector<cluster*> unsortedClusters;
 
-    int i;
+    foreach(cluster *clusterPointer, *(vSettings->clusters))
+        unsortedClusters.append(clusterPointer);
 
-    for(i = 0; i < settings->stopCondition; i++)
+    int largestClusterIndex;
+
+    // While there still are unsorted clusters
+    while(unsortedClusters.size() > 0)
     {
-        clusters.append(c[i]);
+        // Find largest unsorted cluster
+        largestClusterIndex = findLargestClusterIndex(&unsortedClusters);
 
-        if(c[i]->size() > largestClusterSize)
+        if(largestClusterIndex < 0)
         {
-            largestClusterIdx = i;
-            largestClusterSize = c[i]->size();
+            qDebug() << "An error occured during searching for largest cluster index during sorting.";
+            return;
         }
+
+        // Pop its value into sorted clusters vector
+        sortedClusters->append(unsortedClusters.at(largestClusterIndex));
+        unsortedClusters.removeAt(largestClusterIndex);
     }
 
-    result.append(clusters[largestClusterIdx]);
-    clusters.removeAt(largestClusterIdx);
+}
 
-    while(clusters.size() > 0)
+int visualizationThread::findLargestClusterIndex(QVector<cluster *> *unsortedClusters)
+{
+    // Check for nullpointer
+    if(unsortedClusters == NULL)
     {
-        largestClusterIdx = 0;
-        largestClusterSize = 1;
+        qDebug() << "Unsorted clusters pointer is NULL.";
+        return -1;
+    }
 
-        for(i = 0; i < clusters.size(); i++)
+    // Check if given vector is empty
+    if(!unsortedClusters->isEmpty())
+    {
+        // If not find largest cluster
+        int largestClustersIndex = 0, largestClustersSize = unsortedClusters->at(0)->size();
+
+        for(int clustersIndex = 1; clustersIndex < unsortedClusters->size(); ++clustersIndex)
         {
-            if(clusters[i]->size() > largestClusterSize)
+            if(unsortedClusters->at(clustersIndex)->size() > largestClustersSize)
             {
-                largestClusterIdx = i;
-                largestClusterSize = c[i]->size();
+                largestClustersIndex = clustersIndex;
+                largestClustersSize = unsortedClusters->at(clustersIndex)->size();
             }
         }
 
-        result.append(clusters[largestClusterIdx]);
-        clusters.removeAt(largestClusterIdx);
+        return largestClustersIndex;
     }
 
-    return result;
+    qDebug() << "Unsorted clusters vector was empty.";
+    return -1;
 }
-
 qreal visualizationThread::pointsEuklideanDistance(QPoint p1, QPoint p2)
 {
     qreal x = (double) p1.x() - p2.x();

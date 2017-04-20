@@ -15,8 +15,7 @@ class visualizationThread : public QThread
 public:
     visualizationThread();
     visualizationThread(generalSettings* settings,
-                        visualizationSettings_general* vSettings,
-                        visualizationSettings_RSESRules* vSettings_RSES);
+                        visualizationSettings_general* vSettings);
     ~visualizationThread();
 
     void run(ruleCluster *c = NULL);
@@ -32,7 +31,6 @@ private:
 
     generalSettings* settings;
     visualizationSettings_general* vSettings;
-    visualizationSettings_RSESRules* vSettings_RSES;
 
     int rectPadding;
 
@@ -50,7 +48,8 @@ private:
 
             void RSES_CircularTreemap(QRect *rect = new QRect(0,0,0,0), ruleCluster *c = NULL);
                 QRect getCircleBoundingRect(QRect* rect);
-                QList<ruleCluster *> getSortedRuleClusters(ruleCluster **);
+                void fillVectorWithClustersSortedBySize(QVector<cluster*> *sortedClusters);
+                    int findLargestClusterIndex(QVector<cluster*> *unsortedClusters);
 
    qreal pointsEuklideanDistance(QPoint p1, QPoint p2);
 

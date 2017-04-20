@@ -19,7 +19,6 @@ SOURCES +=      Forms/about.cpp \
                 Forms/mainwindow.cpp \
                 Visualization/visualizationthread.cpp \
                 Visualization/visualizationsettings_general.cpp \
-                Visualization/visualizationsettings_rsesrules.cpp \
                 Visualization/customgraphicellipseobject.cpp \
                 Visualization/customgraphicsrectobject.cpp \
                 Clustering/groupingthread.cpp \
@@ -53,7 +52,6 @@ HEADERS  +=     Forms/about.h \
                 Visualization/visualizationsettings_general.h \
                 Visualization/customgraphicellipseobject.h \
                 Visualization/visualizationincludes.h \
-                Visualization/visualizationsettings_rsesrules.h \
                 Clustering/groupingthread.h \
                 Clustering/groupingsettings_general.h \
                 Clustering/groupingsettingsincludes.h \
