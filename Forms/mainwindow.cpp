@@ -671,6 +671,8 @@ QString MainWindow::createXMLFileTableHeader()
     result += createXMLFileTableCell(tr("report.smallestRepSize"), true);
     result += createXMLFileTableCell(tr("report.averageRepSize"), true);
     result += createXMLFileTableCell(tr("report.zeroRepresentativeClusterOccurence"), true);
+    result += createXMLFileTableCell(tr("report.representativeCreationStrategy"), true);
+    result += createXMLFileTableCell(tr("report.representativeCreationThreshold"), true);
     result += createXMLFileTableCell(tr("report.MDI"), true);
     result += createXMLFileTableCell(tr("report.MDBI"), true);
     result += createXMLFileTableCell(tr("report.minMDI"), true);
@@ -731,6 +733,8 @@ QString MainWindow::createXMLFileTableContent()
     result += createXMLFileTableCell(QString::number(getSmallestRepresentativeLength()), false);
     result += createXMLFileTableCell(QString::number(getAverageRepresentativeLength()), false);
     result += createXMLFileTableCell(QString::number(gSettings->zeroRepresentativeClusterOccurence), false);
+    result += createXMLFileTableCell(ui->comboBoxRepresentativeCreationStrategy->currentText(), false);
+    result += createXMLFileTableCell(QString::number(gSettings->repTreshold), false);
     //Indexes data
     result += createXMLFileTableCell(QString::number(MDI), false);
     result += createXMLFileTableCell(QString::number(MDBI), false);
