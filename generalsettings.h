@@ -1,6 +1,7 @@
 #ifndef GENERALSETTINGS_H
 #define GENERALSETTINGS_H
 
+#include "Clustering/clusters.h"
 
 
 class generalSettings
@@ -12,6 +13,7 @@ public:
     int dataTypeID;
     int objectsNumber;
     int stopCondition;
+    QVector<cluster*> *clusters;
 
     //Methods
 

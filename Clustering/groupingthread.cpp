@@ -32,6 +32,13 @@ groupingThread::groupingThread(groupingSettings_Detailed *dGrpSettings,
     initializeCreatingMatrixProgressbar();
 }
 
+void groupingThread::setSettings(groupingSettings_Detailed *dGrpSettings, groupingSettings_General *groupingSettings, generalSettings *settings)
+{
+  this->settings = settings;
+  this->grpSettings =  groupingSettings;
+  this->dGrpSettings = dGrpSettings;
+}
+
 groupingThread::groupingThread(groupingSettings *settings)
 {
     nextClusterID = 0;
@@ -131,7 +138,6 @@ void groupingThread::groupObjects()
 
     emit passLogMsg(tr("log.creatingSimMatrix"));
 
-    std::vector<simData> simMatrix;
     fillSimMatrix(&simMatrix, settings->objectsNumber);
 
     emit passLogMsg(tr("log.groupingProcessStarted"));
@@ -213,12 +219,19 @@ void groupingThread::groupObjects()
     emit passMDIData(MDI, minMDI, minMDIClustersNumber);
     emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
 
+    settings->clusters->clear();
+
+    for(int i = 0; i < settings->stopCondition; ++i)
+      settings->clusters->push_back(clusters[i]);
+
     emit passClusters(clusters);
 }
 
 void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize)
 {
     creatingSimMatrixProgress->show();
+
+    simMatrix->clear();
 
     for(int i = 0; i < simMatrixSize; ++i)
     {
@@ -1285,4 +1298,19 @@ void groupingThread::countMDBI(int clustersNum)
     }
 
     MDBI = qreal(MDBI/clustersNum);
+}
+
+void groupingThread::continueGrouping()
+{
+  for(int i = settings->stopCondition; i < settings->clusters->size(); ++i)
+  {
+    joinMostSimilarClusters(&simMatrix);
+
+    updateSimMatrix(&simMatrix);
+  }
+
+  settings->clusters->clear();
+
+  for(int i = 0; i < settings->stopCondition; ++i)
+    settings->clusters->push_back(clusters[i]);
 }

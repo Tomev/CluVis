@@ -1,24 +1,36 @@
 #ifndef INTERFERENCER_H
 #define INTERFERENCER_H
 
-#include "../Clustering/clusters.h"
+#include <QHash>
 
-#include <QObject>
-#include <QVector>
+#include "../Clustering/groupingthread.h"
 
-class Interferencer
+class interferencer
 {
+  public:
 
-    public:
+    interferencer();
 
-        Interferencer(QString factsBasePath);
+    void generateRandomFactsBase();
+    int loadFactsFromPath(QString path);
+    int interfere();
 
-        void performInterference();
+    void setGroupingThread(groupingThread* newGrpThread);
 
-   private:
+    int numberOfClustersSearched = 0;
+    int numberOfRulesFired = 0;
 
+  private:
 
+    QHash<QString, QString> facts;
+    groupingThread* grpThread;
 
+    ruleCluster createFactRule();
+
+    int findMostSimiliarClusterToFactRule(cluster* factRule);
+    cluster *findRuleToFireInCluster(cluster* fc, cluster* c);
+
+    bool canRuleBeFired(ruleCluster *c);
 
 };
 

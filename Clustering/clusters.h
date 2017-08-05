@@ -12,8 +12,6 @@
 
 #include "enum_interclustersimilaritymeasures.h"
 
-typedef std::shared_ptr<cluster> cluster_ptr;
-
 struct descriptor
 {
     QString attribute;
@@ -135,7 +133,7 @@ struct cluster
         void fillThresholdRepresentativesAttributesValues(int treshold)
         {
             QStringList repAttributes = getRepresentativesAttributesList(treshold);
-            QString atrName;
+            QString atrName, avgValue;
 
             // For each representative attribute
             for(int i = 0; i < repAttributes.length(); ++i)
@@ -155,7 +153,9 @@ struct cluster
                 }
 
                 // Add average value of the attribute into the QList of that attribute
-                representativeAttributesValues.value(atrName)->append(getAttributesAverageValue(atrName));
+                avgValue = getAttributesAverageValue(atrName);
+
+                representativeAttributesValues.value(atrName)->append(avgValue);
             }
         }
 
@@ -374,8 +374,6 @@ struct cluster
             }
 
         }
-
-
 
         virtual QHash<QString, QStringList*> getAttributesForSimilarityCount(int methodId)
         {
@@ -620,6 +618,8 @@ struct ruleCluster : cluster
             // Remove descriptors' separator at the end
             representative.remove(representative.length()-1,1);
 
+            if(decisionAttributes.size() == 0) return representative;
+
             // Add rules parts separator
             representative += "=>";
 
@@ -795,5 +795,7 @@ struct ruleCluster : cluster
         }
 
 };
+
+typedef std::shared_ptr<cluster> cluster_ptr;
 
 #endif // CLUSTERS

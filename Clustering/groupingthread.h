@@ -27,10 +27,25 @@ public:
     groupingThread(groupingSettings_Detailed *dGrpSettings,
                    groupingSettings_General *groupingSettings,
                    generalSettings *settings);
+
+    void setSettings(groupingSettings_Detailed *dGrpSettings,
+                     groupingSettings_General *groupingSettings,
+                     generalSettings *settings);
+
     groupingThread(groupingSettings *settings);
     ~groupingThread();
 
     void run();
+
+    groupingSettings_General* grpSettings;
+    QHash<QString, attributeData*> attributes;
+    generalSettings* settings;
+
+    qreal getClustersSimilarityValue(cluster* c1, cluster* c2);
+
+    void continueGrouping();
+
+    std::vector<simData> simMatrix;
 
 signals:
     void passClusters(cluster**);
@@ -39,7 +54,11 @@ signals:
 
     void passLogMsg(QString);
 
+
+
 private:
+
+
     //Members
         //Variables
 
@@ -54,11 +73,9 @@ private:
     cluster** clusters;
     int nextClusterID, newClusterIdx;
 
-    generalSettings* settings;
-    groupingSettings_General* grpSettings;
     groupingSettings_Detailed* dGrpSettings;
 
-    QHash<QString, attributeData*> attributes;
+
 
     QProgressDialog* groupingProgress;
     QProgressDialog* creatingSimMatrixProgress;
@@ -77,7 +94,7 @@ private:
             void deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix);
         void updateSimMatrix(std::vector<simData> *simMatrix);
 
-        qreal getClustersSimilarityValue(cluster* c1, cluster* c2);
+
             qreal getClustersAverageLinkValue(cluster* c1, cluster* c2);
             qreal getObjectsSimValue(cluster* c1, cluster* c2);
                 qreal getObjectsGowersSimValue(cluster* c1, cluster* c2);

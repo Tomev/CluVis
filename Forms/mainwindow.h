@@ -13,21 +13,24 @@
 
 #include "../Clustering/clusterinfoincludes.h"
 
+#include "../Interference/interferencer.h"
+
 #include "enum_languages.h"
 #include "enum_datatype.h"
 #include "enum_reporttypes.h"
 
-namespace Ui {
-class MainWindow;
+namespace Ui
+{
+  class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+  explicit MainWindow(QWidget *parent = 0);
+  ~MainWindow();
 
 private slots:  
     //File
@@ -77,7 +80,12 @@ private slots:
 
     void on_pushButtonStandard_clicked();
 
+    void on_pushButtonInterfere_clicked();
+
+    void on_actionLoadFactsBase_triggered();
+
 private:
+    interferencer ruleInterferencer;
     QTranslator* translator;
 
     Ui::MainWindow *ui;
@@ -88,7 +96,7 @@ private:
 
     QGraphicsScene* scene;
 
-    groupingThread* gThread;
+    groupingThread* gThread = 0;
     visualizationThread* vThread;
 
     generalSettings* settings;
@@ -98,7 +106,6 @@ private:
     visualizationSettings_general* vSettings;
 
     QVector<cluster*> clusters;
-    //cluster** clusters;
 
     clusterInfo_RSESRules* cInfo;
 
@@ -113,9 +120,12 @@ private:
     int getObjectsNumber();
 
     //File
-    void loadObjectsBase(QFileInfo OB);
     QFileInfo selectObjectBase();
-    bool isRuleSet(QFileInfo base);
+        QString getOpenPath();
+    void loadObjectsBase(QFileInfo OB);
+      bool canBaseBeLoaded(QFileInfo OB);
+        bool wasFileSelected(QString OB);
+        bool isRuleSet(QFileInfo base);
 
     void generateReport(QString path = "");
         QString getFilePath();

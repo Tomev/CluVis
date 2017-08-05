@@ -2,13 +2,13 @@
 #include "about.h"
 #include "ui_mainwindow.h"
 
+#include <string>
 #include <iostream>
 #include <algorithm>
 #include <QtCore>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QTextStream>
-#include <QDebug>
 #include <QtGui>
 #include <QDesktopWidget>
 #include <QTime>
@@ -69,8 +69,6 @@ MainWindow::~MainWindow()
     delete vSettings;
 }
 
-//GUI
-
 //File
 
 void MainWindow::on_actionLoadObjectBase_triggered()
@@ -80,19 +78,38 @@ void MainWindow::on_actionLoadObjectBase_triggered()
     loadObjectsBase(KB);
 }
 
+QFileInfo MainWindow::selectObjectBase()
+{
+    QFileDialog FD;
+
+    QString openPath = getOpenPath();
+
+    QString OBPath = FD.getOpenFileName(
+        this,
+        tr("FD.selectKnowledgeBase"),
+        openPath,
+        tr("FD.RSESRules.fileTypes")
+    );
+
+    return QFileInfo(OBPath);
+}
+
+QString MainWindow::getOpenPath()
+{
+    // TR TODO: Create settings file to store user settings.
+
+    QString customOpenPath = "D:\\Dysk Google\\Rules";
+    QString defaultOpenPath = "C:\\";
+
+    if(QDir(customOpenPath).exists()) return customOpenPath;
+    else return defaultOpenPath;
+}
+
 void MainWindow::loadObjectsBase(QFileInfo OB)
 {
-    QString OBName = OB.completeBaseName();
+  QString OBName = OB.completeBaseName();
 
-    if(OBName == "")
-    {
-        QString logText = tr("log.failedToLoadObjBase") + " ";
-        logText+= tr("log.noFileSelected");
-
-        addLogMessage(logText);
-
-        return;
-    }
+  if(!canBaseBeLoaded(OB)) return;
 
     if(isRuleSet(OB) == false)
     {
@@ -104,7 +121,6 @@ void MainWindow::loadObjectsBase(QFileInfo OB)
         return;
     }
 
-    scene->clear();
     ui->actionSaveVisualization->setEnabled(false);
     ui->actionGenerateReport->setEnabled(false);
     ui->labelIsBaseGrouped->setText(tr("bold.ungrouped"));
@@ -123,27 +139,24 @@ void MainWindow::loadObjectsBase(QFileInfo OB)
     addLogMessage(tr("log.knowledgeBaseLoaded") + " " + OBName + ".");
 }
 
-QFileInfo MainWindow::selectObjectBase()
+bool MainWindow::canBaseBeLoaded(QFileInfo OB)
 {
-    QFileDialog FD;
+  QString OBName = OB.completeBaseName();
 
-    QString customOpenPath = "C:\\Users\\Tomek\\Desktop\\Rules";
-    QString defaultOpenPath = "C:\\";
-    QString openPath;
+  return  wasFileSelected(OBName) ||
+          isRuleSet(OB);
+}
 
-    if(QDir(customOpenPath).exists())
-        openPath = customOpenPath;
-    else
-        openPath = defaultOpenPath;
+bool MainWindow::wasFileSelected(QString OBName)
+{
+  if(OBName == "")
+  {
+      qDebug() << tr("log.fileNotLoaded");
 
-    QString OBPath = FD.getOpenFileName(
-        this,
-        tr("FD.selectKnowledgeBase"),
-        openPath,
-        tr("FD.RSESRules.fileTypes")
-    );
+      return false;
+    }
 
-    return QFileInfo(OBPath);
+  return true;
 }
 
 bool MainWindow::isRuleSet(QFileInfo base)
@@ -158,9 +171,7 @@ bool MainWindow::isRuleSet(QFileInfo base)
 
         line = in.readLine();
 
-
-        if(line.contains("RULE_SET"))
-            return true;
+        if(line.contains("RULE_SET")) return true;
     }
 
     return false;
@@ -1099,6 +1110,7 @@ void MainWindow::setGroupingSettings()
     settings->dataTypeID = 0;
     settings->stopCondition =
             ui->spinBoxStopConditionValue->value();
+    settings->clusters = &this->clusters;
 
     gSettings->groupingAlgorithmID = 0;
     gSettings->attributesFrequencyPercent =
@@ -1126,10 +1138,11 @@ void MainWindow::setGroupingSettings()
 
             dGrpSettings = temp;
 
-            gThread = new groupingThread(dGrpSettings, gSettings, settings);
+            if(gThread == 0)
+              gThread = new groupingThread(dGrpSettings, gSettings, settings);
+            else
+              gThread->setSettings(dGrpSettings, gSettings, settings);
 
-            connect(gThread,SIGNAL(passClusters(cluster**)),
-                    this,SLOT(getClusters(cluster**)));
             connect(gThread,SIGNAL(passLogMsg(QString)),
                     this,SLOT(gotLogText(QString)));
             connect(gThread,SIGNAL(passMDIData(qreal, qreal, int)),
@@ -1459,7 +1472,7 @@ void MainWindow::on_pushButtonStandard_clicked()
 {
     // TODO: Change for editable dir.
     // TODO: D:/ANB/ must exists for this to work. Eliminate this problem.
-    QString baseDir = "D:/ANB/",
+    QString baseDir = "D:/Dysk Google/Rules/",
             targetDir,
             kbsDirPath;
 
@@ -1470,7 +1483,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                 (
                     this,
                     tr("Select directory"),
-                    "C:/",
+                    "D:/Dysk Google/Rules",
                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
                 );
 
@@ -1496,6 +1509,8 @@ void MainWindow::on_pushButtonStandard_clicked()
         // Set targetDir to point at current KB folder
         targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
 
+        ruleInterferencer.loadFactsFromPath(targetDir + ".fct");
+
         // Check if folder with the same name  as KB doesn't exist.
         QDir kbFolder(targetDir);
 
@@ -1503,13 +1518,33 @@ void MainWindow::on_pushButtonStandard_clicked()
         {
             // If so create folder with name same as KB name.
             qDebug() << "creating folder " + targetDir;
-            kbFolder.mkdir(targetDir);
+            qDebug() << "creating commented out";
+            //kbFolder.mkdir(targetDir);
         }
         else
         {
             // TODO: Communicate that folder exists.
             qDebug() << "NOT creating folder";
         }
+
+        // Count number of iterations and get starting number
+        int rulesNumberSqrt = qCeil(qSqrt(settings->objectsNumber));
+        int rulesNumberOnePercent = qCeil(settings->objectsNumber/100.0);
+
+        int numberOfIterationsDown = 0, numberOfIterationsUp = 0, numberOfIterations, start;
+
+        // Get number of iterations
+        for(int i = 0; rulesNumberSqrt - i * rulesNumberOnePercent > 0; ++i)
+        {
+          start = rulesNumberSqrt - i * rulesNumberOnePercent;
+          ++numberOfIterationsUp;
+        }
+        for(int i = 0; rulesNumberSqrt + i * rulesNumberOnePercent > 0; ++i) ++numberOfIterationsDown;
+
+        numberOfIterations = qMin(numberOfIterationsUp, numberOfIterationsDown);
+
+        // As it was meant to go both ways, up and down from the sqrt
+        numberOfIterations *= 2;
 
         // For each inter object similarity measure
         for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
@@ -1544,58 +1579,152 @@ void MainWindow::on_pushButtonStandard_clicked()
                 // Change index of cluster similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
 
-                int rulesNumberSqrt = qCeil(qSqrt(settings->objectsNumber));
-                int rulesNumberOnePercent = qCeil(settings->objectsNumber/100.0);
-                int desiredClustersNumber = rulesNumberSqrt;
-                QString reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
+                int desiredClustersNumber = start + (numberOfIterations-1) * rulesNumberOnePercent;
 
-                // Perform grouping for given clusters number with default settings.
+                while(desiredClustersNumber > settings->objectsNumber)
+                  desiredClustersNumber -= rulesNumberOnePercent;
+
                 ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
 
                 setGroupingSettings();
+
                 groupObjects();
 
-                // Generate report of this grouping in dir.
-                generateReport(targetDir + "/" + reportName + ".xml");
+                on_pushButtonInterfere_clicked();
 
-                for(
-                        int i = 1;
-                        /* TODO: FIX THE CONDITIONS
-                         *  when number of clusters is greater than number of rules */
-                        rulesNumberSqrt - i * rulesNumberOnePercent != 0 &&
-                        rulesNumberSqrt - i * rulesNumberOnePercent <= settings->objectsNumber &&
-                        /* when number of clusters is lower than 0 */
-                        rulesNumberSqrt + i * rulesNumberOnePercent <= settings->objectsNumber &&
-                        rulesNumberSqrt + i * rulesNumberOnePercent != 0;
-                        ++i
-                    )
+                while(desiredClustersNumber > 0)
                 {
-                    desiredClustersNumber = rulesNumberSqrt - i * rulesNumberOnePercent;
-                    reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
+                  desiredClustersNumber -= rulesNumberOnePercent;
 
-                    // Perform grouping for given clusters number with default settings.
-                    ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
+                  qDebug() << desiredClustersNumber;
 
-                    setGroupingSettings();
-                    groupObjects();
+                  // Perform grouping for given clusters number with default settings.
+                  ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
 
-                    // Generate report of this grouping in dir.
-                    generateReport(targetDir + "/" + reportName + ".xml");
+                  setGroupingSettings();
 
-                    desiredClustersNumber = rulesNumberSqrt + i * rulesNumberOnePercent;
-                    reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
+                  gThread->continueGrouping();
 
-                    // Perform grouping for given clusters number with default settings.
-                    ui->spinBoxStopConditionValue->setValue(rulesNumberSqrt + i * rulesNumberOnePercent);
-
-                    setGroupingSettings();
-                    groupObjects();
-
-                    // Generate report of this grouping in dir.
-                    generateReport(targetDir + "/" + reportName + ".xml");
-
+                  // Generate report of this grouping in dir.
+                  //QString reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
+                  //generateReport(targetDir + "/" + reportName + ".xml");
+                  on_pushButtonInterfere_clicked();
                 }
             }
         }
     }
+}
+
+
+void MainWindow::on_pushButtonInterfere_clicked()
+{
+  // GENERATING RANDOM FACTS BASE
+
+  /*
+
+  // Group objects to ensure clusters are separate
+  ui->spinBoxStopConditionValue->setValue(settings->objectsNumber);
+  setGroupingSettings();
+  groupObjects();
+
+  // Now, that clusters are received I want a random cluster.
+  int clusterIdx = rand() % settings->objectsNumber;
+
+  // Having random rule, I now want to generate facts base
+  // only from premises. I want it to look like:
+  // atr=value\n atr=value\n ...
+  QString rule = static_cast<ruleCluster*>(clusters.at(clusterIdx))->rule();
+  QStringList premise = rule.split("=>").at(0).split("&");
+
+  // Now I want to create a file that will store this clusters
+  // rule as a fact.
+  QString fileName = ui->labelObjectBaseName->text();
+  fileName.chop(8);
+  fileName.remove(0, 3);
+  fileName += ".fct";
+
+  QString path = "D:\\Dysk Google\\Rules\\";
+  path += fileName;
+
+  QFile file(path);
+
+  if(file.open(QIODevice::ReadWrite))
+  {
+    QTextStream stream(&file);
+
+    for(QString prem : premise)
+    {
+      prem.remove(0,1);
+      prem.chop(1);
+      stream << prem << endl;
+    }
+  }
+
+  file.close();
+
+  */
+
+
+  QString fileName = ui->labelObjectBaseName->text();
+  fileName.chop(8);
+  fileName.remove(0, 3);
+  fileName += ".csv";
+
+  QString path = "D:\\Dysk Google\\Rules\\" + fileName;
+
+  QFile file(path);
+
+  if(!file.exists())
+  {
+    if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
+    {
+      QTextStream stream(&file);
+
+      stream << "Number of rules fired,Number of new facts,Was rule fired,Number of clusters searched,Number of clusters,"
+                "Clustering Similarity Method,Object Similarity Method,Representative Generation Method, Rep. Threshold\n";
+    }
+
+    file.close();
+  }
+
+  gSettings->interClusterSimMeasureID = CentroidLinkId;
+
+  ruleInterferencer.setGroupingThread(this->gThread);
+  ruleInterferencer.interfere();
+
+  if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
+  {
+    QTextStream stream(&file);
+
+    stream << ruleInterferencer.numberOfRulesFired << ",";
+    stream << ruleInterferencer.numberOfRulesFired << ",";
+    stream << ruleInterferencer.numberOfRulesFired << ",";
+    stream << ruleInterferencer.numberOfClustersSearched << ",";
+    stream << settings->stopCondition << ",";
+    stream << ui->comboBoxInterClusterSimMeasure->currentText() << ",";
+    stream << ui->comboBoxInterObjectSimMeasure->currentText() << ",";
+    stream << ui->comboBoxRepresentativeCreationStrategy->currentText() << ",";
+    stream << ui->spinBoxRepresentativeAttributePercent->text() << "\n";
+  }
+
+  file.close();
+
+
+}
+
+void MainWindow::on_actionLoadFactsBase_triggered()
+{
+  QFileDialog FD;
+
+  QString openPath = getOpenPath();
+
+  QString FBPath = FD.getOpenFileName(
+      this,
+      tr("FD.selectKnowledgeBase"),
+      openPath,
+      "*.fct"
+  );
+
+  ruleInterferencer.loadFactsFromPath(FBPath);
+
 }
