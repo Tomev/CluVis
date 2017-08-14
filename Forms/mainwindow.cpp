@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "about.h"
 #include "ui_mainwindow.h"
+#include "Validators/rsesrulebasevalidator.h"
 
 #include <string>
 #include <iostream>
@@ -13,9 +14,10 @@
 #include <QDesktopWidget>
 #include <QTime>
 
+
+
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent), ui(new Ui::MainWindow)
 {
     settings = new generalSettings();
     gSettings = new groupingSettings_General();
@@ -74,6 +76,10 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionLoadObjectBase_triggered()
 {
     QFileInfo KB = selectObjectBase();
+
+    //rsesRuleBaseValidator fileValidator(&KB);
+
+    //fileValidator.validate();
 
     loadObjectsBase(KB);
 }
@@ -1143,13 +1149,6 @@ void MainWindow::setGroupingSettings()
             else
               gThread->setSettings(dGrpSettings, gSettings, settings);
 
-            connect(gThread,SIGNAL(passLogMsg(QString)),
-                    this,SLOT(gotLogText(QString)));
-            connect(gThread,SIGNAL(passMDIData(qreal, qreal, int)),
-                    this,SLOT(gotMDIData(qreal, qreal, int)));
-            connect(gThread,SIGNAL(passMDBIData(qreal, qreal, int)),
-                    this,SLOT(gotMDBIData(qreal, qreal, int)));
-
             addLogMessage(tr("log.rsesRules.detailedSettingsLoaded"));
 
             break;
@@ -1531,7 +1530,9 @@ void MainWindow::on_pushButtonStandard_clicked()
         int rulesNumberSqrt = qCeil(qSqrt(settings->objectsNumber));
         int rulesNumberOnePercent = qCeil(settings->objectsNumber/100.0);
 
-        int numberOfIterationsDown = 0, numberOfIterationsUp = 0, numberOfIterations, start;
+        int numberOfIterationsDown = 0,
+            numberOfIterationsUp = 0,
+            numberOfIterations, start;
 
         // Get number of iterations
         for(int i = 0; rulesNumberSqrt - i * rulesNumberOnePercent > 0; ++i)
@@ -1547,7 +1548,8 @@ void MainWindow::on_pushButtonStandard_clicked()
         numberOfIterations *= 2;
 
         // For each inter object similarity measure
-        for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
+        for(int osm = 6; osm < 7; ++osm)
+        //for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
         {
             // Reset target dir.
             targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
@@ -1574,67 +1576,99 @@ void MainWindow::on_pushButtonStandard_clicked()
             }
 
             // For each inter cluster similarity measure
-            for(int csm = 0; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
+            for(int csm = 2; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
             {
                 // Change index of cluster similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
 
-                int desiredClustersNumber = start + (numberOfIterations-1) * rulesNumberOnePercent;
-
-                while(desiredClustersNumber > settings->objectsNumber)
-                  desiredClustersNumber -= rulesNumberOnePercent;
-
-                ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
-
-                setGroupingSettings();
-
-                groupObjects();
-
-                on_pushButtonInterfere_clicked();
-
-                while(desiredClustersNumber > 0)
+                // For each representative creation strategy
+                for(int rcs = 0; rcs < ui->comboBoxRepresentativeCreationStrategy->count(); ++rcs)
                 {
-                  desiredClustersNumber -= rulesNumberOnePercent;
+                  // Change index of representative creation strategy
+                  ui->comboBoxRepresentativeCreationStrategy->setCurrentIndex(rcs);
 
-                  qDebug() << desiredClustersNumber;
+                  QList<int> thresholds;
 
-                  // Perform grouping for given clusters number with default settings.
-                  ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
+                  // Check if rcs is threshold oriented or not
+                  if(rcs == 0 || rcs == 3)
+                  {
+                    thresholds = {30, 25, 50, 75};
+                  }
+                  else
+                    thresholds = {30};
 
-                  setGroupingSettings();
+                  // For each threshold
+                  for(int tres : thresholds)
+                  {
+                    // Set this threshold
+                    ui->spinBoxRepresentativeAttributePercent->setValue(tres);
 
-                  gThread->continueGrouping();
+                    int desiredClustersNumber = start + (numberOfIterations-1) * rulesNumberOnePercent;
 
-                  // Generate report of this grouping in dir.
-                  //QString reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
-                  //generateReport(targetDir + "/" + reportName + ".xml");
-                  on_pushButtonInterfere_clicked();
+                    while(desiredClustersNumber > settings->objectsNumber)
+                      desiredClustersNumber -= rulesNumberOnePercent;
+
+                    ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
+
+                    setGroupingSettings();
+
+                    qDebug() << "Grouping: "
+                             << ui->comboBoxInterClusterSimMeasure->currentText()
+                             << ", "
+                             << ui->comboBoxInterObjectSimMeasure->currentText()
+                             << ", "
+                             << ui->comboBoxRepresentativeCreationStrategy->currentText()
+                             << " "
+                             << ui->spinBoxRepresentativeAttributePercent->value();
+
+                    groupObjects();
+
+                    on_pushButtonInterfere_clicked();
+
+                    desiredClustersNumber -= rulesNumberOnePercent;
+
+                    qDebug() << "Continuing grouping.";
+
+                    while(desiredClustersNumber > 0)
+                    {
+                      qDebug() << desiredClustersNumber;
+
+                      // Perform grouping for given clusters number with default settings.
+                      ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
+
+                      setGroupingSettings();
+
+                      gThread->continueGrouping();
+
+                      // Generate report of this grouping in dir.
+                      //QString reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
+                      //generateReport(targetDir + "/" + reportName + ".xml");
+                      on_pushButtonInterfere_clicked();
+
+                      desiredClustersNumber -= rulesNumberOnePercent;
+                    }
+
+                    qDebug() << "Next measure.";
+                  }
                 }
             }
         }
     }
-}
 
+    qDebug() << "A splendid finish.";
+}
 
 void MainWindow::on_pushButtonInterfere_clicked()
 {
   // GENERATING RANDOM FACTS BASE
 
   /*
-
-  // Group objects to ensure clusters are separate
-  ui->spinBoxStopConditionValue->setValue(settings->objectsNumber);
+  // Group objects to ensure attributes data is gathered
   setGroupingSettings();
+  settings->stopCondition = settings->objectsNumber;
   groupObjects();
 
-  // Now, that clusters are received I want a random cluster.
-  int clusterIdx = rand() % settings->objectsNumber;
-
-  // Having random rule, I now want to generate facts base
-  // only from premises. I want it to look like:
-  // atr=value\n atr=value\n ...
-  QString rule = static_cast<ruleCluster*>(clusters.at(clusterIdx))->rule();
-  QStringList premise = rule.split("=>").at(0).split("&");
+  ruleInterferencer.setGroupingThread(this->gThread);
 
   // Now I want to create a file that will store this clusters
   // rule as a fact.
@@ -1642,28 +1676,15 @@ void MainWindow::on_pushButtonInterfere_clicked()
   fileName.chop(8);
   fileName.remove(0, 3);
   fileName += ".fct";
+  //fileName += "_f.fct";
 
   QString path = "D:\\Dysk Google\\Rules\\";
   path += fileName;
 
-  QFile file(path);
-
-  if(file.open(QIODevice::ReadWrite))
-  {
-    QTextStream stream(&file);
-
-    for(QString prem : premise)
-    {
-      prem.remove(0,1);
-      prem.chop(1);
-      stream << prem << endl;
-    }
-  }
-
-  file.close();
-
+  ruleInterferencer.generateRandomFactsBase(path, 10);
   */
 
+  qDebug() << "Interfering";
 
   QString fileName = ui->labelObjectBaseName->text();
   fileName.chop(8);
@@ -1680,8 +1701,23 @@ void MainWindow::on_pushButtonInterfere_clicked()
     {
       QTextStream stream(&file);
 
-      stream << "Number of rules fired,Number of new facts,Was rule fired,Number of clusters searched,Number of clusters,"
-                "Clustering Similarity Method,Object Similarity Method,Representative Generation Method, Rep. Threshold\n";
+      stream << "First rule that could be fired,"
+             << "Last rule that could be fired,"
+             << "Number of facts,"
+             << "Number of rules that could be fired,"
+             << "Is target achiveable,"
+             << "Number of rules fired,"
+             << "Most similiar rule,"
+             << "Was target achieved,"
+             << "Number of new facts,"
+             << "Was rule fired,"
+             << "Number of clusters searched,"
+             << "Number of clusters,"
+             << "Clustering Similarity Method,"
+             << "Object Similarity Method,"
+             << "Representative Generation Method,"
+             << "Rep. Threshold,"
+             << "Rules that could be fired\n";
     }
 
     file.close();
@@ -1690,25 +1726,44 @@ void MainWindow::on_pushButtonInterfere_clicked()
   gSettings->interClusterSimMeasureID = CentroidLinkId;
 
   ruleInterferencer.setGroupingThread(this->gThread);
-  ruleInterferencer.interfere();
 
-  if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
+  QList<int> factsPercents = {100, 75, 50, 25, 10, 1};
+
+  for(int factPercent : factsPercents)
   {
-    QTextStream stream(&file);
+    ruleInterferencer.factsBasePercents = {factPercent};
 
-    stream << ruleInterferencer.numberOfRulesFired << ",";
-    stream << ruleInterferencer.numberOfRulesFired << ",";
-    stream << ruleInterferencer.numberOfRulesFired << ",";
-    stream << ruleInterferencer.numberOfClustersSearched << ",";
-    stream << settings->stopCondition << ",";
-    stream << ui->comboBoxInterClusterSimMeasure->currentText() << ",";
-    stream << ui->comboBoxInterObjectSimMeasure->currentText() << ",";
-    stream << ui->comboBoxRepresentativeCreationStrategy->currentText() << ",";
-    stream << ui->spinBoxRepresentativeAttributePercent->text() << "\n";
+    ruleInterferencer.interfere();
+
+    //qDebug() << ruleInterferencer.availableRuleIndexes;
+
+    if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
+    {
+      QTextStream stream(&file);
+
+      stream  << ruleInterferencer.availableRuleIndexes.first() << ","
+              << ruleInterferencer.availableRuleIndexes.last() << ","
+              << ruleInterferencer.getNumberOfFacts() << ","
+              << ruleInterferencer.getNumberOfRulesThatCanBeFired() << ","
+              << ruleInterferencer.targetAchiveable <<","
+              << ruleInterferencer.numberOfRulesFired << ","
+              << ruleInterferencer.mostSimilarRule->name() << ","
+              << ruleInterferencer.targetAchieved << ","
+              << ruleInterferencer.getNumberOfNewFacts() << ","
+              << ruleInterferencer.wasRuleFired() << ","
+              << ruleInterferencer.numberOfClustersSearched << ","
+              << settings->stopCondition << ","
+              << ui->comboBoxInterClusterSimMeasure->currentText() << ","
+              << ui->comboBoxInterObjectSimMeasure->currentText() << ","
+              << ui->comboBoxRepresentativeCreationStrategy->currentText() << ","
+              << ui->spinBoxRepresentativeAttributePercent->text() << ","
+              << ruleInterferencer.availableRuleIndexes.join(" & ") << "\n";
+    }
+
+    file.close();
   }
 
-  file.close();
-
+  qDebug() << "End interfering.";
 
 }
 

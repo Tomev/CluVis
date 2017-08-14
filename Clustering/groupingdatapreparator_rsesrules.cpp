@@ -6,7 +6,8 @@
 groupingDataPreparator_RSESRules::groupingDataPreparator_RSESRules(groupingSettings* settings)
 : groupingDataPreparator(settings->genSet, settings->grpSet)
 {
-    this->dGrpSet = static_cast<groupingSettings_RSESRules*>(settings->dGrpSet);
+    this->dGrpSet =
+      static_cast<groupingSettings_RSESRules*>(settings->dGrpSet);
 }
 
 void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attributeData*> *attributes)
@@ -51,34 +52,35 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
     }
 }
 
-void groupingDataPreparator_RSESRules::clusterObjects(cluster **clusters, QHash<QString, attributeData*> *attributes)
+void groupingDataPreparator_RSESRules::clusterObjects(
+    QVector<cluster*> *clusters, QHash<QString, attributeData*> *attributes)
 {
-    int i = 0;
+  clusters->clear();
+  int i = 0;
 
-    QString line;
+  QString line;
 
-    QFile KB(grpSet->objectBaseInfo.absoluteFilePath());
+  QFile KB(grpSet->objectBaseInfo.absoluteFilePath());
 
-    if(KB.open(QIODevice::ReadOnly))
+  if(KB.open(QIODevice::ReadOnly))
+  {
+    QTextStream in(&KB);
+
+    //Rewind to rules.
+    while(!line.startsWith("RULES"))
+      line = in.readLine();
+
+    while(!in.atEnd())
     {
-        QTextStream in(&KB);
-
-        //Rewind to rules.
-        while(!line.startsWith("RULES"))
-            line = in.readLine();
-
-        while(!in.atEnd())
-        {
-            line = in.readLine();
-            clusters[i] = new ruleCluster(i);
-            clusterRule(static_cast<ruleCluster*>(clusters[i]), line, attributes);
-            ++i;
-        }
+      line = in.readLine();
+      clusters->push_back(new ruleCluster(i++));
+      clusterRule(static_cast<ruleCluster*>(clusters->last()), line, attributes);
     }
-
+  }
 }
 
-void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule, QHash<QString, attributeData *> *attributes)
+void groupingDataPreparator_RSESRules::clusterRule(
+    ruleCluster* c, QString rule, QHash<QString, attributeData *> *attributes)
 {
     /*
      *  Rules in RSES knowledge bases are stored in following format:
@@ -95,7 +97,8 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
     // Conclusions are at(1), conditions at(0)
     conditionsConclusions = rule.split(")=>(");
 
-    //Calling QString consturctor to no longer work on constant, enabling use of .remove method
+    // Calling QString consturctor to no longer work on constant, enabling use
+    // of .remove method
     attributesValues = QString(conditionsConclusions.at(0))
         .remove(0, 1)   // Remove parentheses at the begining
         .split(")&(");  // Split into nice "name=value" strings;
@@ -133,14 +136,14 @@ void groupingDataPreparator_RSESRules::clusterRule(ruleCluster* c, QString rule,
     c->fillRepresentativesAttributesValues(grpSet->repCreationStrategyID ,grpSet->repTreshold);
 }
 
-void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attributeData*> *attributes, cluster** clusters)
+void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attributeData*> *attributes, QVector<cluster *> *clusters)
 {
     QStringList keys;
     QString atrName, atrMaxVal, atrMinVal;
 
     for(int i = 0; i < genSet->objectsNumber; ++i)
     {
-        keys = clusters[i]->attributesValues.keys();
+        keys = clusters->at(i)->attributesValues.keys();
 
         for(int j = 0; j < keys.length(); ++j)
         {
@@ -151,7 +154,7 @@ void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attri
                 categoricalAttributeData* currentAttribute =
                         static_cast<categoricalAttributeData*>(attributes->value(atrName));
 
-                QStringList* attributesValues = clusters[i]->attributesValues.value(atrName);
+                QStringList* attributesValues = clusters->at(i)->attributesValues.value(atrName);
 
                 foreach(const QString value, *attributesValues)
                 {
@@ -165,14 +168,17 @@ void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attri
             }
             else
             {
-                numericAttributeData* atrData =  static_cast<numericAttributeData*>(attributes->value(atrName));
+                numericAttributeData* atrData =
+                  static_cast<numericAttributeData*>(attributes->value(atrName));
 
                 atrMaxVal = atrData->maxValue;
 
-                // If atrMaxValue is equal to "" or "MISSING" then so does minValue. Set them and continue.
+                // If atrMaxValue is equal to "" or "MISSING" then
+                // so does minValue. Set them and continue.
                 if(atrMaxVal == "" || atrMaxVal == "MISSING")
                 {
-                    QStringList* newValues = clusters[i]->attributesValues.value(atrName);
+                    QStringList* newValues =
+                        clusters->at(i)->attributesValues.value(atrName);
 
                     // Set initial values
                     atrData->setMaxValue(newValues->at(0));
@@ -181,6 +187,8 @@ void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attri
                     // For each value in values set
                     foreach(const QString value, *newValues)
                     {
+                        atrData->valuesInBase.append(value);
+
                         // Check if value is missing
                         if(value == "MISSING")
                         {
@@ -213,14 +221,17 @@ void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attri
                     continue;
                 }
 
-                // When they're not MISSING nor empty then check for new maximum or minimum
+                // When they're not MISSING nor empty then check for new
+                // maximum or minimum
 
                 atrMinVal = atrData->minValue;
 
-                QStringList* newValues = clusters[i]->attributesValues.value(atrName);
+                QStringList* newValues = clusters->at(i)->attributesValues.value(atrName);
 
                 foreach(const QString value, *newValues)
                 {
+                    atrData->valuesInBase.append(value);
+
                     if(value != "MISSING")
                     {
                         if(atrMaxVal.toDouble() < value.toDouble())
@@ -234,6 +245,8 @@ void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attri
                         }
                     }
                 }
+
+                atrData->valuesInBase = atrData->valuesInBase.toSet().toList();
             }
         }
     }

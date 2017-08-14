@@ -33,7 +33,8 @@ SOURCES +=      Forms/about.cpp \
     Interference/interferencer.cpp \
     Object/attribute.cpp \
     Object/numericattribute.cpp \
-    Object/categoricalattribute.cpp
+    Object/categoricalattribute.cpp \
+    Validators/rsesrulebasevalidator.cpp
 
 
 HEADERS  +=     Forms/about.h \
@@ -68,7 +69,9 @@ HEADERS  +=     Forms/about.h \
     Interference/interferencer.h \
     Object/attribute.h \
     Object/numericattribute.h \
-    Object/categoricalattribute.h
+    Object/categoricalattribute.h \
+    Validators/validator.h \
+    Validators/rsesrulebasevalidator.h
 
 FORMS    +=     Forms/about.ui \
                 Forms/clusterinfo_rsesrules.ui \

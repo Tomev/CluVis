@@ -19,8 +19,8 @@ public:
     groupingDataPreparator_RSESRules(groupingSettings* settings);
 
     void fillAttributesData(QHash<QString, attributeData *> *attributes);
-    void clusterObjects(cluster** clusters, QHash<QString, attributeData *> *attributes);
-    void fillAttributesValues(QHash<QString, attributeData*>* attributes, cluster **clusters);
+    void clusterObjects(QVector<cluster *> *clusters, QHash<QString, attributeData *> *attributes);
+    void fillAttributesValues(QHash<QString, attributeData*>* attributes, QVector<cluster*> *clusters);
 
 private:
 

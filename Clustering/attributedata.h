@@ -61,6 +61,8 @@ struct numericAttributeData : attributeData
 
         return qAbs(result);
     }
+
+    QStringList valuesInBase;
 };
 
 struct categoricalAttributeData: attributeData

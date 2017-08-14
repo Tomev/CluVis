@@ -65,6 +65,8 @@ void groupingThread::run()
 
 void groupingThread::initializeGroupingProgressbar()
 {
+  //delete groupingProgress;
+
     groupingProgress = new QProgressDialog(tr("gThreadDialog.grouping"),tr("gThreadDialog.cancel"),1, settings->objectsNumber,0,0);
     groupingProgress->setValue(0);
     groupingProgress->setWindowTitle(tr("gThreadDialog.grouping"));
@@ -78,6 +80,8 @@ void groupingThread::initializeGroupingProgressbar()
 
 void groupingThread::initializeCreatingMatrixProgressbar()
 {
+  //delete creatingSimMatrixProgress;
+
     creatingSimMatrixProgress  = new QProgressDialog(tr("gThreadDialog.creatingSimilarityMatrix")
                                                      ,tr("gThreadDialog.cancel"),1,settings->objectsNumber,0,0);
     creatingSimMatrixProgress->setValue(0);
@@ -120,21 +124,19 @@ void groupingThread::initializeDataPreparator()
 void groupingThread::groupObjects()
 {   
     // Clear zero representative cluster occurence
-
     grpSettings->zeroRepresentativeClusterOccurence = -1;
 
     emit passLogMsg(tr("log.gatheringAttributesData"));
 
     grpDataPrep->fillAttributesData(&attributes);
 
-    // Clusters are initialized here, so they wont be deleted after prep method finishes.
-    clusters = new cluster*[settings->objectsNumber];
-
+    // Clusters are initialized here, so they wont be deleted after
+    // prep method finishes.
     emit passLogMsg(tr("log.placingObjectsInClusters"));
 
-    grpDataPrep->clusterObjects(clusters, &attributes);
+    grpDataPrep->clusterObjects(&clusters, &attributes);
 
-    grpDataPrep->fillAttributesValues(&attributes, clusters);
+    grpDataPrep->fillAttributesValues(&attributes, &clusters);
 
     emit passLogMsg(tr("log.creatingSimMatrix"));
 
@@ -142,16 +144,18 @@ void groupingThread::groupObjects()
 
     emit passLogMsg(tr("log.groupingProcessStarted"));
 
-    groupingProgress->show();
+    //groupingProgress->show();
 
     for(int i = 0; i < settings->objectsNumber - settings->stopCondition; ++i)
     {
-        groupingProgress->setValue(i);
+        //groupingProgress->setValue(i);
 
         QApplication::processEvents();
 
         if(groupingProgress->wasCanceled())
+        {
             wasGroupingCanceled = true;
+        }
 
         if(wasGroupingCanceled)
         {
@@ -160,7 +164,7 @@ void groupingThread::groupObjects()
 
             emit passLogMsg(tr("log.groupingCancelled"));
             emit passLogMsg(tr("log.visualizationImpossible"));
-            return;
+            //return;
         }
 
         if(grpSettings->findBestClustering)
@@ -216,28 +220,24 @@ void groupingThread::groupObjects()
 
     emit passLogMsg(tr("log.groupingFinished"));
     emit passLogMsg(tr("log.sendingResultatntStructure"));
-    emit passMDIData(MDI, minMDI, minMDIClustersNumber);
-    emit passMDBIData(MDBI, maxMDBI, maxMDBIClustersNumber);
 
     settings->clusters->clear();
 
     for(int i = 0; i < settings->stopCondition; ++i)
       settings->clusters->push_back(clusters[i]);
-
-    emit passClusters(clusters);
 }
 
 void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize)
 {
-    creatingSimMatrixProgress->show();
+    //creatingSimMatrixProgress->show();
 
     simMatrix->clear();
 
     for(int i = 0; i < simMatrixSize; ++i)
     {
-        creatingSimMatrixProgress->setValue(i);
+        //creatingSimMatrixProgress->setValue(i);
 
-        QApplication::processEvents();
+        //QApplication::processEvents();
 
         simMatrix->push_back(simData(new clusterSimilarityData));
 
@@ -255,7 +255,7 @@ void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatri
         }
     }
 
-    creatingSimMatrixProgress->close();
+    //creatingSimMatrixProgress->close();
 }
 
 void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
@@ -532,7 +532,8 @@ qreal groupingThread::getObjectsOFSimValue(cluster* c1, cluster* c2)
             c2->getAttributesForSimilarityCount(grpSettings->interClusterSimMeasureID);
 
     // Find common attributes of both objects
-    commonAttributes = c1Attributes.keys().toSet().intersect(c2Attributes.keys().toSet());
+    commonAttributes = c1Attributes.keys().toSet()
+                       .intersect(c2Attributes.keys().toSet());
 
     // For each common attribute
     foreach(const QString attribute, commonAttributes)
@@ -568,6 +569,7 @@ qreal groupingThread::getObjectsOFSimValue(cluster* c1, cluster* c2)
                         // If so then set it as new addend
                         addend = potentialNewValue;
                     }
+
                 }
 
                 // Set denumerator as this

@@ -18,6 +18,7 @@ class numericAttribute : public attribute
     private:
 
         QString minValue, maxValue;
+        QStringList valuesInBase;
 };
 
 #endif // NUMERICATTRIBUTE_H

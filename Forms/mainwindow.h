@@ -29,12 +29,15 @@ class MainWindow : public QMainWindow
   Q_OBJECT
 
 public:
+
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();
 
 private slots:  
-    //File
+
     void on_actionLoadObjectBase_triggered();
+
+
     void on_actionSaveVisualization_triggered();
     void on_actionGenerateReport_triggered();
     void on_actionMergeReports_triggered();

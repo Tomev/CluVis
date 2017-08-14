@@ -5,6 +5,9 @@
 
 int main(int argc, char *argv[])
 {
+    // So it works well on eg. laptop.
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     QApplication a(argc, argv);
 
     MainWindow w;

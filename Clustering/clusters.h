@@ -12,6 +12,13 @@
 
 #include "enum_interclustersimilaritymeasures.h"
 
+enum rulePart
+{
+  PREMISES = 0,
+  DECISIONS = 1,
+  BOTH = 2
+};
+
 struct descriptor
 {
     QString attribute;
@@ -111,6 +118,12 @@ struct cluster
 
         void fillRepresentativesAttributesValues(unsigned int strategyID, unsigned int threshold)
         {
+          if(size() == 1)
+          {
+            representativeAttributesValues = attributesValues;
+            return;
+          }
+
             switch(strategyID)
             {
                 case 0: //Threshold
@@ -739,20 +752,52 @@ struct ruleCluster : cluster
             QHash<QString, QStringList*> result;
             QSet<QString> attributesToExclude;
 
-            if(methodId == CentroidLinkId){result = representativeAttributesValues;}
-            else{result = attributesValues;}
+            if(methodId == CentroidLinkId)
+              result = representativeAttributesValues;
+            else result = attributesValues;
 
             if(!areDecisionsGrouped){attributesToExclude = decisionAttributes;}
             else                    {attributesToExclude = premiseAttributes;}
 
             // Remove attributes from other rules part
             foreach(const QString attribute, attributesToExclude)
-            {
                 result.remove(attribute);
-            }
 
             return result;
         }
+
+        QSet<QString> getDescriptors(int part)
+        {
+          QSet<QString> result;
+
+          if(this->size() > 1) return result;
+
+          QSet<QString> attributesOccured;
+
+          switch (part)
+          {
+            case PREMISES:
+              attributesOccured = premiseAttributes;
+              break;
+            case DECISIONS:
+              attributesOccured = decisionAttributes;
+            case BOTH:
+            default:
+              attributesOccured = premiseAttributes + decisionAttributes;
+              break;
+          }
+
+          for(QString atrName : attributesOccured)
+          {
+            for(QString atrValue : *attributesValues[atrName])
+            {
+              result << atrName + "=" + atrValue;
+            }
+          }
+
+          return result;
+        }
+
 
     private:
 

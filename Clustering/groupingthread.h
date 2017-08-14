@@ -47,10 +47,10 @@ public:
 
     std::vector<simData> simMatrix;
 
+    QVector<cluster*> clusters;
+    //cluster** clusters;
+
 signals:
-    void passClusters(cluster**);
-    void passMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber);
-    void passMDBIData(qreal MDBI, qreal maxMDBI, int maxMDBIClustersNumber);
 
     void passLogMsg(QString);
 
@@ -70,12 +70,10 @@ private:
     qreal MDI, minMDI, MDBI, maxMDBI;
     int minMDIClustersNumber, maxMDBIClustersNumber;
 
-    cluster** clusters;
+
     int nextClusterID, newClusterIdx;
 
     groupingSettings_Detailed* dGrpSettings;
-
-
 
     QProgressDialog* groupingProgress;
     QProgressDialog* creatingSimMatrixProgress;

@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>615</height>
+    <height>532</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -27,6 +27,9 @@
   </property>
   <property name="windowTitle">
    <string>CluVis - Wizualizator Skupień</string>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -304,7 +307,7 @@
          </rect>
         </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -330,6 +333,12 @@
           <layout class="QHBoxLayout" name="horizontalLayoutAlgorithmVisualization">
            <item>
             <widget class="QComboBox" name="comboBoxAlgorithmVisualization">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="minimumSize">
               <size>
                <width>120</width>
@@ -354,7 +363,7 @@
               <enum>Qt::Horizontal</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Preferred</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -669,7 +678,7 @@
          </item>
         </layout>
        </widget>
-       <widget class="QGroupBox" name="groupBox_4">
+       <widget class="QGroupBox" name="groupBoxBaseInfo">
         <property name="geometry">
          <rect>
           <x>10</x>
