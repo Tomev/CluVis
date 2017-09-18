@@ -446,7 +446,7 @@ QString MainWindow::formatThickString(QString s)
     return s;
 }
 
-ruleCluster* MainWindow::findSmallestCluster()
+cluster *MainWindow::findSmallestCluster()
 {
     ruleCluster* smallest = ((ruleCluster*)clusters[0]);
 
@@ -507,7 +507,7 @@ qreal MainWindow::getAverageRepresentativeLength()
     return averageRepSize;
 }
 
-ruleCluster* MainWindow::findBiggestCluster()
+cluster* MainWindow::findBiggestCluster()
 {
     ruleCluster* biggest = ((ruleCluster*)clusters[0]);
 
@@ -742,7 +742,7 @@ QString MainWindow::createXMLFileTableContent()
     //Overall result data
     result += createXMLFileTableCell(findBiggestCluster()->name(), false);
     result += createXMLFileTableCell(QString::number(findBiggestCluster()->size()), false);
-    result += createXMLFileTableCell(QString::number(countRuleLength(findBiggestCluster()->representative())), false);
+    //result += createXMLFileTableCell(QString::number(countRuleLength(findBiggestCluster()->representative())), false);
     result += createXMLFileTableCell(findSmallestCluster()->name(), false);
     result += createXMLFileTableCell(QString::number(countUngroupedObjects()), false);
     // Representatives info
@@ -1548,8 +1548,7 @@ void MainWindow::on_pushButtonStandard_clicked()
         numberOfIterations *= 2;
 
         // For each inter object similarity measure
-        for(int osm = 6; osm < 7; ++osm)
-        //for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
+        for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
         {
             // Reset target dir.
             targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
@@ -1576,7 +1575,7 @@ void MainWindow::on_pushButtonStandard_clicked()
             }
 
             // For each inter cluster similarity measure
-            for(int csm = 2; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
+            for(int csm = 0; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
             {
                 // Change index of cluster similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
@@ -1705,10 +1704,13 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Last rule that could be fired,"
              << "Number of facts,"
              << "Number of rules that could be fired,"
+             << "Percent of rules that could be fired,"
+             << "Was target set,"
              << "Is target achiveable,"
              << "Number of rules fired,"
              << "Most similiar rule,"
              << "Was target achieved,"
+
              << "Number of new facts,"
              << "Was rule fired,"
              << "Number of clusters searched,"
@@ -1717,7 +1719,16 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Object Similarity Method,"
              << "Representative Generation Method,"
              << "Rep. Threshold,"
-             << "Rules that could be fired\n";
+             << "Rules that could be fired,"
+             << "Smallest cluster size,"
+
+             << "Biggest cluster size,"
+             << "Number of outliers,"
+             << "Smallest representative length,"
+             << "Average representative length,"
+             << "Biggest representative length,"
+             << "Number of attributes,"
+             << "Number of rules\n";
     }
 
     file.close();
@@ -1745,10 +1756,14 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << ruleInterferencer.availableRuleIndexes.last() << ","
               << ruleInterferencer.getNumberOfFacts() << ","
               << ruleInterferencer.getNumberOfRulesThatCanBeFired() << ","
+              << qreal(100 * ruleInterferencer.getNumberOfRulesThatCanBeFired()
+                      / settings->objectsNumber ) << ","
+              << ruleInterferencer.target.size() << ","
               << ruleInterferencer.targetAchiveable <<","
               << ruleInterferencer.numberOfRulesFired << ","
               << ruleInterferencer.mostSimilarRule->name() << ","
               << ruleInterferencer.targetAchieved << ","
+
               << ruleInterferencer.getNumberOfNewFacts() << ","
               << ruleInterferencer.wasRuleFired() << ","
               << ruleInterferencer.numberOfClustersSearched << ","
@@ -1757,7 +1772,16 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << ui->comboBoxInterObjectSimMeasure->currentText() << ","
               << ui->comboBoxRepresentativeCreationStrategy->currentText() << ","
               << ui->spinBoxRepresentativeAttributePercent->text() << ","
-              << ruleInterferencer.availableRuleIndexes.join(" & ") << "\n";
+              << ruleInterferencer.availableRuleIndexes.join(" & ") << ","
+              << findSmallestCluster()->size() << ","
+
+              << findBiggestCluster()->size() << ","
+              << countUngroupedObjects() << ","
+              << getSmallestRepresentativeLength() << ","
+              << getAverageRepresentativeLength() << ","
+              << getBiggestRepresentativeLength() << ","
+              << settings->objectsNumber << ","
+              << gSettings->attributesNumber << "\n";
     }
 
     file.close();

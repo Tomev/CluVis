@@ -157,8 +157,8 @@ private:
         int countRuleLength(QString rule);
         int countAllNodes();
         int countUngroupedObjects();
-        ruleCluster* findBiggestCluster();
-        ruleCluster* findSmallestCluster();
+        cluster* findBiggestCluster();
+        cluster* findSmallestCluster();
         int getBiggestRepresentativeLength();
         int getSmallestRepresentativeLength();
         qreal getAverageRepresentativeLength();
