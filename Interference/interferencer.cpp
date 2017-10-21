@@ -326,7 +326,7 @@ int interferencer::fillFacts(int basePercent)
 
 int interferencer::findMostSimiliarClusterToFactRule(cluster* factRule)
 {
-  int clusterIdx = -1;
+  int clusterIdx = 0;
   double maxSimilarity = -1.0, sim;
 
   QVector<cluster*>* clusters = grpThread->settings->clusters;

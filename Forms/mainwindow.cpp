@@ -1680,9 +1680,9 @@ void MainWindow::on_pushButtonInterfere_clicked()
   QString path = "D:\\Dysk Google\\Rules\\";
   path += fileName;
 
-  ruleInterferencer.generateRandomFactsBase(path, 10);
-  */
+  ruleInterferencer.generateRandomFactsBase(path, 100000);
 
+  */
   qDebug() << "Interfering";
 
   QString fileName = ui->labelObjectBaseName->text();
@@ -1788,6 +1788,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   }
 
   qDebug() << "End interfering.";
+
 
 }
 
