@@ -1170,6 +1170,8 @@ void MainWindow::setVisualizationSettings()
 
     vSettings->sceneRect = new QRect(0,0,sceneWidth,sceneHeight);
 
+    vSettings->clusters = &(this->clusters);
+
     addLogMessage(tr("log.generalSettingsLoaded"));
 
     switch(settings->dataTypeID)
