@@ -255,6 +255,21 @@ void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatri
         }
     }
 
+    QString row;
+
+    // Print simMatrix
+    for(int i = 0; i < simMatrix->size(); ++i)
+    {
+      row = "";
+      for(int j = 0; j < simMatrix->at(i)->size(); ++j)
+      {
+        row += QString::number(*(simMatrix->at(i)->at(j)));
+        row += ", ";
+      }
+
+      qDebug() << row;
+    }
+
     //creatingSimMatrixProgress->close();
 }
 
@@ -308,6 +323,21 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
     {
         qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
         simMatrix->at(i)->insert(simMatrix->at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
+    }
+
+    QString row;
+
+    // Print simMatrix
+    for(int i = 0; i < simMatrix->size(); ++i)
+    {
+      row = "";
+      for(int j = 0; j < simMatrix->at(i)->size(); ++j)
+      {
+        row += QString::number(*(simMatrix->at(i)->at(j)));
+        row += ", ";
+      }
+
+      qDebug() << row;
     }
 }
 
@@ -440,7 +470,12 @@ qreal groupingThread::getGowersSimilarityMeasureNumericAttributesSimilarity
             c1NaiveAverage = getAttributesNaiveAverageValue(c1Attributes.value(attribute)),
             c2NaiveAverage = getAttributesNaiveAverageValue(c2Attributes.value(attribute));
 
-    similarityValue -= qAbs(c1NaiveAverage - c2NaiveAverage) / atrData->getMaxMinAbsDiff();
+    similarityValue -= qAbs(c1NaiveAverage - c2NaiveAverage);
+
+    if(atrData->getMaxMinAbsDiff() != 0)
+    {
+       similarityValue /= atrData->getMaxMinAbsDiff();
+    }
 
     return similarityValue;
 }
