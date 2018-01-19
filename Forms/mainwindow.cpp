@@ -1130,6 +1130,7 @@ void MainWindow::setGroupingSettings()
     gSettings->repTreshold =
             ui->spinBoxRepresentativeAttributePercent->value();
     gSettings->repCreationStrategyID = ui->comboBoxRepresentativeCreationStrategy->currentIndex();
+    gSettings->inequityThreshold = ui->lineEdit_inequalityThreshold->text().toDouble();
 
     addLogMessage(tr("log.generalSettingsLoaded"));
 
@@ -1169,6 +1170,7 @@ void MainWindow::setVisualizationSettings()
     int sceneHeight = ui->graphicsView->height() - 2;
 
     vSettings->sceneRect = new QRect(0,0,sceneWidth,sceneHeight);
+    vSettings->clusters = &clusters;
 
     addLogMessage(tr("log.generalSettingsLoaded"));
 
@@ -1728,7 +1730,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Average representative length,"
              << "Biggest representative length,"
              << "Number of attributes,"
-             << "Number of rules\n";
+             << "Number of rules,"
+             << "Inequity Index\n";
     }
 
     file.close();
@@ -1781,7 +1784,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << getAverageRepresentativeLength() << ","
               << getBiggestRepresentativeLength() << ","
               << settings->objectsNumber << ","
-              << gSettings->attributesNumber << "\n";
+              << gSettings->attributesNumber << ","
+              << gSettings->inequityIndex << "\n";
     }
 
     file.close();

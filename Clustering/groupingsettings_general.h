@@ -38,6 +38,9 @@ public:
     int repTreshold;
     int zeroRepresentativeClusterOccurence;
 
+    double inequityIndex;
+    double inequityThreshold;
+
     bool findBestClustering;
 
     //Methods

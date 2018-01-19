@@ -140,11 +140,14 @@ void groupingThread::groupObjects()
 
     emit passLogMsg(tr("log.creatingSimMatrix"));
 
-    fillSimMatrix(&simMatrix, settings->objectsNumber);
+    fillSimMatrix(settings->objectsNumber);
 
     emit passLogMsg(tr("log.groupingProcessStarted"));
 
     //groupingProgress->show();
+
+    stepNumber = 0;
+    inequityIndex = 0;
 
     for(int i = 0; i < settings->objectsNumber - settings->stopCondition; ++i)
     {
@@ -152,10 +155,7 @@ void groupingThread::groupObjects()
 
         QApplication::processEvents();
 
-        if(groupingProgress->wasCanceled())
-        {
-            wasGroupingCanceled = true;
-        }
+        if(groupingProgress->wasCanceled()) wasGroupingCanceled = true;
 
         if(wasGroupingCanceled)
         {
@@ -189,9 +189,12 @@ void groupingThread::groupObjects()
             }
         }
 
-        joinMostSimilarClusters(&simMatrix);
+        joinMostSimilarClusters();
 
-        updateSimMatrix(&simMatrix);
+        updateSimMatrix();
+
+        //qDebug() << "Step number: " << stepNumber;
+        //qDebug() << "Inequity Index: " << inequityIndex;
     }
 
     if(!grpSettings->findBestClustering)
@@ -227,11 +230,11 @@ void groupingThread::groupObjects()
       settings->clusters->push_back(clusters[i]);
 }
 
-void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize)
+void groupingThread::fillSimMatrix(int simMatrixSize)
 {
     //creatingSimMatrixProgress->show();
 
-    simMatrix->clear();
+    simMatrix.clear();
 
     for(int i = 0; i < simMatrixSize; ++i)
     {
@@ -239,18 +242,18 @@ void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatri
 
         //QApplication::processEvents();
 
-        simMatrix->push_back(simData(new clusterSimilarityData));
+        simMatrix.push_back(simData(new clusterSimilarityData));
 
         for(int j = 0; j <= i; ++j)
         {
             if(i == j)
             {
-                simMatrix->at(i)->push_back(qreal_ptr(new qreal(-1.0)));
+                simMatrix.at(i)->push_back(qreal_ptr(new qreal(-1.0)));
             }
             else
             {
                 qreal simValue = getClustersSimilarityValue(clusters[i], clusters[j]);
-                simMatrix->at(i)->push_back(qreal_ptr(new qreal(simValue)));
+                simMatrix.at(i)->push_back(qreal_ptr(new qreal(simValue)));
             }
         }
     }
@@ -258,7 +261,7 @@ void groupingThread::fillSimMatrix(std::vector<simData> *simMatrix, int simMatri
     //creatingSimMatrixProgress->close();
 }
 
-void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
+void groupingThread::updateSimMatrix()
 {
     /*
      * I'll explain update algorithm here. It takes 3 steps:
@@ -286,28 +289,28 @@ void groupingThread::updateSimMatrix(std::vector<simData> *simMatrix)
      */
 
     //First column which would represent new cluster is added.
-    simMatrix->insert(simMatrix->begin()+newClusterIdx,simData(new clusterSimilarityData()));
+    simMatrix.insert(simMatrix.begin()+newClusterIdx,simData(new clusterSimilarityData()));
 
     //Then, the column is filled.
     for(int i = 0; i <= newClusterIdx; ++i)
     {
         if(i == newClusterIdx)
         {
-            simMatrix->at(newClusterIdx)->push_back(qreal_ptr(new qreal(-1)));
+            simMatrix.at(newClusterIdx)->push_back(qreal_ptr(new qreal(-1)));
         }
         else
         {
             qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
 
-            simMatrix->at(newClusterIdx)->push_back(qreal_ptr(new qreal(simValue)));
+            simMatrix.at(newClusterIdx)->push_back(qreal_ptr(new qreal(simValue)));
         }
     }
 
     //Then, the row is filled.
-    for(unsigned int i = (newClusterIdx + 1); i <= (simMatrix->size() - 1) ; ++i)
+    for(unsigned int i = (newClusterIdx + 1); i <= (simMatrix.size() - 1) ; ++i)
     {
         qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
-        simMatrix->at(i)->insert(simMatrix->at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
+        simMatrix.at(i)->insert(simMatrix.at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
     }
 }
 
@@ -330,6 +333,8 @@ qreal groupingThread::getClustersSimilarityValue(cluster *c1, cluster *c2)
     switch(grpSettings->interClusterSimMeasureID)
     {
         case SingleLinkId:
+        case GenieGiniId:
+        case GenieBonferroniId:
             return qMax(getClustersSimilarityValue(c1->leftNode,c2),
                         getClustersSimilarityValue(c1->rightNode,c2)) / attributes.size();
             break;
@@ -1028,16 +1033,18 @@ qreal groupingThread::getObjectsGoodall4SimValue(cluster* c1, cluster* c2)
     return result;
 }
 
-void groupingThread::joinMostSimilarClusters(std::vector<simData> *simMatrix)
+void groupingThread::joinMostSimilarClusters()
 {
     int i, j;
 
-    findHighestSimilarityIndexes(&i, &j, simMatrix);
+    findClustersToJoin(&i, &j);
+
+    updateInequityIndex(clusters[i]->size(), clusters[j]->size());
 
     clusters[j] = joinClusters(clusters[i], clusters[j]);
 
     //TODO: Consider deleting / smart_ptr.
-    std::swap(clusters[i], clusters[simMatrix->size()-1]);
+    std::swap(clusters[i], clusters[simMatrix.size()-1]);
 
     // This is used in updating matrix.
     newClusterIdx = j;
@@ -1051,11 +1058,24 @@ void groupingThread::joinMostSimilarClusters(std::vector<simData> *simMatrix)
      *  needed.
      */
 
-    deleteClusterSimilarityData(i, simMatrix);
-    deleteClusterSimilarityData(j, simMatrix);
+    deleteClusterSimilarityData(i);
+    deleteClusterSimilarityData(j);
 }
 
-void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ, std::vector<simData> *simMatrix)
+void groupingThread::findClustersToJoin(int *i, int *j)
+{
+
+  if(grpSettings->interClusterSimMeasureID > 3 &&
+     inequityIndex > grpSettings->inequityThreshold)
+  {
+      findHighestSimilarityIndicesWithSmallestCluster(i, j);
+  }
+
+  findHighestSimilarityIndexes(i, j);
+
+}
+
+void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ)
 {
     /*
      * This method fills i and j references. It's used to find
@@ -1064,18 +1084,47 @@ void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ, st
 
     qreal highestSim = -1;
 
-    for(unsigned int i = 0; i < simMatrix->size(); ++i)
+    for(unsigned int i = 0; i < simMatrix.size(); ++i)
     {
         for(unsigned int j = 0; j < i; ++j)
         {
-            if(*(simMatrix->at(i)->at(j)) > highestSim)
+            if(*(simMatrix.at(i)->at(j)) > highestSim)
             {
                 *targetI = i;
                 *targetJ = j;
-                highestSim = *(simMatrix->at(i)->at(j));
+                highestSim = *(simMatrix.at(i)->at(j));
             }
         }
     }
+}
+
+void groupingThread::findHighestSimilarityIndicesWithSmallestCluster(int *targetI, int *targetJ)
+{
+  qreal highestSim = -1;
+  long smallestSize = settings->objectsNumber;
+
+  //qDebug() << "Finding highest smallest.";
+
+  for(cluster *c : clusters)
+    if(c->size() < smallestSize) smallestSize = c->size();
+
+  for(unsigned int i = 0; i < simMatrix.size(); ++i)
+  {
+    for(unsigned int j = 0; j < i; ++j)
+    {
+      if(!(clusters[i]->size() == smallestSize || clusters[j]->size() == smallestSize))
+        continue;
+
+      if(*(simMatrix.at(i)->at(j)) > highestSim)
+      {
+          *targetI = i;
+          *targetJ = j;
+          highestSim = *(simMatrix.at(i)->at(j));
+      }
+    }
+  }
+
+  //qDebug() << "Finding highest smallest end.";
 }
 
 cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
@@ -1171,17 +1220,17 @@ qreal groupingThread::countClustersCompactness(cluster* c)
     return result;
 }
 
-void groupingThread::deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix)
+void groupingThread::deleteClusterSimilarityData(unsigned int clusterId)
 {
     /*
      * First deleting data from each column that had similarity with clusterId.
      * This happened to be all columns with id > than clusterId.
     */
 
-    for(unsigned int i = 0; i < simMatrix->size(); ++i)
+    for(unsigned int i = 0; i < simMatrix.size(); ++i)
     {
-        if(simMatrix->at(i)->size() > clusterId)
-            simMatrix->at(i)->erase(simMatrix->at(i)->begin()+(clusterId));
+        if(simMatrix.at(i)->size() > clusterId)
+            simMatrix.at(i)->erase(simMatrix.at(i)->begin()+(clusterId));
     }
 
     /*
@@ -1191,8 +1240,8 @@ void groupingThread::deleteClusterSimilarityData(unsigned int clusterId, std::ve
      * call vectors destructor and freeing the memory.
     */
 
-    simData().swap(simMatrix->at(clusterId));
-    simMatrix->erase(simMatrix->begin()+clusterId);
+    simData().swap(simMatrix.at(clusterId));
+    simMatrix.erase(simMatrix.begin()+clusterId);
 }
 
 // TODO: Consides some kind of cluster validator in other file.
@@ -1306,13 +1355,121 @@ void groupingThread::continueGrouping()
 {
   for(int i = settings->stopCondition; i < settings->clusters->size(); ++i)
   {
-    joinMostSimilarClusters(&simMatrix);
+    joinMostSimilarClusters();
 
-    updateSimMatrix(&simMatrix);
+    updateSimMatrix();
   }
 
   settings->clusters->clear();
 
   for(int i = 0; i < settings->stopCondition; ++i)
     settings->clusters->push_back(clusters[i]);
+}
+
+int groupingThread::updateInequityIndex(long c1Size, long c2Size)
+{
+  if(grpSettings->interClusterSimMeasureID == GenieBonferroniId)
+    inequityIndex = countBonferroniIndex();
+  //else inequityIndex = updateGiniIndex(c1Size, c2Size);
+  else inequityIndex = countGiniIndex();
+
+  grpSettings->inequityIndex = inequityIndex;
+
+  return 0;
+}
+
+double groupingThread::updateGiniIndex(long c1Size, long c2Size)
+{
+  //qDebug() << "Updating Gini.";
+
+  ++stepNumber;
+
+  long n = this->settings->objectsNumber;
+
+  double result = (n - stepNumber) * n * inequityIndex;
+
+  for(cluster *c : clusters)
+    result += abs(c->size() - c1Size - c2Size) - abs(c->size() - c1Size) - abs(c->size() - c2Size);
+
+  result -= c2Size + c1Size;
+  result += abs(c2Size - c1Size);
+
+  result /= (n - stepNumber - 1) * n;
+
+  return result;
+}
+
+double groupingThread::countGiniIndex()
+{
+  long n = settings->objectsNumber;
+  QVector<long> nonincreasinglySortedSizes = sortClusterSizesNonincreasingly();
+  double result = 0.0;
+  double denumerator = 0.0;
+
+  for(long i = 0; i < n - 1; ++i)
+  {
+    for(long j = i + 1; j < n; ++j)
+    {
+      result += abs(nonincreasinglySortedSizes[i] - nonincreasinglySortedSizes[j]);
+    }
+
+    denumerator += nonincreasinglySortedSizes[i];
+  }
+
+  denumerator += nonincreasinglySortedSizes.at(nonincreasinglySortedSizes.size() -1);
+  denumerator *= n - 1;
+
+  result /= denumerator;
+
+  return result;
+}
+
+double groupingThread::countBonferroniIndex()
+{
+  QVector<long> nonincreasinglySortedSizes = sortClusterSizesNonincreasingly();
+  long n = settings->objectsNumber;
+
+  double result = 0.0;
+  long sum;
+
+  for(int i = 0; i < n; ++i)
+  {
+    sum = 0;
+
+    for(int j = i; j < n; ++j)
+    {
+      sum += nonincreasinglySortedSizes[j];
+    }
+
+    result += sum / (n - i + 1);
+  }
+
+  sum = 0;
+
+  for(long size : nonincreasinglySortedSizes)
+    sum += size;
+
+  result /= sum;
+  result = 1 - result;
+  result *= n / (n - 1);
+
+  return result;
+}
+
+QVector<long> groupingThread::sortClusterSizesNonincreasingly()
+{
+  QVector<long> sortedSizes;
+  int i = 0;
+
+  for(cluster *c : clusters)
+  {
+    for(i = 0; i < sortedSizes.size(); ++i)
+    {
+      if(c->size() > sortedSizes[i]) break;
+    }
+
+    sortedSizes.insert(sortedSizes.begin() + i, c->size());
+  }
+
+  return sortedSizes;
 }

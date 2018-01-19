@@ -32,7 +32,7 @@
         <translation>CluVis - Cluster Visualizer</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="781"/>
+        <location filename="Forms/mainwindow.ui" line="797"/>
         <source>Wizualizacja</source>
         <translation>Visualization</translation>
     </message>
@@ -41,17 +41,17 @@
         <translation type="vanished">General settings</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="599"/>
+        <location filename="Forms/mainwindow.ui" line="608"/>
         <source>Typ grupowanych obiektów:</source>
         <translation>Grouped objects type:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="606"/>
+        <location filename="Forms/mainwindow.ui" line="615"/>
         <source>&lt;b&gt;RSES LEM2 Rules&lt;/b&gt;</source>
         <translation>RSES LEM2 Rules</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="79"/>
+        <location filename="Forms/mainwindow.ui" line="82"/>
         <source>Algorytm grupowania:</source>
         <translation>Grouping algorithm:</translation>
     </message>
@@ -60,88 +60,88 @@
         <translation type="vanished">Classic hierarchic grouping algorithm</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="694"/>
+        <location filename="Forms/mainwindow.ui" line="703"/>
         <source>Baza reguł:</source>
         <translation>Object base:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="703"/>
+        <location filename="Forms/mainwindow.ui" line="712"/>
         <source>&lt;b&gt;Nie wczytano.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Not loaded.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="710"/>
+        <location filename="Forms/mainwindow.ui" line="719"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;(Niepogrupowana) &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translatorcomment>&lt;b&gt;(Niepogrupowana)&lt;/b&gt;</translatorcomment>
         <translation>&lt;b&gt;(Ungrouped)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="719"/>
+        <location filename="Forms/mainwindow.ui" line="728"/>
         <source>Liczba reguł w bazie:</source>
         <translation>Objects number:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="726"/>
+        <location filename="Forms/mainwindow.ui" line="735"/>
         <source>&lt;b&gt;0.&lt;/b&gt;</source>
         <translation>&lt;b&gt; 0.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="613"/>
+        <location filename="Forms/mainwindow.ui" line="622"/>
         <source>Grupowanie reguł ze względu na:</source>
         <translation>Grouped part:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="629"/>
+        <location filename="Forms/mainwindow.ui" line="638"/>
         <source>Warunki</source>
         <translation>Conditions</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="634"/>
+        <location filename="Forms/mainwindow.ui" line="643"/>
         <source>Konkluzje</source>
         <translation>Conclusions</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="99"/>
+        <location filename="Forms/mainwindow.ui" line="102"/>
         <source>Miara odległości między obiektami:</source>
         <translation>Inter-object distance measure:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="115"/>
+        <location filename="Forms/mainwindow.ui" line="118"/>
         <source>Miara Gowera</source>
         <translation>Gower&apos;s measure</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="120"/>
+        <location filename="Forms/mainwindow.ui" line="123"/>
         <source>Simple Similarity</source>
         <translation>Simple Similarity</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="125"/>
+        <location filename="Forms/mainwindow.ui" line="128"/>
         <source>Weighted Similarity</source>
         <translation>Weighted Similarity</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="178"/>
+        <location filename="Forms/mainwindow.ui" line="181"/>
         <source>Miara odległości międzyklastrowej:</source>
         <translation>Inter-cluster similarity measure:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="194"/>
+        <location filename="Forms/mainwindow.ui" line="197"/>
         <source>Pojedynczego połączenia</source>
         <translation>Single Link</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="199"/>
+        <location filename="Forms/mainwindow.ui" line="202"/>
         <source>Całkowitego połączenia</source>
         <translation>Complete link</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="204"/>
+        <location filename="Forms/mainwindow.ui" line="207"/>
         <source>Średniej grupowej</source>
         <translation>Average link</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="209"/>
+        <location filename="Forms/mainwindow.ui" line="212"/>
         <source>Środków ciężkości</source>
         <translation>Centroid link</translation>
     </message>
@@ -158,121 +158,126 @@ to number of objects in base.</translation>
         <translation type="vanished">Objects containing attribure percent, for attribute to be added to clusters representative:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="325"/>
-        <location filename="Forms/mainwindow.ui" line="805"/>
+        <location filename="Forms/mainwindow.ui" line="328"/>
+        <location filename="Forms/mainwindow.ui" line="821"/>
         <source>Algorytm wizualizacji:</source>
         <translation>Visualization algorithm:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="341"/>
+        <location filename="Forms/mainwindow.ui" line="350"/>
         <source>RT Slice And Dice</source>
         <translation>RT Slice And Dice</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="346"/>
-        <location filename="Forms/mainwindow.ui" line="824"/>
+        <location filename="Forms/mainwindow.ui" line="355"/>
+        <location filename="Forms/mainwindow.ui" line="840"/>
         <source>Circular Treemap</source>
         <translation>Circular Treemap</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="409"/>
+        <location filename="Forms/mainwindow.ui" line="418"/>
         <source>Wizualizuj wszystkie poziomy hierarchii.</source>
         <translation>Visualize all hierarchy levels.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="278"/>
+        <location filename="Forms/mainwindow.ui" line="281"/>
         <source>Szukaj optymalnych grupowań.</source>
         <oldsource>Szukaj optymalnych grupowań</oldsource>
         <translation>Search for optimal groupings.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="765"/>
+        <location filename="Forms/mainwindow.ui" line="781"/>
         <source>Grupuj</source>
         <translation>Group</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="772"/>
-        <location filename="Forms/mainwindow.ui" line="864"/>
+        <location filename="Forms/mainwindow.ui" line="788"/>
+        <location filename="Forms/mainwindow.ui" line="880"/>
         <source>Wizualizuj</source>
         <translation>Visualize</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="587"/>
+        <location filename="Forms/mainwindow.ui" line="596"/>
         <source>Ustawienia szczegółowe</source>
         <translation>Advanced settings</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="40"/>
+        <location filename="Forms/mainwindow.ui" line="43"/>
         <source>Ustawienia</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="70"/>
+        <location filename="Forms/mainwindow.ui" line="73"/>
         <source>Ustawienia ogólne grupowania</source>
         <translation>General grouping settings</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="92"/>
+        <location filename="Forms/mainwindow.ui" line="95"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Klasyczny AHC&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;b&gt;Classical AHC&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="130"/>
+        <location filename="Forms/mainwindow.ui" line="133"/>
         <source>OF</source>
         <translation>OF</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="135"/>
+        <location filename="Forms/mainwindow.ui" line="138"/>
         <source>IOF</source>
         <translation>IOF</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="140"/>
+        <location filename="Forms/mainwindow.ui" line="143"/>
         <source>Goodall1</source>
         <translation>Goodall1</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="145"/>
+        <location filename="Forms/mainwindow.ui" line="148"/>
         <source>Goodall2</source>
         <translation>Goodall2</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="150"/>
+        <location filename="Forms/mainwindow.ui" line="153"/>
         <source>Goodall3</source>
         <translation>Goodall3</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="155"/>
+        <location filename="Forms/mainwindow.ui" line="158"/>
         <source>Goodall4</source>
         <translation>Goodall4</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="235"/>
+        <location filename="Forms/mainwindow.ui" line="238"/>
         <source>Oczekiwana liczba skupień:</source>
         <translation>Expected clusters number:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="319"/>
-        <location filename="Forms/mainwindow.ui" line="799"/>
+        <location filename="Forms/mainwindow.ui" line="322"/>
+        <location filename="Forms/mainwindow.ui" line="815"/>
         <source>Ustawienia wizualizacji</source>
         <translation>Visualization settings</translation>
+    </message>
+    <message>
+        <location filename="Forms/mainwindow.ui" line="1036"/>
+        <source>Wczytaj bazę faktów</source>
+        <translation type="unfinished">Load facts base</translation>
     </message>
     <message>
         <source>Margines prostokątów (px):</source>
         <translation type="vanished">Rectangles margin (px):</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="444"/>
+        <location filename="Forms/mainwindow.ui" line="453"/>
         <source>Ustawienia reprezentanta</source>
         <translation>Representative settings</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="450"/>
+        <location filename="Forms/mainwindow.ui" line="459"/>
         <source>Strategia tworzenia reprezentanta:</source>
         <translation>Representative creation strategy:</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="472"/>
+        <location filename="Forms/mainwindow.ui" line="481"/>
         <source>Progowa</source>
         <translation>Threshold</translation>
     </message>
@@ -281,133 +286,133 @@ to number of objects in base.</translation>
         <translation type="vanished">TFIDF</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="510"/>
+        <location filename="Forms/mainwindow.ui" line="519"/>
         <source>Występowanie atrybutu (%):</source>
         <translation>Attribute occurence (%):</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="688"/>
+        <location filename="Forms/mainwindow.ui" line="697"/>
         <source>Informacje o bazie</source>
         <translation>Object base information</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="819"/>
+        <location filename="Forms/mainwindow.ui" line="835"/>
         <source>RT Slice and Dice</source>
         <translation>RT Slice and Dice</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="372"/>
-        <location filename="Forms/mainwindow.ui" line="832"/>
+        <location filename="Forms/mainwindow.ui" line="381"/>
+        <location filename="Forms/mainwindow.ui" line="848"/>
         <source>Margines obiektów (px):</source>
         <translation>Objects margin (px):</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="477"/>
+        <location filename="Forms/mainwindow.ui" line="486"/>
         <source>Dolne przybliżenie</source>
         <translation>Bottom approximation </translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="482"/>
+        <location filename="Forms/mainwindow.ui" line="491"/>
         <source>Górne przybliżenie</source>
         <translation>Top approximation</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="487"/>
+        <location filename="Forms/mainwindow.ui" line="496"/>
         <source>Ważone podejście</source>
         <translation>Weighted approach</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="758"/>
+        <location filename="Forms/mainwindow.ui" line="767"/>
+        <source>Wnioskuj</source>
+        <translation>Run Interference</translation>
+    </message>
+    <message>
+        <location filename="Forms/mainwindow.ui" line="774"/>
         <source>Standard</source>
         <translation>Standard</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="856"/>
+        <location filename="Forms/mainwindow.ui" line="872"/>
         <source>Wizualizuj wszystkie 
  poziomy hierarchii.</source>
         <translation>Visualize all hierarchy levels.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="904"/>
+        <location filename="Forms/mainwindow.ui" line="920"/>
         <source>Dziennik zdarzeń</source>
         <translation>Log</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="910"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <oldsource>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Log...&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="Forms/mainwindow.ui" line="935"/>
+        <location filename="Forms/mainwindow.ui" line="951"/>
         <source>Plik</source>
         <translation>File</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="939"/>
+        <location filename="Forms/mainwindow.ui" line="955"/>
         <source>Raporty</source>
         <translation>Reports</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="953"/>
+        <location filename="Forms/mainwindow.ui" line="970"/>
         <source>Pomoc</source>
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="959"/>
+        <location filename="Forms/mainwindow.ui" line="976"/>
         <source>Widok</source>
         <translation>View</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="963"/>
+        <location filename="Forms/mainwindow.ui" line="980"/>
         <source>Język</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="979"/>
+        <location filename="Forms/mainwindow.ui" line="996"/>
         <source>Wczytaj bazę obiektów</source>
         <translation>Load object base</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="984"/>
+        <location filename="Forms/mainwindow.ui" line="1001"/>
         <source>Zakończ program</source>
         <translation>Quit</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="989"/>
+        <location filename="Forms/mainwindow.ui" line="1006"/>
         <source>Informacje o programie</source>
         <translation>About</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="994"/>
+        <location filename="Forms/mainwindow.ui" line="1011"/>
         <source>Zapisz wizualizację</source>
         <translation>Save visualization</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="1009"/>
+        <location filename="Forms/mainwindow.ui" line="1026"/>
         <source>Generuj raport</source>
         <translation>Generate raport</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="1014"/>
+        <location filename="Forms/mainwindow.ui" line="1031"/>
         <source>Scal raporty</source>
         <translation>Merge reports</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="999"/>
+        <location filename="Forms/mainwindow.ui" line="1016"/>
         <source>Angielski</source>
         <translation>English</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.ui" line="1004"/>
+        <location filename="Forms/mainwindow.ui" line="926"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.14286pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.25pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="Forms/mainwindow.ui" line="1021"/>
         <source>Polski</source>
         <translation>Polish</translation>
     </message>
@@ -420,308 +425,312 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Rule files(*.rul);; Text files (*.txt)</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="59"/>
+        <location filename="Forms/mainwindow.cpp" line="61"/>
         <source>log.applicationStart</source>
         <translation>Application CluVis started.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="116"/>
-        <location filename="Forms/mainwindow.cpp" line="156"/>
+        <location filename="Forms/mainwindow.cpp" line="122"/>
         <source>log.failedToLoadObjBase</source>
         <translation>Failed to load object base.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="157"/>
         <source>log.noFileSelected</source>
-        <translation>No file has been selected.</translation>
+        <translation type="vanished">No file has been selected.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="117"/>
+        <location filename="Forms/mainwindow.cpp" line="123"/>
         <source>log.selectedFileIsNotKnowledgeBase</source>
         <translation>Selected file is not RSES knowledge base.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="126"/>
+        <location filename="Forms/mainwindow.cpp" line="132"/>
         <source>bold.ungrouped</source>
         <translation>&lt;b&gt;(Ungrouped)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="139"/>
+        <location filename="Forms/mainwindow.cpp" line="145"/>
         <source>log.knowledgeBaseLoaded</source>
         <translation>Knowledge base loaded.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="89"/>
+        <location filename="Forms/mainwindow.cpp" line="95"/>
+        <location filename="Forms/mainwindow.cpp" line="1802"/>
         <source>FD.selectKnowledgeBase</source>
         <translation>Select object base</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="91"/>
+        <location filename="Forms/mainwindow.cpp" line="97"/>
         <source>FD.RSESRules.fileTypes</source>
         <translation>RSES Rule files (*.rul);; Text files (*.txt)</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="207"/>
+        <location filename="Forms/mainwindow.cpp" line="160"/>
+        <source>log.fileNotLoaded</source>
+        <translation type="unfinished">File not loaded.</translation>
+    </message>
+    <message>
+        <location filename="Forms/mainwindow.cpp" line="208"/>
         <source>FD.save</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="209"/>
+        <location filename="Forms/mainwindow.cpp" line="210"/>
         <source>FD.png</source>
         <translation>*.png</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="220"/>
+        <location filename="Forms/mainwindow.cpp" line="221"/>
         <source>log.failedToSaveVisualization</source>
         <translation>Failed to save visualization.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="221"/>
-        <location filename="Forms/mainwindow.cpp" line="310"/>
+        <location filename="Forms/mainwindow.cpp" line="222"/>
+        <location filename="Forms/mainwindow.cpp" line="311"/>
         <source>log.fileNameNotSelected</source>
         <translation>No file name has been selected.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="241"/>
+        <location filename="Forms/mainwindow.cpp" line="242"/>
         <source>log.visualizationSavedWithName</source>
         <translation>Visuzalization saved with name %1.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="262"/>
-        <location filename="Forms/mainwindow.cpp" line="278"/>
-        <location filename="Forms/mainwindow.cpp" line="889"/>
+        <location filename="Forms/mainwindow.cpp" line="263"/>
+        <location filename="Forms/mainwindow.cpp" line="279"/>
+        <location filename="Forms/mainwindow.cpp" line="890"/>
         <source>log.operationAborted</source>
         <translation>Operation aborted.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="273"/>
+        <location filename="Forms/mainwindow.cpp" line="274"/>
         <source>log.reportGenerationStarted</source>
         <translation>Report generation started.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="277"/>
-        <location filename="Forms/mainwindow.cpp" line="888"/>
+        <location filename="Forms/mainwindow.cpp" line="278"/>
+        <location filename="Forms/mainwindow.cpp" line="889"/>
         <source>log.unableToOpenFileForSaving</source>
         <translation>Unable to open file for saving.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="291"/>
+        <location filename="Forms/mainwindow.cpp" line="292"/>
         <source>log.reportGenerationFinished</source>
         <translation>Report generation finished.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="301"/>
+        <location filename="Forms/mainwindow.cpp" line="302"/>
         <source>FD.saveReport</source>
         <translation>Save report</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="303"/>
+        <location filename="Forms/mainwindow.cpp" line="304"/>
         <source>FD.reportFileTypes</source>
         <translation>XML Files (*.xml);; Text files (*.txt)</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="308"/>
+        <location filename="Forms/mainwindow.cpp" line="309"/>
         <source>log.failedToSaveReport</source>
         <translation>Failed to save report.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="371"/>
+        <location filename="Forms/mainwindow.cpp" line="372"/>
         <source>report.report</source>
         <translation>Report</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="373"/>
+        <location filename="Forms/mainwindow.cpp" line="374"/>
         <source>report.knowledgeBaseInformation</source>
         <translation>Object base information</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="375"/>
-        <location filename="Forms/mainwindow.cpp" line="670"/>
+        <location filename="Forms/mainwindow.cpp" line="376"/>
+        <location filename="Forms/mainwindow.cpp" line="671"/>
         <source>report.nameOfBase</source>
         <translation>Name of the base</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="378"/>
-        <location filename="Forms/mainwindow.cpp" line="671"/>
+        <location filename="Forms/mainwindow.cpp" line="379"/>
+        <location filename="Forms/mainwindow.cpp" line="672"/>
         <source>report.attributesNumber</source>
         <translation>Attributes number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="381"/>
-        <location filename="Forms/mainwindow.cpp" line="672"/>
+        <location filename="Forms/mainwindow.cpp" line="382"/>
+        <location filename="Forms/mainwindow.cpp" line="673"/>
         <source>report.objectsNumber</source>
         <translation>Objects number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="384"/>
-        <location filename="Forms/mainwindow.cpp" line="674"/>
+        <location filename="Forms/mainwindow.cpp" line="385"/>
+        <location filename="Forms/mainwindow.cpp" line="675"/>
         <source>report.clustersNumber</source>
         <translation>Clusters number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="387"/>
-        <location filename="Forms/mainwindow.cpp" line="675"/>
+        <location filename="Forms/mainwindow.cpp" line="388"/>
+        <location filename="Forms/mainwindow.cpp" line="676"/>
         <source>report.coverageSum</source>
         <translation>Coverage sum</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="390"/>
+        <location filename="Forms/mainwindow.cpp" line="391"/>
         <source>report.settings</source>
         <translation>Settings</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="392"/>
-        <location filename="Forms/mainwindow.cpp" line="677"/>
+        <location filename="Forms/mainwindow.cpp" line="393"/>
+        <location filename="Forms/mainwindow.cpp" line="678"/>
         <source>report.groupingAlgorithmUsed</source>
         <translation>Clustering Algorithm used</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="395"/>
-        <location filename="Forms/mainwindow.cpp" line="678"/>
+        <location filename="Forms/mainwindow.cpp" line="396"/>
+        <location filename="Forms/mainwindow.cpp" line="679"/>
         <source>report.objectsSimilarityMeasure</source>
         <translation>Objects similarity measure</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="398"/>
-        <location filename="Forms/mainwindow.cpp" line="679"/>
+        <location filename="Forms/mainwindow.cpp" line="399"/>
+        <location filename="Forms/mainwindow.cpp" line="680"/>
         <source>report.clustersSimilarityMeasure</source>
         <translation>Clusters similarity measure</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="401"/>
-        <location filename="Forms/mainwindow.cpp" line="676"/>
+        <location filename="Forms/mainwindow.cpp" line="402"/>
+        <location filename="Forms/mainwindow.cpp" line="677"/>
         <source>report.selectedVisualizationAlgorithm</source>
         <translation>Selected visualization algorithm</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="404"/>
-        <location filename="Forms/mainwindow.cpp" line="680"/>
+        <location filename="Forms/mainwindow.cpp" line="405"/>
+        <location filename="Forms/mainwindow.cpp" line="681"/>
         <source>report.groupedRulePart</source>
         <translation>Grouped rule part</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="407"/>
+        <location filename="Forms/mainwindow.cpp" line="408"/>
         <source>report.clustersInformation</source>
         <translation>Clusters information</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="409"/>
-        <location filename="Forms/mainwindow.cpp" line="681"/>
+        <location filename="Forms/mainwindow.cpp" line="410"/>
+        <location filename="Forms/mainwindow.cpp" line="682"/>
         <source>report.biggestCluster</source>
         <translation>The biggest cluster</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="412"/>
-        <location filename="Forms/mainwindow.cpp" line="684"/>
+        <location filename="Forms/mainwindow.cpp" line="413"/>
+        <location filename="Forms/mainwindow.cpp" line="685"/>
         <source>report.smallestCluster</source>
         <translation>The smallest cluster</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="415"/>
+        <location filename="Forms/mainwindow.cpp" line="416"/>
         <source>report.clustersDetails</source>
         <translation>Cluster&apos;s details</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="420"/>
-        <location filename="Forms/mainwindow.cpp" line="777"/>
+        <location filename="Forms/mainwindow.cpp" line="421"/>
+        <location filename="Forms/mainwindow.cpp" line="778"/>
         <source>report.clustersName</source>
         <translation>Cluster&apos;s name</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="423"/>
-        <location filename="Forms/mainwindow.cpp" line="778"/>
+        <location filename="Forms/mainwindow.cpp" line="424"/>
+        <location filename="Forms/mainwindow.cpp" line="779"/>
         <source>report.clustersSize</source>
         <translation>Cluster&apos;s size</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="426"/>
-        <location filename="Forms/mainwindow.cpp" line="782"/>
+        <location filename="Forms/mainwindow.cpp" line="427"/>
+        <location filename="Forms/mainwindow.cpp" line="783"/>
         <source>report.clustersCoverage</source>
         <translation>Cluster&apos;s coverage</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="682"/>
+        <location filename="Forms/mainwindow.cpp" line="683"/>
         <source>report.biggestClusterSize</source>
         <translation>Biggest cluster size</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="683"/>
+        <location filename="Forms/mainwindow.cpp" line="684"/>
         <source>report.biggestClusterRepLength</source>
         <translation>Biggest cluster representative length</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="686"/>
+        <location filename="Forms/mainwindow.cpp" line="687"/>
         <source>report.biggestRepSize</source>
         <translation>Biggest representative size</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="687"/>
+        <location filename="Forms/mainwindow.cpp" line="688"/>
         <source>report.smallestRepSize</source>
         <translation>Smallest representative size</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="688"/>
+        <location filename="Forms/mainwindow.cpp" line="689"/>
         <source>report.averageRepSize</source>
         <translation>Average representative size</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="689"/>
+        <location filename="Forms/mainwindow.cpp" line="690"/>
         <source>report.zeroRepresentativeClusterOccurence</source>
         <translation>Zero representative occurence</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="690"/>
+        <location filename="Forms/mainwindow.cpp" line="691"/>
         <source>report.representativeCreationStrategy</source>
         <translation>Representative Creation Strategy</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="691"/>
+        <location filename="Forms/mainwindow.cpp" line="692"/>
         <source>report.representativeCreationThreshold</source>
         <translation>Representative Creation Threshold</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="694"/>
+        <location filename="Forms/mainwindow.cpp" line="695"/>
         <source>report.minMDI</source>
         <translation>min. MDI</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="695"/>
+        <location filename="Forms/mainwindow.cpp" line="696"/>
         <source>report.minMDIClustersNumber</source>
         <translation>min. MDI Clusters number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="784"/>
+        <location filename="Forms/mainwindow.cpp" line="785"/>
         <source>report.clustersRepresentative</source>
         <translation>Cluster&apos;s representative</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="434"/>
+        <location filename="Forms/mainwindow.cpp" line="435"/>
         <source>report.end</source>
         <translation>The end</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="669"/>
-        <location filename="Forms/mainwindow.cpp" line="776"/>
+        <location filename="Forms/mainwindow.cpp" line="670"/>
+        <location filename="Forms/mainwindow.cpp" line="777"/>
         <source>report.index</source>
         <translation>Index</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="673"/>
+        <location filename="Forms/mainwindow.cpp" line="674"/>
         <source>report.nodesNumber</source>
         <translation>Nodes number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="685"/>
+        <location filename="Forms/mainwindow.cpp" line="686"/>
         <source>report.ungroupedRules</source>
         <translation>Ungrouped objects</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="692"/>
+        <location filename="Forms/mainwindow.cpp" line="693"/>
         <source>report.MDI</source>
         <translation>MDI</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="693"/>
+        <location filename="Forms/mainwindow.cpp" line="694"/>
         <source>report.MDBI</source>
         <translation>MDBI</translation>
     </message>
@@ -734,207 +743,207 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Max MDI Clusters Number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="696"/>
+        <location filename="Forms/mainwindow.cpp" line="697"/>
         <source>report.maxMDBI</source>
         <translation>Max. MDBI</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="697"/>
+        <location filename="Forms/mainwindow.cpp" line="698"/>
         <source>report.maxMDBIClustersNumber</source>
         <translation>Max. MDBI Clusters Number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="779"/>
+        <location filename="Forms/mainwindow.cpp" line="780"/>
         <source>report.clustersRulesPercent</source>
         <translation>Objects percent in cluster [%]</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="780"/>
+        <location filename="Forms/mainwindow.cpp" line="781"/>
         <source>report.clustersNodesNumber</source>
         <translation>Cluster&apos;s nodes number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="781"/>
+        <location filename="Forms/mainwindow.cpp" line="782"/>
         <source>report.clustersNodesNumberPercent</source>
         <translation>Cluster&apos;s nodes percent [%]</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="783"/>
+        <location filename="Forms/mainwindow.cpp" line="784"/>
         <source>report.clustersCoveragePercent</source>
         <translation>Cluster&apos;s coverage percent [%]</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="785"/>
+        <location filename="Forms/mainwindow.cpp" line="786"/>
         <source>report.representativeLength</source>
         <translation>Cluster&apos;s representative length</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="846"/>
-        <location filename="Forms/mainwindow.cpp" line="1488"/>
+        <location filename="Forms/mainwindow.cpp" line="847"/>
+        <location filename="Forms/mainwindow.cpp" line="1484"/>
         <source>Select directory</source>
         <translation>Select directory</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1023"/>
+        <location filename="Forms/mainwindow.cpp" line="1024"/>
         <source>log.programmeInformationOpened</source>
         <translation>Application information opened.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1029"/>
+        <location filename="Forms/mainwindow.cpp" line="1030"/>
         <source>log.loadingGroupingSettings</source>
         <translation>Loading grouping settings...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1033"/>
+        <location filename="Forms/mainwindow.cpp" line="1034"/>
         <source>log.validatingSettings</source>
         <translation>Validating loaded settings...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1037"/>
+        <location filename="Forms/mainwindow.cpp" line="1038"/>
         <source>log.settingsCorrect</source>
         <translation>Settings are correct.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1086"/>
-        <location filename="Forms/mainwindow.cpp" line="1437"/>
+        <location filename="Forms/mainwindow.cpp" line="1087"/>
+        <location filename="Forms/mainwindow.cpp" line="1433"/>
         <source>log.loadingVisualizationSettings</source>
         <translation>Loading visualization settings...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1100"/>
-        <location filename="Forms/mainwindow.cpp" line="1451"/>
+        <location filename="Forms/mainwindow.cpp" line="1101"/>
+        <location filename="Forms/mainwindow.cpp" line="1447"/>
         <source>log.visualizationSettingsLoaded</source>
         <translation>Visualization settings loaded.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1106"/>
-        <location filename="Forms/mainwindow.cpp" line="1457"/>
+        <location filename="Forms/mainwindow.cpp" line="1107"/>
+        <location filename="Forms/mainwindow.cpp" line="1453"/>
         <source>log.visualizationGenerationFailed</source>
         <translation>Visualization generation failed.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1107"/>
-        <location filename="Forms/mainwindow.cpp" line="1458"/>
+        <location filename="Forms/mainwindow.cpp" line="1108"/>
+        <location filename="Forms/mainwindow.cpp" line="1454"/>
         <source>log.objectsNotGrouped</source>
         <translation>Objects are not properly clustered.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1132"/>
-        <location filename="Forms/mainwindow.cpp" line="1177"/>
+        <location filename="Forms/mainwindow.cpp" line="1134"/>
+        <location filename="Forms/mainwindow.cpp" line="1173"/>
         <source>log.generalSettingsLoaded</source>
         <translation>General settings loaded.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1156"/>
+        <location filename="Forms/mainwindow.cpp" line="1152"/>
         <source>log.rsesRules.detailedSettingsLoaded</source>
         <translation>RSES Rules detailed settings loaded.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1185"/>
+        <location filename="Forms/mainwindow.cpp" line="1181"/>
         <source>report.detailedSettingsLoaded</source>
         <translation>Detailed settings loaded.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1226"/>
-        <location filename="Forms/mainwindow.cpp" line="1236"/>
+        <location filename="Forms/mainwindow.cpp" line="1222"/>
+        <location filename="Forms/mainwindow.cpp" line="1232"/>
         <source>log.failedAttemptOfGrouping</source>
         <translation>Failed attempt of clustering.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1208"/>
+        <location filename="Forms/mainwindow.cpp" line="1204"/>
         <source>log.baseNotSelected</source>
         <translation>Objects base is not selected.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1227"/>
+        <location filename="Forms/mainwindow.cpp" line="1223"/>
         <source>log.stopConditionToHigh</source>
         <translation>Stop condition cannot exceed objects number.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1237"/>
+        <location filename="Forms/mainwindow.cpp" line="1233"/>
         <source>log.stopConditionToSmall</source>
         <translation>Stop condition cannot be lower than 1.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1252"/>
+        <location filename="Forms/mainwindow.cpp" line="1248"/>
         <source>log.groupingStarted</source>
         <translation>Grouping started.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1254"/>
-        <location filename="Forms/mainwindow.cpp" line="1283"/>
+        <location filename="Forms/mainwindow.cpp" line="1250"/>
+        <location filename="Forms/mainwindow.cpp" line="1279"/>
         <source>log.blockingButtonsForOperation</source>
         <translation>Buttons shall be blocked during execution of operation.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1261"/>
+        <location filename="Forms/mainwindow.cpp" line="1257"/>
         <source>log.groupingThreadStarted</source>
         <translation>Grouping thread started.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1268"/>
+        <location filename="Forms/mainwindow.cpp" line="1264"/>
         <source>log.groupingThreadFinishedIn</source>
         <translation>Grouping thread executed in %1 ms.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1276"/>
-        <location filename="Forms/mainwindow.cpp" line="1311"/>
+        <location filename="Forms/mainwindow.cpp" line="1272"/>
+        <location filename="Forms/mainwindow.cpp" line="1307"/>
         <source>log.buttonsUnlocked</source>
         <translation>Buttons has been unlocked.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1055"/>
+        <location filename="Forms/mainwindow.cpp" line="1056"/>
         <source>FD.clustersNumber</source>
         <translation>Resultant clusters number</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1058"/>
+        <location filename="Forms/mainwindow.cpp" line="1059"/>
         <source>FD.clustersMDI</source>
         <translation>Resultant clusters MDI</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1061"/>
+        <location filename="Forms/mainwindow.cpp" line="1062"/>
         <source>FD.clustersMDBI</source>
         <translation>Resultant clusters MDBI</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1065"/>
+        <location filename="Forms/mainwindow.cpp" line="1066"/>
         <source>FD.visualizeGrouping</source>
         <translation>Do you want to visualize resultant structure of clustering?</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1068"/>
-        <location filename="Forms/mainwindow.cpp" line="1070"/>
+        <location filename="Forms/mainwindow.cpp" line="1069"/>
+        <location filename="Forms/mainwindow.cpp" line="1071"/>
         <source>FD.groupingFinished</source>
         <translation>Clustering finished</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1073"/>
+        <location filename="Forms/mainwindow.cpp" line="1074"/>
         <source>FD.yes</source>
         <translation>Yes</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1074"/>
+        <location filename="Forms/mainwindow.cpp" line="1075"/>
         <source>FD.no</source>
         <translation>No</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1281"/>
+        <location filename="Forms/mainwindow.cpp" line="1277"/>
         <source>log.visualizationStarted</source>
         <translation>Visualizing started.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1288"/>
+        <location filename="Forms/mainwindow.cpp" line="1284"/>
         <source>log.visualizationThreadStarted</source>
         <translation>Visualization thread started.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1294"/>
+        <location filename="Forms/mainwindow.cpp" line="1290"/>
         <source>log.visualizationThreadFinishedIn</source>
         <translation>Visualization thread finished in %1 ms.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1305"/>
+        <location filename="Forms/mainwindow.cpp" line="1301"/>
         <source>log.visualizationCentered</source>
         <translation>Visualization has been centered.</translation>
     </message>
@@ -948,27 +957,27 @@ p, li { white-space: pre-wrap; }
         <translation type="vanished">Visualization finished!</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1042"/>
+        <location filename="Forms/mainwindow.cpp" line="1043"/>
         <source>log.groupedObjectsReceived</source>
         <translation>Grouped objects received.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1044"/>
+        <location filename="Forms/mainwindow.cpp" line="1045"/>
         <source>log.visualizationAvailable</source>
         <translation>Visualization is now available.</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1048"/>
+        <location filename="Forms/mainwindow.cpp" line="1049"/>
         <source>bold.grouped</source>
         <translation>&lt;b&gt;(Grouped)&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1357"/>
+        <location filename="Forms/mainwindow.cpp" line="1353"/>
         <source>log.clusterSelectedForVisualization</source>
         <translation>Cluster has been selected... Visualizing...</translation>
     </message>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1369"/>
+        <location filename="Forms/mainwindow.cpp" line="1365"/>
         <source>log.showClustersInfo</source>
         <translation>Showing info about selected cluster.</translation>
     </message>
@@ -976,7 +985,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QObject</name>
     <message>
-        <location filename="Forms/mainwindow.cpp" line="1207"/>
+        <location filename="Forms/mainwindow.cpp" line="1203"/>
         <source>log.failedAttemptOfGrouping</source>
         <translation>Failed attempt of clustering.</translation>
     </message>
@@ -1084,90 +1093,90 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>groupingThread</name>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="61"/>
-        <location filename="Clustering/groupingthread.cpp" line="63"/>
+        <location filename="Clustering/groupingthread.cpp" line="70"/>
+        <location filename="Clustering/groupingthread.cpp" line="72"/>
         <source>gThreadDialog.grouping</source>
         <translation>Grouping...</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="61"/>
-        <location filename="Clustering/groupingthread.cpp" line="75"/>
+        <location filename="Clustering/groupingthread.cpp" line="70"/>
+        <location filename="Clustering/groupingthread.cpp" line="86"/>
         <source>gThreadDialog.cancel</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="74"/>
-        <location filename="Clustering/groupingthread.cpp" line="77"/>
+        <location filename="Clustering/groupingthread.cpp" line="85"/>
+        <location filename="Clustering/groupingthread.cpp" line="88"/>
         <source>gThreadDialog.creatingSimilarityMatrix</source>
         <translation>Creating similarity matrix....</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="92"/>
+        <location filename="Clustering/groupingthread.cpp" line="103"/>
         <source>log.rsesGroupingStarted</source>
         <translation>RSES Rules grouping started...</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="105"/>
+        <location filename="Clustering/groupingthread.cpp" line="116"/>
         <source>log.unknownObjectsType</source>
         <translation>Unknown objects type.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="106"/>
+        <location filename="Clustering/groupingthread.cpp" line="117"/>
         <source>log.operationWontStart</source>
         <translation>Operation won&apos;t start.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="119"/>
+        <location filename="Clustering/groupingthread.cpp" line="129"/>
         <source>log.gatheringAttributesData</source>
         <translation>Gathering attributes data...</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="126"/>
+        <location filename="Clustering/groupingthread.cpp" line="135"/>
         <source>log.placingObjectsInClusters</source>
         <translation>Placing objects in clusters...</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="132"/>
+        <location filename="Clustering/groupingthread.cpp" line="141"/>
         <source>log.creatingSimMatrix</source>
         <translation>Creating similarity matrix...</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="137"/>
+        <location filename="Clustering/groupingthread.cpp" line="145"/>
         <source>log.groupingProcessStarted</source>
         <translation>Grouping process started.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="194"/>
+        <location filename="Clustering/groupingthread.cpp" line="204"/>
         <source>log.clustersNumber</source>
         <translation>Clusters number: %1.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="199"/>
+        <location filename="Clustering/groupingthread.cpp" line="209"/>
         <source>log.mdiPointer</source>
         <translation>MDI of grouping: %1.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="204"/>
+        <location filename="Clustering/groupingthread.cpp" line="214"/>
         <source>log.mdbiPointer</source>
         <translation>MDBI of grouping: %1.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="211"/>
+        <location filename="Clustering/groupingthread.cpp" line="221"/>
         <source>log.groupingFinished</source>
         <translation>Clustering  finished.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="212"/>
+        <location filename="Clustering/groupingthread.cpp" line="222"/>
         <source>log.sendingResultatntStructure</source>
         <translation>Sending resultant structure to main thread...</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="155"/>
+        <location filename="Clustering/groupingthread.cpp" line="165"/>
         <source>log.groupingCancelled</source>
         <translation>Clustering cancelled.</translation>
     </message>
     <message>
-        <location filename="Clustering/groupingthread.cpp" line="156"/>
+        <location filename="Clustering/groupingthread.cpp" line="166"/>
         <source>log.visualizationImpossible</source>
         <translation>Visualization will be impossible until clustering is sucessfully completed.</translation>
     </message>

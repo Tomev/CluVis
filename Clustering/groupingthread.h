@@ -48,12 +48,21 @@ public:
     std::vector<simData> simMatrix;
 
     QVector<cluster*> clusters;
-    //cluster** clusters;
 
 signals:
 
     void passLogMsg(QString);
 
+protected:
+
+    double inequityIndex = 0.0;
+    long stepNumber = 0;
+
+    int updateInequityIndex(long c1Size, long c2Size);
+      double updateGiniIndex(long c1Size, long c2Size);
+      double countGiniIndex();
+      double countBonferroniIndex();
+        QVector<long> sortClusterSizesNonincreasingly();
 
 
 private:
@@ -85,12 +94,14 @@ private:
     void initializeDataPreparator();
 
     void groupObjects();     
-        void fillSimMatrix(std::vector<simData> *simMatrix, int simMatrixSize);
-        void joinMostSimilarClusters(std::vector<simData> *simMatrix);
-            void findHighestSimilarityIndexes(int* i, int* j, std::vector<simData> *simMatrix);
+        void fillSimMatrix(int simMatrixSize);
+        void joinMostSimilarClusters();
+            void findClustersToJoin(int *i, int *j);
+              void findHighestSimilarityIndexes(int* i, int* j);
+              void findHighestSimilarityIndicesWithSmallestCluster(int* targetI, int* targetJ);
             cluster* joinClusters(cluster* c1, cluster* c2);
-            void deleteClusterSimilarityData(unsigned int clusterId, std::vector<simData> *simMatrix);
-        void updateSimMatrix(std::vector<simData> *simMatrix);
+            void deleteClusterSimilarityData(unsigned int clusterId);
+        void updateSimMatrix();
 
 
             qreal getClustersAverageLinkValue(cluster* c1, cluster* c2);

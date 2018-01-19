@@ -18,7 +18,7 @@ public:
                         visualizationSettings_general* vSettings);
     ~visualizationThread();
 
-    void run(ruleCluster *c = NULL);
+    void run(ruleCluster* c = NULL);
 
 signals:
     void passGraphicsRectObject(customGraphicsRectObject *o);

@@ -53,12 +53,12 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
 
 void visualizationThread::RSES_RTSAD(QRect* rect, ruleCluster* c)
 {
-    QRect paintAreaRect = *rect;
+  QRect paintAreaRect = *rect;
 
-    if(paintAreaRect.width() >= paintAreaRect.height())
-        RSES_RTSAD_PaintVertical(paintAreaRect, c);
-    else
-        RSES_RTSAD_PaintHorizontal(paintAreaRect, c);
+  if(paintAreaRect.width() >= paintAreaRect.height())
+      RSES_RTSAD_PaintVertical(paintAreaRect, c);
+  else
+      RSES_RTSAD_PaintHorizontal(paintAreaRect, c);
 }
 
 void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
@@ -71,13 +71,13 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
         {
             int top = paintAreaRect.top();
             int left = paintAreaRect.left();
-            float width = widthScaled(vSettings->clusters->size(), rect, settings->objectsNumber);
+            float width = widthScaled(settings->clusters->size(), rect, settings->objectsNumber);
             if(width<1)
                 width = 1;
             int height = paintAreaRect.height();
             if(height<1)
                 height =1;
-            QColor sV = getColorFromSize(vSettings->clusters->at(i)->size()); // sV -> shadeValue
+            QColor sV = getColorFromSize(settings->clusters->at(i)->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
             QRect smallerRect(left+rectPadding, top+rectPadding,
@@ -98,20 +98,20 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
     }
     else
     {
-        ruleCluster** clusters;
+        //ruleCluster** clusters;
+        QVector<ruleCluster*> clusters;
+
         int clustersNumber;
 
         if(c->hasBothNodes())
         {
-            clusters = new ruleCluster*[2];
-            clusters[0] = (ruleCluster*)c->leftNode;
-            clusters[1] = (ruleCluster*)c->rightNode;
+            clusters.push_back((ruleCluster*)(c->leftNode));
+            clusters.push_back((ruleCluster*)(c->rightNode));
             clustersNumber = 2;
         }
         else
         {
-            clusters = new ruleCluster*[1];
-            clusters[0] = c;
+            clusters.push_back(c);
             clustersNumber = 1;
         }
 
@@ -302,7 +302,6 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
         if(settings->stopCondition == 1)
         {
             newC = (ruleCluster*) vSettings->clusters->at(0);
-
 
             QColor sV = getColorFromSize(newC->size());
 
@@ -733,6 +732,7 @@ int visualizationThread::findLargestClusterIndex(QVector<cluster *> *unsortedClu
     qDebug() << "Unsorted clusters vector was empty.";
     return -1;
 }
+
 qreal visualizationThread::pointsEuklideanDistance(QPoint p1, QPoint p2)
 {
     qreal x = (double) p1.x() - p2.x();
