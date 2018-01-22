@@ -1,8 +1,11 @@
 #ifndef VISUALIZATIONSETTINGS_GENERAL_H
 #define VISUALIZATIONSETTINGS_GENERAL_H
 
+
 #include "../Clustering/clusters.h"
 #include "enum_visualizationalgorithms.h"
+
+#include <memory>
 
 #include <QRect>
 

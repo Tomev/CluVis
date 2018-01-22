@@ -1172,6 +1172,8 @@ void MainWindow::setVisualizationSettings()
     vSettings->sceneRect = new QRect(0,0,sceneWidth,sceneHeight);
     vSettings->clusters = &clusters;
 
+    vSettings->clusters = &(this->clusters);
+
     addLogMessage(tr("log.generalSettingsLoaded"));
 
     switch(settings->dataTypeID)
@@ -1682,9 +1684,9 @@ void MainWindow::on_pushButtonInterfere_clicked()
   QString path = "D:\\Dysk Google\\Rules\\";
   path += fileName;
 
-  ruleInterferencer.generateRandomFactsBase(path, 10);
-  */
+  ruleInterferencer.generateRandomFactsBase(path, 100000);
 
+  */
   qDebug() << "Interfering";
 
   QString fileName = ui->labelObjectBaseName->text();
@@ -1792,6 +1794,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   }
 
   qDebug() << "End interfering.";
+
 
 }
 

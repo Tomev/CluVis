@@ -13,13 +13,13 @@ visualizationThread::visualizationThread(generalSettings *settings,
 
 visualizationThread::~visualizationThread(){}
 
-void visualizationThread::run(ruleCluster *c)
+void visualizationThread::run(cluster *c)
 {
     rectPadding = 10;
     visualize(c);
 }
 
-void visualizationThread::visualize(ruleCluster *c)
+void visualizationThread::visualize(cluster *c)
 {
     switch(settings->dataTypeID)
     {
@@ -36,7 +36,7 @@ void visualizationThread::visualize(ruleCluster *c)
     }
 }
 
-void visualizationThread::visualizeRSESRules(ruleCluster *c)
+void visualizationThread::visualizeRSESRules(cluster *c)
 {
     switch(vSettings->visualizationAlgorithmID)
     {
@@ -51,7 +51,7 @@ void visualizationThread::visualizeRSESRules(ruleCluster *c)
     }
 }
 
-void visualizationThread::RSES_RTSAD(QRect* rect, ruleCluster* c)
+void visualizationThread::RSES_RTSAD(QRect* rect, cluster* c)
 {
   QRect paintAreaRect = *rect;
 
@@ -61,7 +61,7 @@ void visualizationThread::RSES_RTSAD(QRect* rect, ruleCluster* c)
       RSES_RTSAD_PaintHorizontal(paintAreaRect, c);
 }
 
-void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
+void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, cluster* c)
 {
     QRect paintAreaRect = rect;
 
@@ -72,14 +72,18 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
             int top = paintAreaRect.top();
             int left = paintAreaRect.left();
             float width = widthScaled(settings->clusters->size(), rect, settings->objectsNumber);
+
             if(width<1)
                 width = 1;
+
             int height = paintAreaRect.height();
+
             if(height<1)
                 height =1;
             QColor sV = getColorFromSize(settings->clusters->at(i)->size()); // sV -> shadeValue
 
             QRect newRect(left,top,width,height);
+
             QRect smallerRect(left+rectPadding, top+rectPadding,
                               width-2*rectPadding,height-2*rectPadding);
 
@@ -99,7 +103,7 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
     else
     {
         //ruleCluster** clusters;
-        QVector<ruleCluster*> clusters;
+        QVector<cluster*> clusters;
 
         int clustersNumber;
 
@@ -127,7 +131,7 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
             QRect smallerRect(left+rectPadding, top+rectPadding,
                               width-2*rectPadding,height-2*rectPadding);
 
-            customGraphicsRectObject* vRect = new customGraphicsRectObject(newRect, sV, clusters[i]);
+            customGraphicsRectObject* vRect = new customGraphicsRectObject(newRect, sV, (ruleCluster*)clusters[i]);
 
             emit passGraphicsRectObject(vRect);;
 
@@ -138,6 +142,7 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, ruleCluster* c)
                 RSES_RTSAD(&smallerRect, clusters[i]);
 
             paintAreaRect.setLeft(paintAreaRect.left() + width);
+
         }
     }
 }
@@ -154,7 +159,7 @@ float visualizationThread::widthScaled(int width, QRect rect, int rulesInCluster
     return result;
 }
 
-void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
+void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, cluster *c)
 {
     QRect paintAreaRect = rect;
 
@@ -203,9 +208,11 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, ruleCluster* c)
         }
         else
         {
+          /*
             clusters = new ruleCluster*[1];
             clusters[0] = c;
             clustersNumber = 1;
+          */
         }
 
         for(int i = 0; i < clustersNumber; i++)
@@ -286,7 +293,7 @@ QColor visualizationThread::getColorFromSize(int cSize)
     return QColor(0,0,0);
 }
 
-void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
+void visualizationThread::RSES_CircularTreemap(QRect *rect, cluster *c)
 {
     QRect mainBRect;
     ruleCluster* newC;
@@ -602,7 +609,7 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, ruleCluster *c)
     }
     else
     {
-        newC = c;
+        newC = (ruleCluster*)c;
 
         QColor sV = getColorFromSize(newC->size()); // sV -> shadeValue
 
