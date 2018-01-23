@@ -149,6 +149,8 @@ void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attri
         {
             atrName = keys.at(j);
 
+            //qDebug() << "Atr name: " << atrName;
+
             if(attributes->value(atrName)->type == "symbolic")
             {
                 categoricalAttributeData* currentAttribute =

@@ -136,11 +136,17 @@ void groupingThread::groupObjects()
 
     grpDataPrep->clusterObjects(&clusters, &attributes);
 
+    //qDebug() << "Objects clustered.";
+
     grpDataPrep->fillAttributesValues(&attributes, &clusters);
+
+    //qDebug() << "Attributes data filled.";
 
     emit passLogMsg(tr("log.creatingSimMatrix"));
 
     fillSimMatrix(settings->objectsNumber);
+
+    //qDebug() << "Sim matrix filled.";
 
     emit passLogMsg(tr("log.groupingProcessStarted"));
 

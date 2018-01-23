@@ -1664,12 +1664,16 @@ void MainWindow::on_pushButtonStandard_clicked()
 void MainWindow::on_pushButtonInterfere_clicked()
 {
   // GENERATING RANDOM FACTS BASE
-
   /*
+
+  qDebug() << "Start";
+
   // Group objects to ensure attributes data is gathered
   setGroupingSettings();
   settings->stopCondition = settings->objectsNumber;
   groupObjects();
+
+  qDebug() << "Objects grouped";
 
   ruleInterferencer.setGroupingThread(this->gThread);
 
@@ -1685,8 +1689,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
   path += fileName;
 
   ruleInterferencer.generateRandomFactsBase(path, 100000);
-
   */
+
   qDebug() << "Interfering";
 
   QString fileName = ui->labelObjectBaseName->text();
@@ -1794,7 +1798,6 @@ void MainWindow::on_pushButtonInterfere_clicked()
   }
 
   qDebug() << "End interfering.";
-
 
 }
 
