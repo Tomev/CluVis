@@ -53,7 +53,7 @@ void groupingDataPreparator_RSESRules::fillAttributesData(QHash<QString, attribu
 }
 
 void groupingDataPreparator_RSESRules::clusterObjects(
-    QVector<cluster*> *clusters, QHash<QString, attributeData*> *attributes)
+    std::vector<std::shared_ptr<cluster>> *clusters, QHash<QString, attributeData*> *attributes)
 {
   clusters->clear();
   int i = 0;
@@ -73,8 +73,8 @@ void groupingDataPreparator_RSESRules::clusterObjects(
     while(!in.atEnd())
     {
       line = in.readLine();
-      clusters->push_back(new ruleCluster(i++));
-      clusterRule(static_cast<ruleCluster*>(clusters->last()), line, attributes);
+      clusters->push_back(std::shared_ptr<cluster>(new ruleCluster(i++)));
+      clusterRule(static_cast<ruleCluster*>(clusters->at(clusters->size()-1).get()), line, attributes);
     }
   }
 }
@@ -136,7 +136,7 @@ void groupingDataPreparator_RSESRules::clusterRule(
     c->fillRepresentativesAttributesValues(grpSet->repCreationStrategyID ,grpSet->repTreshold);
 }
 
-void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attributeData*> *attributes, QVector<cluster *> *clusters)
+void groupingDataPreparator_RSESRules::fillAttributesValues(QHash<QString, attributeData*> *attributes, std::vector<std::shared_ptr<cluster>> *clusters)
 {
     QStringList keys;
     QString atrName, atrMaxVal, atrMinVal;

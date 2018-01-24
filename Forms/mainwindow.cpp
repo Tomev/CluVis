@@ -425,7 +425,7 @@ QString MainWindow::createTXTReportContent()
                 + QString::number(clusters[i]->size());
         // Liczba reguł w grupie
         content += "\n\t" + tr("report.clustersCoverage") + ": "
-                + QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()) + "%";
+                + QString::number((((ruleCluster*)(clusters[i].get()))->support*100)/countCoverageSum()) + "%";
         // Pokrycie skupienia
         //content += "\n\t" + tr("report.clustersRepresentative") + ": "
                 //+ ((ruleCluster*)clusters[i])->representative;
@@ -448,12 +448,12 @@ QString MainWindow::formatThickString(QString s)
 
 cluster *MainWindow::findSmallestCluster()
 {
-    ruleCluster* smallest = ((ruleCluster*)clusters[0]);
+    ruleCluster* smallest = ((ruleCluster*)clusters[0].get());
 
     for(int i = 1; i < settings->stopCondition; ++i)
     {
         if(smallest->size() > clusters[i]->size())
-            smallest = ((ruleCluster*)clusters[i]);
+            smallest = ((ruleCluster*)clusters[i].get());
     }
 
     return smallest;
@@ -466,7 +466,7 @@ int MainWindow::getBiggestRepresentativeLength()
 
     for(int i = 0; i < settings->stopCondition; ++i)
     {
-        c = static_cast<ruleCluster*>(clusters[i]);
+        c = static_cast<ruleCluster*>(clusters[i].get());
 
         if(biggestRepSize < countRuleLength(c->representative()))
             biggestRepSize = countRuleLength(c->representative());
@@ -482,7 +482,7 @@ int MainWindow::getSmallestRepresentativeLength()
 
     for(int i = 0; i < settings->stopCondition; ++i)
     {
-        c = static_cast<ruleCluster*>(clusters[i]);
+        c = static_cast<ruleCluster*>(clusters[i].get());
 
         if(smallestRepSize > countRuleLength(c->representative()))
             smallestRepSize = countRuleLength(c->representative());
@@ -498,7 +498,7 @@ qreal MainWindow::getAverageRepresentativeLength()
 
     for(int i = 0; i < settings->stopCondition; ++i)
     {
-        c = static_cast<ruleCluster*>(clusters[i]);
+        c = static_cast<ruleCluster*>(clusters[i].get());
         averageRepSize += countRuleLength(c->representative());
     }
 
@@ -509,12 +509,12 @@ qreal MainWindow::getAverageRepresentativeLength()
 
 cluster* MainWindow::findBiggestCluster()
 {
-    ruleCluster* biggest = ((ruleCluster*)clusters[0]);
+    ruleCluster* biggest = ((ruleCluster*)clusters[0].get());
 
     for(int i = 1; i < this->settings->stopCondition; i++)
     {
         if(biggest->size() < clusters[i]->size())
-            biggest = ((ruleCluster*)clusters[i]);
+            biggest = ((ruleCluster*)clusters[i].get());
     }
 
     return biggest;
@@ -545,7 +545,7 @@ int MainWindow::countCoverageSum()
     int coverageSum = 0;
 
     for(int i = 0; i < settings->stopCondition; ++i)
-        coverageSum += ((ruleCluster*)clusters[i])->support;
+        coverageSum += ((ruleCluster*)clusters[i].get())->support;
 
     return coverageSum;
 }
@@ -816,15 +816,15 @@ QString MainWindow::createXMLFileClustersDataContent()
                     QString::number(clusters[i]->nodesNumber()*100/countAllNodes()), false);
         //Cluster's support
         //TODO: RECONSIDER
-        result += createXMLFileTableCell(QString::number((((ruleCluster*)clusters[i])->support)),false);
+        result += createXMLFileTableCell(QString::number((((ruleCluster*)clusters[i].get())->support)),false);
         //Cluster's support percent
         result += createXMLFileTableCell(
-                    QString::number((((ruleCluster*)clusters[i])->support*100)/countCoverageSum()), false);
+                    QString::number((((ruleCluster*)clusters[i].get())->support*100)/countCoverageSum()), false);
         //Cluster's representative
-        representativeHolder = ((ruleCluster*)clusters[i])->representative();
+        representativeHolder = ((ruleCluster*)clusters[i].get())->representative();
         result += createXMLFileTableCell(representativeHolder.replace("&","&amp;").replace("<","&lt;").replace(">", "&gt;"), false);
         //Cluster's representative length
-        result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i])->representative())), false);
+        result += createXMLFileTableCell(QString::number(countRuleLength(((ruleCluster*)clusters[i].get())->representative())), false);
 
         result += "\t\t\t</Row>\n";
     }
@@ -1116,7 +1116,7 @@ void MainWindow::setGroupingSettings()
     settings->dataTypeID = 0;
     settings->stopCondition =
             ui->spinBoxStopConditionValue->value();
-    settings->clusters = &this->clusters;
+    settings->clusters = &clusters;
 
     gSettings->groupingAlgorithmID = 0;
     gSettings->attributesFrequencyPercent =
@@ -1171,8 +1171,6 @@ void MainWindow::setVisualizationSettings()
 
     vSettings->sceneRect = new QRect(0,0,sceneWidth,sceneHeight);
     vSettings->clusters = &clusters;
-
-    vSettings->clusters = &(this->clusters);
 
     addLogMessage(tr("log.generalSettingsLoaded"));
 

@@ -21,7 +21,7 @@ public:
 
     QRect* sceneRect;
 
-    QVector<cluster*> *clusters;
+    std::vector<std::shared_ptr<cluster>> *clusters;
 
     //Methods
 

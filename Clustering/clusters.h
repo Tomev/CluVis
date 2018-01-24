@@ -64,8 +64,8 @@ struct cluster
          */
         qreal compactness;
 
-        cluster* leftNode = NULL;
-        cluster* rightNode = NULL;
+        std::shared_ptr<cluster> leftNode;
+        std::shared_ptr<cluster> rightNode;
 
         //Methods
         QString name()
@@ -97,7 +97,7 @@ struct cluster
 
         bool hasBothNodes()
     {
-        if(leftNode == NULL || rightNode == NULL)
+        if(leftNode.use_count() == 0 || rightNode.use_count() == 0)
             return false;
 
         return true;

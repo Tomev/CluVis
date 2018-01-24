@@ -13,7 +13,7 @@ public:
     int dataTypeID;
     int objectsNumber;
     int stopCondition;
-    QVector<cluster*> *clusters;
+    std::vector<std::shared_ptr<cluster>> *clusters;
 
     //Methods
 

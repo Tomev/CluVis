@@ -88,29 +88,28 @@ void visualizationThread::RSES_RTSAD_PaintVertical(QRect rect, cluster* c)
                               width-2*rectPadding,height-2*rectPadding);
 
             customGraphicsRectObject* vRect =
-                    new customGraphicsRectObject(newRect, sV, (ruleCluster*)(vSettings->clusters->at(i)));
+                    new customGraphicsRectObject(newRect, sV, (ruleCluster*)(vSettings->clusters->at(i).get()));
             emit passGraphicsRectObject(vRect);
 
             if(vSettings->visualizeAllHierarchyLevels &&
                     height > 2*rectPadding &&
                     width > 2*rectPadding &&
                     vSettings->clusters->at(i)->size() > 1)
-                RSES_RTSAD(&smallerRect, (ruleCluster*)(vSettings->clusters->at(i)));
+                RSES_RTSAD(&smallerRect, (ruleCluster*)(vSettings->clusters->at(i).get()));
 
             paintAreaRect.setLeft(paintAreaRect.left() + width);
         }
     }
     else
     {
-        //ruleCluster** clusters;
         QVector<cluster*> clusters;
 
         int clustersNumber;
 
         if(c->hasBothNodes())
         {
-            clusters.push_back((ruleCluster*)(c->leftNode));
-            clusters.push_back((ruleCluster*)(c->rightNode));
+            clusters.push_back((ruleCluster*)(c->leftNode.get()));
+            clusters.push_back((ruleCluster*)(c->rightNode.get()));
             clustersNumber = 2;
         }
         else
@@ -181,7 +180,7 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, cluster *c)
             customGraphicsRectObject* vRect =
                     new customGraphicsRectObject(newRect,
                                                  sV,
-                                                 (ruleCluster*)(vSettings->clusters->at(i)));
+                                                 (ruleCluster*)(vSettings->clusters->at(i).get()));
 
             emit passGraphicsRectObject(vRect);
 
@@ -189,7 +188,7 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, cluster *c)
                     height > 2*rectPadding &&
                     width > 2*rectPadding &&
                     vSettings->clusters->at(i)->size() > 1)
-                RSES_RTSAD(&smallerRect, (ruleCluster*)(vSettings->clusters->at(i)));
+                RSES_RTSAD(&smallerRect, (ruleCluster*)(vSettings->clusters->at(i).get()));
 
             paintAreaRect.setLeft(paintAreaRect.top() + height);
         }
@@ -202,8 +201,8 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, cluster *c)
         if(c->hasBothNodes())
         {
             clusters = new ruleCluster*[2];
-            clusters[0] = (ruleCluster*)c->leftNode;
-            clusters[1] = (ruleCluster*)c->rightNode;
+            clusters[0] = (ruleCluster*)c->leftNode.get();
+            clusters[1] = (ruleCluster*)c->rightNode.get();
             clustersNumber = 2;
         }
         else
@@ -308,7 +307,7 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, cluster *c)
     {
         if(settings->stopCondition == 1)
         {
-            newC = (ruleCluster*) vSettings->clusters->at(0);
+            newC = (ruleCluster*) vSettings->clusters->at(0).get();
 
             QColor sV = getColorFromSize(newC->size());
 
@@ -335,8 +334,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, cluster *c)
                 QRect* c2BRect =
                     new QRect(left,top,d2,d2);
 
-                RSES_CircularTreemap(c1BRect,(ruleCluster*)newC->leftNode);
-                RSES_CircularTreemap(c2BRect,(ruleCluster*)newC->rightNode);
+                RSES_CircularTreemap(c1BRect,(ruleCluster*)newC->leftNode.get());
+                RSES_CircularTreemap(c2BRect,(ruleCluster*)newC->rightNode.get());
             }
         }
 
@@ -599,8 +598,8 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, cluster *c)
                     QRect* c2BRect =
                         new QRect(left,top,d2,d2);
 
-                    RSES_CircularTreemap(c1BRect,(ruleCluster*)sortedClusters.at(i)->leftNode);
-                    RSES_CircularTreemap(c2BRect,(ruleCluster*)sortedClusters.at(i)->rightNode);
+                    RSES_CircularTreemap(c1BRect,(ruleCluster*)sortedClusters.at(i)->leftNode.get());
+                    RSES_CircularTreemap(c2BRect,(ruleCluster*)sortedClusters.at(i)->rightNode.get());
                 }
             }
 
@@ -635,21 +634,21 @@ void visualizationThread::RSES_CircularTreemap(QRect *rect, cluster *c)
                 new QRect(left,top+1,d2,d2);
 
             if(vSettings->visualizeAllHierarchyLevels){
-                RSES_CircularTreemap(c1BRect,(ruleCluster*)newC->leftNode);
-                RSES_CircularTreemap(c2BRect,(ruleCluster*)newC->rightNode);
+                RSES_CircularTreemap(c1BRect,(ruleCluster*)newC->leftNode.get());
+                RSES_CircularTreemap(c2BRect,(ruleCluster*)newC->rightNode.get());
             }
             else
             {
                 sV = getColorFromSize(newC->leftNode->size());
 
                 customGraphicEllipseObject* object =
-                   new customGraphicEllipseObject(*c1BRect,sV,(ruleCluster*)newC->leftNode);
+                   new customGraphicEllipseObject(*c1BRect,sV,(ruleCluster*)newC->leftNode.get());
 
                 emit passGraphicsEllipseObject(object);
 
                 sV = getColorFromSize(newC->rightNode->size());
 
-                object = new customGraphicEllipseObject(*c2BRect,sV,(ruleCluster*)newC->rightNode);
+                object = new customGraphicEllipseObject(*c2BRect,sV,(ruleCluster*)newC->rightNode.get());
 
                 emit passGraphicsEllipseObject(object);
             }
@@ -685,8 +684,8 @@ void visualizationThread::fillVectorWithClustersSortedBySize(QVector<cluster *> 
     // Fill temporary vector with unsorted clusters
     QVector<cluster*> unsortedClusters;
 
-    foreach(cluster *clusterPointer, *(vSettings->clusters))
-        unsortedClusters.append(clusterPointer);
+    foreach(std::shared_ptr<cluster> clusterPointer, *(vSettings->clusters))
+        unsortedClusters.append(clusterPointer.get());
 
     int largestClusterIndex;
 

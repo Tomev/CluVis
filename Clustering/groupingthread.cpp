@@ -27,9 +27,6 @@ groupingThread::groupingThread(groupingSettings_Detailed *dGrpSettings,
     this->dGrpSettings = dGrpSettings;
 
     wasGroupingCanceled = false;
-
-    initializeGroupingProgressbar();
-    initializeCreatingMatrixProgressbar();
 }
 
 void groupingThread::setSettings(groupingSettings_Detailed *dGrpSettings, groupingSettings_General *groupingSettings, generalSettings *settings)
@@ -50,9 +47,6 @@ groupingThread::groupingThread(groupingSettings *settings)
     this->dGrpSettings = settings->dGrpSet;
 
     wasGroupingCanceled = false;
-
-    initializeGroupingProgressbar();
-    initializeCreatingMatrixProgressbar();
 }
 
 groupingThread::~groupingThread(){}
@@ -61,37 +55,6 @@ void groupingThread::run()
 {    
     initializeDataPreparator();
     groupObjects();
-}
-
-void groupingThread::initializeGroupingProgressbar()
-{
-  //delete groupingProgress;
-
-    groupingProgress = new QProgressDialog(tr("gThreadDialog.grouping"),tr("gThreadDialog.cancel"),1, settings->objectsNumber,0,0);
-    groupingProgress->setValue(0);
-    groupingProgress->setWindowTitle(tr("gThreadDialog.grouping"));
-    groupingProgress->setFixedSize(groupingProgress->sizeHint());
-    groupingProgress->setWindowFlags(groupingProgress->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    groupingProgress->setWindowModality(Qt::WindowModal);
-    groupingProgress->move(QApplication::desktop()->availableGeometry().center()
-                           - groupingProgress->rect().center()
-                           - QPoint(groupingProgress->width()/2, 0));
-}
-
-void groupingThread::initializeCreatingMatrixProgressbar()
-{
-  //delete creatingSimMatrixProgress;
-
-    creatingSimMatrixProgress  = new QProgressDialog(tr("gThreadDialog.creatingSimilarityMatrix")
-                                                     ,tr("gThreadDialog.cancel"),1,settings->objectsNumber,0,0);
-    creatingSimMatrixProgress->setValue(0);
-    creatingSimMatrixProgress->setWindowTitle(tr("gThreadDialog.creatingSimilarityMatrix"));
-    creatingSimMatrixProgress->setFixedSize(creatingSimMatrixProgress->sizeHint());
-    creatingSimMatrixProgress->setWindowFlags(creatingSimMatrixProgress->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-    creatingSimMatrixProgress->setWindowModality(Qt::WindowModal);
-    creatingSimMatrixProgress->move(QApplication::desktop()->availableGeometry().center()
-                                    - creatingSimMatrixProgress->rect().center()
-                                    + QPoint(20 + groupingProgress->width()/2,0));
 }
 
 void groupingThread::initializeDataPreparator()
@@ -161,13 +124,8 @@ void groupingThread::groupObjects()
 
         QApplication::processEvents();
 
-        if(groupingProgress->wasCanceled()) wasGroupingCanceled = true;
-
         if(wasGroupingCanceled)
         {
-            creatingSimMatrixProgress->close();
-            groupingProgress->close();
-
             emit passLogMsg(tr("log.groupingCancelled"));
             emit passLogMsg(tr("log.visualizationImpossible"));
             //return;
@@ -197,6 +155,8 @@ void groupingThread::groupObjects()
 
         joinMostSimilarClusters();
 
+        //qDebug() << "Clusters joined.";
+
         updateSimMatrix();
 
         //qDebug() << "Step number: " << stepNumber;
@@ -223,9 +183,6 @@ void groupingThread::groupObjects()
         QString(tr("log.mdbiPointer"))
         .arg(QString::number(MDBI))
     );
-
-    creatingSimMatrixProgress->close();
-    groupingProgress->close();
 
     emit passLogMsg(tr("log.groupingFinished"));
     emit passLogMsg(tr("log.sendingResultatntStructure"));
@@ -258,7 +215,7 @@ void groupingThread::fillSimMatrix(int simMatrixSize)
             }
             else
             {
-                qreal simValue = getClustersSimilarityValue(clusters[i], clusters[j]);
+                qreal simValue = getClustersSimilarityValue(clusters[i].get(), clusters[j].get());
                 simMatrix.at(i)->push_back(qreal_ptr(new qreal(simValue)));
             }
         }
@@ -297,6 +254,8 @@ void groupingThread::updateSimMatrix()
     //First column which would represent new cluster is added.
     simMatrix.insert(simMatrix.begin()+newClusterIdx,simData(new clusterSimilarityData()));
 
+    //qDebug() << "Column created.";
+
     //Then, the column is filled.
     for(int i = 0; i <= newClusterIdx; ++i)
     {
@@ -306,18 +265,22 @@ void groupingThread::updateSimMatrix()
         }
         else
         {
-            qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
+            qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx].get(), clusters[i].get());
 
             simMatrix.at(newClusterIdx)->push_back(qreal_ptr(new qreal(simValue)));
         }
     }
 
+    //qDebug() << "Column filled.";
+
     //Then, the row is filled.
     for(unsigned int i = (newClusterIdx + 1); i <= (simMatrix.size() - 1) ; ++i)
     {
-        qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx], clusters[i]);
+        qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx].get(), clusters[i].get());
         simMatrix.at(i)->insert(simMatrix.at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
     }
+
+    //qDebug() << "Row filled.";
 }
 
 //TODO: Consides placing similarity counting in another class.
@@ -341,12 +304,12 @@ qreal groupingThread::getClustersSimilarityValue(cluster *c1, cluster *c2)
         case SingleLinkId:
         case GenieGiniId:
         case GenieBonferroniId:
-            return qMax(getClustersSimilarityValue(c1->leftNode,c2),
-                        getClustersSimilarityValue(c1->rightNode,c2)) / attributes.size();
+            return qMax(getClustersSimilarityValue(c1->leftNode.get(),c2),
+                        getClustersSimilarityValue(c1->rightNode.get(),c2)) / attributes.size();
             break;
         case CompleteLinkId:
-            return qMin(getClustersSimilarityValue(c1->leftNode,c2),
-                        getClustersSimilarityValue(c1->rightNode,c2)) / attributes.size();
+            return qMin(getClustersSimilarityValue(c1->leftNode.get(),c2),
+                        getClustersSimilarityValue(c1->rightNode.get(),c2)) / attributes.size();
             break;
         default:
             return -1;
@@ -1111,7 +1074,7 @@ void groupingThread::findHighestSimilarityIndicesWithSmallestCluster(int *target
 
   //qDebug() << "Finding highest smallest.";
 
-  for(cluster *c : clusters)
+  for(std::shared_ptr<cluster> c : clusters)
     if(c->size() < smallestSize) smallestSize = c->size();
 
   for(unsigned int i = 0; i < simMatrix.size(); ++i)
@@ -1133,7 +1096,7 @@ void groupingThread::findHighestSimilarityIndicesWithSmallestCluster(int *target
   //qDebug() << "Finding highest smallest end.";
 }
 
-cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
+std::shared_ptr<cluster> groupingThread::joinClusters(std::shared_ptr<cluster> c1, std::shared_ptr<cluster> c2)
 {
     QStringList atrNames;
     ruleCluster* newGrp = new ruleCluster(++nextClusterID);
@@ -1143,18 +1106,18 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
     newGrp->rightNode = c2;
 
     newGrp->decisionAttributes
-            .unite(((ruleCluster*) c1)->decisionAttributes);
+            .unite(((ruleCluster*) c1.get())->decisionAttributes);
     newGrp->decisionAttributes
-            .unite(((ruleCluster*) c2)->decisionAttributes);
+            .unite(((ruleCluster*) c2.get())->decisionAttributes);
 
     newGrp->premiseAttributes
-            .unite(((ruleCluster*) c1)->premiseAttributes);
+            .unite(((ruleCluster*) c1.get())->premiseAttributes);
     newGrp->premiseAttributes
-            .unite(((ruleCluster*) c2)->premiseAttributes);
+            .unite(((ruleCluster*) c2.get())->premiseAttributes);
 
     newGrp->support =
-            static_cast<ruleCluster*>(c1)->support +
-            static_cast<ruleCluster*>(c2)->support;
+            static_cast<ruleCluster*>(c1.get())->support +
+            static_cast<ruleCluster*>(c2.get())->support;
 
     newGrp->attributes = c1->attributes;
     atrNames = c2->attributes.keys();
@@ -1177,7 +1140,7 @@ cluster* groupingThread::joinClusters(cluster* c1, cluster* c2)
 
     newGrp->compactness = countClustersCompactness(newGrp);
 
-    return newGrp;
+    return std::shared_ptr<cluster>(newGrp);
 }
 
 qreal groupingThread::countClustersCompactness(cluster* c)
@@ -1285,13 +1248,13 @@ qreal groupingThread::getMaxInterClusterSimilarity(int clustersNum)
 
     qreal maxInterSim, potentialMax;
 
-    maxInterSim = getClustersSimilarityValue(clusters[0], clusters[1]);
+    maxInterSim = getClustersSimilarityValue(clusters[0].get(), clusters[1].get());
 
     for(int i = 0; i < clustersNum; ++i)
     {
         for(int j = 0; j < i; ++j)
         {
-            potentialMax = getClustersSimilarityValue(clusters[i], clusters[j]);
+            potentialMax = getClustersSimilarityValue(clusters[i].get(), clusters[j].get());
 
             if(potentialMax > maxInterSim)
                 maxInterSim = potentialMax;
@@ -1345,7 +1308,7 @@ void groupingThread::countMDBI(int clustersNum)
         for(int j = 0; j < i; ++j)
         {
             addend = clusters[i]->compactness + clusters[j]->compactness;
-            clustersSim = getClustersSimilarityValue(clusters[i], clusters[j]);
+            clustersSim = getClustersSimilarityValue(clusters[i].get(), clusters[j].get());
 
             if(clustersSim == 0)
                 clustersSim = 1;
@@ -1359,7 +1322,7 @@ void groupingThread::countMDBI(int clustersNum)
 
 void groupingThread::continueGrouping()
 {
-  for(int i = settings->stopCondition; i < settings->clusters->size(); ++i)
+  for(unsigned int i = settings->stopCondition; i < settings->clusters->size(); ++i)
   {
     joinMostSimilarClusters();
 
@@ -1394,7 +1357,7 @@ double groupingThread::updateGiniIndex(long c1Size, long c2Size)
 
   double result = (n - stepNumber) * n * inequityIndex;
 
-  for(cluster *c : clusters)
+  for(std::shared_ptr<cluster> c : clusters)
     result += abs(c->size() - c1Size - c2Size) - abs(c->size() - c1Size) - abs(c->size() - c2Size);
 
   result -= c2Size + c1Size;
@@ -1467,7 +1430,7 @@ QVector<long> groupingThread::sortClusterSizesNonincreasingly()
   QVector<long> sortedSizes;
   int i = 0;
 
-  for(cluster *c : clusters)
+  for(std::shared_ptr<cluster> c : clusters)
   {
     for(i = 0; i < sortedSizes.size(); ++i)
     {

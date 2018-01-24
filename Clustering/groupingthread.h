@@ -47,7 +47,7 @@ public:
 
     std::vector<simData> simMatrix;
 
-    QVector<cluster*> clusters;
+    std::vector<std::shared_ptr<cluster>> clusters;
 
 signals:
 
@@ -84,13 +84,8 @@ private:
 
     groupingSettings_Detailed* dGrpSettings;
 
-    QProgressDialog* groupingProgress;
-    QProgressDialog* creatingSimMatrixProgress;
-
     //Methods
 
-    void initializeGroupingProgressbar();
-    void initializeCreatingMatrixProgressbar();
     void initializeDataPreparator();
 
     void groupObjects();     
@@ -99,7 +94,7 @@ private:
             void findClustersToJoin(int *i, int *j);
               void findHighestSimilarityIndexes(int* i, int* j);
               void findHighestSimilarityIndicesWithSmallestCluster(int* targetI, int* targetJ);
-            cluster* joinClusters(cluster* c1, cluster* c2);
+            std::shared_ptr<cluster> joinClusters(std::shared_ptr<cluster> c1, std::shared_ptr<cluster> c2);
             void deleteClusterSimilarityData(unsigned int clusterId);
         void updateSimMatrix();
 

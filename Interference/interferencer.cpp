@@ -137,14 +137,14 @@ int interferencer::interfere()
 
     findRulesToFireInCluster(&factRule,
                              grpThread->settings
-                             ->clusters->at(mostSimiliarClusterIdx));
+                             ->clusters->at(mostSimiliarClusterIdx).get());
 
     canTargetBeAchieved();
 
     numberOfRulesFired = fireableRules.size();
 
     findMostSimilarRule(&factRule, grpThread->settings
-                        ->clusters->at(mostSimiliarClusterIdx));
+                        ->clusters->at(mostSimiliarClusterIdx).get());
 
     wasTargetAchieved();
   }
@@ -160,7 +160,7 @@ int interferencer::fillAvailableRuleIndexes()
 
   //qDebug() << "Clus size: " << grpThread->settings->clusters->size();
 
-  for(int i = 0; i < grpThread->settings->clusters->size(); ++i)
+  for(unsigned int i = 0; i < grpThread->settings->clusters->size(); ++i)
   {
     //qDebug() << i << ". " << grpThread->settings->clusters->at(i)->size();
     objects += grpThread->settings->clusters->at(i)->getObjects();
@@ -200,7 +200,7 @@ int interferencer::canTargetBeAchieved()
 
   QList<cluster*> clus = {};
 
-  for(int i = 0; i < grpThread->settings->clusters->size(); ++i)
+  for(unsigned int i = 0; i < grpThread->settings->clusters->size(); ++i)
     clus += grpThread->settings->clusters->at(i)->getObjects();
 
   for(cluster* cl : clus)
@@ -329,11 +329,11 @@ int interferencer::findMostSimiliarClusterToFactRule(cluster* factRule)
   int clusterIdx = 0;
   double maxSimilarity = -1.0, sim;
 
-  QVector<cluster*>* clusters = grpThread->settings->clusters;
+  std::vector<std::shared_ptr<cluster>> *clusters = grpThread->settings->clusters;
 
-  for(int idx = 0; idx < clusters->size(); ++idx)
+  for(unsigned int idx = 0; idx < clusters->size(); ++idx)
   {
-    sim = grpThread->getClustersSimilarityValue(clusters->at(idx), factRule);
+    sim = grpThread->getClustersSimilarityValue(clusters->at(idx).get(), factRule);
 
     if(sim > maxSimilarity)
     {
@@ -357,8 +357,8 @@ int interferencer::findRulesToFireInCluster(cluster *fc, cluster *c)
     return 0;
   }
 
-  return  findRulesToFireInCluster(fc, c->leftNode) +
-          findRulesToFireInCluster(fc, c->rightNode);
+  return  findRulesToFireInCluster(fc, c->leftNode.get()) +
+          findRulesToFireInCluster(fc, c->rightNode.get());
 }
 
 bool interferencer::canRuleBeFired(ruleCluster *c)
@@ -393,7 +393,7 @@ int interferencer::countNumberOfPossibleFacts()
   for(int i = 0; i < grpThread->settings->stopCondition; ++i)
   {
     ruleCluster* c =
-      static_cast<ruleCluster*>(grpThread->clusters[i]);
+      static_cast<ruleCluster*>(grpThread->clusters[i].get());
     factsSet += c->getDescriptors(PREMISES);
   }
 
@@ -407,7 +407,7 @@ int interferencer::saveAllFactsToBase(QString path)
   for(int i = 0; i < grpThread->settings->stopCondition; ++i)
   {
     ruleCluster* c =
-      static_cast<ruleCluster*>(grpThread->clusters[i]);
+      static_cast<ruleCluster*>(grpThread->clusters[i].get());
     factsSet += c->getDescriptors(PREMISES);
   }
 
@@ -421,7 +421,7 @@ int interferencer::saveRandomNFactsToBase(int numOfFacts, QString path)
   for(int i = 0; i < grpThread->settings->stopCondition; ++i)
   {
     ruleCluster* c =
-      static_cast<ruleCluster*>(grpThread->clusters[i]);
+      static_cast<ruleCluster*>(grpThread->clusters[i].get());
     factsSet += c->getDescriptors(PREMISES);
   }
 
@@ -466,11 +466,11 @@ int interferencer::findMostSimilarRule(cluster* fc, cluster* c)
     return 0;
   }
 
-  if(grpThread->getClustersSimilarityValue(fc, c->leftNode) >
-     grpThread->getClustersSimilarityValue(fc, c->rightNode))
-    return findMostSimilarRule(fc, c->leftNode);
+  if(grpThread->getClustersSimilarityValue(fc, c->leftNode.get()) >
+     grpThread->getClustersSimilarityValue(fc, c->rightNode.get()))
+    return findMostSimilarRule(fc, c->leftNode.get());
   else
-    return findMostSimilarRule(fc, c->rightNode);
+    return findMostSimilarRule(fc, c->rightNode.get());
 
   return -1;
 }

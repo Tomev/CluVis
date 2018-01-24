@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <memory>
 
 #include "../generalsettings.h"
 
@@ -108,7 +109,7 @@ private:
 
     visualizationSettings_general* vSettings;
 
-    QVector<cluster*> clusters;
+    std::vector<std::shared_ptr<cluster>> clusters;
 
     clusterInfo_RSESRules* cInfo;
 
