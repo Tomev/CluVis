@@ -36,9 +36,12 @@ public:
     int coverSum;
     unsigned int repCreationStrategyID;
     int repTreshold;
-    int zeroRepresentativeClusterOccurence;
 
-    double inequityIndex;
+    int zeroRepresentativeClusterOccurence;
+    unsigned int zeroRepresentativesNumber = 0;
+
+    double giniIndex;
+    double bonferroniIndex;
     double inequityThreshold;
 
     bool findBestClustering;

@@ -56,6 +56,8 @@ signals:
 protected:
 
     double inequityIndex = 0.0;
+    double bonferroniIndex = 0.0;
+    double giniIndex = 0.0;
     long stepNumber = 0;
 
     int updateInequityIndex(long c1Size, long c2Size);

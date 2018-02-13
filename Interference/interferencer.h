@@ -42,6 +42,8 @@ class interferencer
 
     QList<int> factsBasePercents;
 
+    bool zeroRepresentativeOccured = false;
+
   private:
 
     groupingThread* grpThread;

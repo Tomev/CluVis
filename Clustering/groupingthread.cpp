@@ -1,7 +1,8 @@
+#define UNUSED(a) (void)(a)
+
 #include "groupingthread.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QStringList>
 #include <QMessageBox>
 #include <algorithm>
@@ -86,8 +87,9 @@ void groupingThread::initializeDataPreparator()
 
 void groupingThread::groupObjects()
 {   
-    // Clear zero representative cluster occurence
+    // Clear zero representative cluster data
     grpSettings->zeroRepresentativeClusterOccurence = -1;
+    grpSettings->zeroRepresentativesNumber = 0;
 
     emit passLogMsg(tr("log.gatheringAttributesData"));
 
@@ -1132,10 +1134,12 @@ std::shared_ptr<cluster> groupingThread::joinClusters(std::shared_ptr<cluster> c
 
     newGrp->fillRepresentativesAttributesValues(grpSettings->repCreationStrategyID, grpSettings->repTreshold);
 
-    if(newGrp->representativeAttributesValues.keys().size() == 0 &&
-       grpSettings->zeroRepresentativeClusterOccurence == -1)
+    if(newGrp->representativeAttributesValues.keys().size() == 0)
     {
+      if(grpSettings->zeroRepresentativeClusterOccurence == -1)
         grpSettings->zeroRepresentativeClusterOccurence = nextClusterID - 1;
+
+      ++(grpSettings->zeroRepresentativesNumber);
     }
 
     newGrp->compactness = countClustersCompactness(newGrp);
@@ -1337,12 +1341,19 @@ void groupingThread::continueGrouping()
 
 int groupingThread::updateInequityIndex(long c1Size, long c2Size)
 {
-  if(grpSettings->interClusterSimMeasureID == GenieBonferroniId)
-    inequityIndex = countBonferroniIndex();
-  //else inequityIndex = updateGiniIndex(c1Size, c2Size);
-  else inequityIndex = countGiniIndex();
+  // c1Size and c2Size can be used to update Gini Index, but are not used now
+  UNUSED(c1Size);
+  UNUSED(c2Size);
 
-  grpSettings->inequityIndex = inequityIndex;
+  giniIndex = countGiniIndex();
+  bonferroniIndex = countBonferroniIndex();
+
+  if(grpSettings->interClusterSimMeasureID == GenieBonferroniId)
+    inequityIndex = bonferroniIndex;
+  else inequityIndex = giniIndex;
+
+  grpSettings->giniIndex = giniIndex;
+  grpSettings->bonferroniIndex = bonferroniIndex;
 
   return 0;
 }

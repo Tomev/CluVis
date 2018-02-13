@@ -1717,6 +1717,10 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Most similiar rule,"
              << "Was target achieved,"
 
+             << "Zero representative occurence,"
+             << "Zero representatives number,"
+             << "Was zero representative found during interference,"
+
              << "Number of new facts,"
              << "Was rule fired,"
              << "Number of clusters searched,"
@@ -1735,7 +1739,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Biggest representative length,"
              << "Number of attributes,"
              << "Number of rules,"
-             << "Inequity Index\n";
+             << "Gini Index,"
+             << "Bonferroni Index\n";
     }
 
     file.close();
@@ -1771,6 +1776,10 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << ruleInterferencer.mostSimilarRule->name() << ","
               << ruleInterferencer.targetAchieved << ","
 
+              << gSettings->zeroRepresentativeClusterOccurence << ","
+              << gSettings->zeroRepresentativesNumber << ","
+              << ruleInterferencer.zeroRepresentativeOccured << ","
+
               << ruleInterferencer.getNumberOfNewFacts() << ","
               << ruleInterferencer.wasRuleFired() << ","
               << ruleInterferencer.numberOfClustersSearched << ","
@@ -1789,7 +1798,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << getBiggestRepresentativeLength() << ","
               << settings->objectsNumber << ","
               << gSettings->attributesNumber << ","
-              << gSettings->inequityIndex << "\n";
+              << gSettings->giniIndex << ","
+              << gSettings->bonferroniIndex << "\n";
     }
 
     file.close();

@@ -121,6 +121,8 @@ int interferencer::loadFactsFromPath(QString path)
 
 int interferencer::interfere()
 {
+  zeroRepresentativeOccured = false;
+
   for(int basePercent : factsBasePercents)
   {
     qDebug() << "Number of facts: " << fillFacts(basePercent);
@@ -340,6 +342,9 @@ int interferencer::findMostSimiliarClusterToFactRule(cluster* factRule)
       maxSimilarity = sim;
       clusterIdx = idx;
     }
+
+    if(clusters->at(idx).get()->representativeAttributesValues.keys().size() == 0)
+      zeroRepresentativeOccured = true;
   }
 
   return clusterIdx;
