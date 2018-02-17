@@ -86,6 +86,7 @@ int interferencer::generateRandomFactsBase(QString path,
 int interferencer::loadFactsFromPath(QString path)
 {
   allFacts.clear();
+  target.clear();
 
   QFile factsBase(path);
   QTextStream stream(&factsBase);
