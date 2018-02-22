@@ -25,7 +25,5 @@ int rsesRuleBaseValidator::validate()
 
   ruleBaseFile.close();
 
-
-
   return 1;
 }
