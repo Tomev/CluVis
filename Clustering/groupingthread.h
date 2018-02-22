@@ -127,4 +127,17 @@ private:
      void countMDBI(int size);
 };
 
+enum interObjectSimilarityMeasureId
+{
+    GowersMeasureId = 0,
+    SMCId           = 1,
+    WSMCId          = 2,
+    OF              = 3,
+    IOF             = 4,
+    Goodall1        = 5,
+    Goodall2        = 6,
+    Goodall3        = 7,
+    Goodall4        = 8
+};
+
 #endif // GROUPINGTHREAD_H

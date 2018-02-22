@@ -195,7 +195,7 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, cluster *c)
     }
     else
     {
-        ruleCluster** clusters;
+        ruleCluster** clusters = NULL;
         int clustersNumber;
 
         if(c->hasBothNodes())
@@ -204,14 +204,6 @@ void visualizationThread::RSES_RTSAD_PaintHorizontal(QRect rect, cluster *c)
             clusters[0] = (ruleCluster*)c->leftNode.get();
             clusters[1] = (ruleCluster*)c->rightNode.get();
             clustersNumber = 2;
-        }
-        else
-        {
-          /*
-            clusters = new ruleCluster*[1];
-            clusters[0] = c;
-            clustersNumber = 1;
-          */
         }
 
         for(int i = 0; i < clustersNumber; i++)

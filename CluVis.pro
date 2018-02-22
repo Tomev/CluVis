@@ -28,7 +28,6 @@ SOURCES +=      Forms/about.cpp \
                 Clustering/groupingsettings_general.cpp \
                 Clustering/groupingsettings_rsesrules.cpp \
                 main.cpp \
-                enum_interobjectsimilaritymeasures.cpp \
                 generalsettings.cpp \
     Interference/interferencer.cpp \
     Object/attribute.cpp \
@@ -40,14 +39,6 @@ SOURCES +=      Forms/about.cpp \
 HEADERS  +=     Forms/about.h \
                 Forms/clusterinfo_rsesrules.h \
                 Forms/mainwindow.h \
-                enum_interclustersimilaritymeasures.h \
-                enum_interobjectsimilaritymeasure.h \
-                enum_visualizationalgorithms.h \
-                enum_rulesparts.h \
-                enum_reporttypes.h \
-                enum_languages.h \
-                enum_datatype.h \
-                enum_groupingalgorithms.h \
                 Visualization/customgraphicsrectobject.h \
                 Visualization/visualizationthread.h \
                 Visualization/visualizationsettings_general.h \

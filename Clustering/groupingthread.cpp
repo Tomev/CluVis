@@ -12,8 +12,6 @@
 #include "math.h"
 
 #include "generalsettings.h"
-#include "enum_interclustersimilaritymeasures.h"
-#include "enum_interobjectsimilaritymeasure.h"
 
 groupingThread::groupingThread(groupingSettings_Detailed *dGrpSettings,
                                groupingSettings_General *groupingSettings,
@@ -1156,7 +1154,7 @@ qreal groupingThread::countClustersCompactness(cluster* c)
      *  about similarity measures (countSim methods).
      */
 
-    qreal result, addend;
+    qreal result = 0, addend;
     QList<cluster*> objects = c->getObjects();
 
     // Clusters compactness of object is equal to 0

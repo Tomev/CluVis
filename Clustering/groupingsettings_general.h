@@ -4,8 +4,12 @@
 #include <QFileInfo>
 
 #include "clusters.h"
-#include "enum_interclustersimilaritymeasures.h"
-#include "enum_interobjectsimilaritymeasure.h"
+
+enum visualizationAlgorithmsId
+{
+    SliceAndDiceRTId = 0,
+    CircularTreemapId = 1
+};
 
 enum representativeCreationStrategy
 {
@@ -15,16 +19,14 @@ enum representativeCreationStrategy
     WEIGHTED_ESTIMATE
 };
 
+enum groupingAlgorithmsId
+{
+    ClassicAHCId = 0
+};
+
 class groupingSettings_General
 {
 public:
-    //Members
-        //Constans
-            //Algorithms ID
-
-    const static int CLASSIC_AHC_ID = 0;
-
-        //Variables
 
     QFileInfo objectBaseInfo;
 

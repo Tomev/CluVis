@@ -10,7 +10,15 @@
 
 #include "attributedata.h"
 
-#include "enum_interclustersimilaritymeasures.h"
+enum interClusterSimilarityMeasureId
+{
+    SingleLinkId = 0,
+    CompleteLinkId = 1,
+    AverageLinkId = 2,
+    CentroidLinkId = 3,
+    GenieGiniId = 4,
+    GenieBonferroniId = 5
+};
 
 enum rulePart
 {

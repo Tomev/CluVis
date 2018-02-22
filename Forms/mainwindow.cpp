@@ -1534,7 +1534,7 @@ void MainWindow::on_pushButtonStandard_clicked()
 
         int numberOfIterationsDown = 0,
             numberOfIterationsUp = 0,
-            numberOfIterations, start;
+            numberOfIterations, start = 0;
 
         // Get number of iterations
         for(int i = 0; rulesNumberSqrt - i * rulesNumberOnePercent > 0; ++i)

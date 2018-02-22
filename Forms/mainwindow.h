@@ -16,9 +16,20 @@
 
 #include "../Interference/interferencer.h"
 
-#include "enum_languages.h"
+enum languagesId
+{
+    english = 0,
+    polish = 1
+};
+
+enum reportTypesId
+{
+    XmlReportId = 0,
+    TxtReportId = 1
+};
+
 #include "enum_datatype.h"
-#include "enum_reporttypes.h"
+
 
 namespace Ui
 {
