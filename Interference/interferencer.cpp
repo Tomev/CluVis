@@ -334,6 +334,8 @@ int interferencer::findMostSimiliarClusterToFactRule(cluster* factRule)
 
   std::vector<std::shared_ptr<cluster>> *clusters = grpThread->settings->clusters;
 
+  zeroRepresentativeOccurenceNumber = 0;
+
   for(unsigned int idx = 0; idx < clusters->size(); ++idx)
   {
     sim = grpThread->getClustersSimilarityValue(clusters->at(idx).get(), factRule);
@@ -345,7 +347,10 @@ int interferencer::findMostSimiliarClusterToFactRule(cluster* factRule)
     }
 
     if(clusters->at(idx).get()->representativeAttributesValues.keys().size() == 0)
+    {
       zeroRepresentativeOccured = true;
+      ++zeroRepresentativeOccurenceNumber;
+    }
   }
 
   return clusterIdx;

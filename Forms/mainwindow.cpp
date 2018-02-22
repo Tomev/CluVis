@@ -1720,6 +1720,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Zero representative occurence,"
              << "Zero representatives number,"
              << "Was zero representative found during interference,"
+             << "Zero representatives checked number,"
 
              << "Number of new facts,"
              << "Was rule fired,"
@@ -1779,6 +1780,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << gSettings->zeroRepresentativeClusterOccurence << ","
               << gSettings->zeroRepresentativesNumber << ","
               << ruleInterferencer.zeroRepresentativeOccured << ","
+              << ruleInterferencer.zeroRepresentativeOccurenceNumber << ","
 
               << ruleInterferencer.getNumberOfNewFacts() << ","
               << ruleInterferencer.wasRuleFired() << ","

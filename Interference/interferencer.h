@@ -43,6 +43,7 @@ class interferencer
     QList<int> factsBasePercents;
 
     bool zeroRepresentativeOccured = false;
+    long zeroRepresentativeOccurenceNumber = 0;
 
   private:
 
