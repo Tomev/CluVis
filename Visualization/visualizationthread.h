@@ -9,8 +9,6 @@
 #include "memory"
 #include "vector"
 
-#include "enum_datatype.h"
-
 class visualizationThread : public QThread
 {
     Q_OBJECT

@@ -1,3 +1,5 @@
+#define UNUSED(a) (void)a;
+
 #include "customgraphicellipseobject.h"
 
 #include <QGraphicsSceneMouseEvent>
@@ -20,6 +22,9 @@ QRectF customGraphicEllipseObject::boundingRect() const
 
 void customGraphicEllipseObject::paint(QPainter* painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+  UNUSED(option);
+  UNUSED(widget);
+
     QRectF rec = boundingRect();
     QBrush rectBrush(Qt::blue);
     QString text = c.name();

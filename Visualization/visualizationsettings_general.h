@@ -3,7 +3,6 @@
 
 
 #include "../Clustering/clusters.h"
-#include "enum_visualizationalgorithms.h"
 
 #include <memory>
 

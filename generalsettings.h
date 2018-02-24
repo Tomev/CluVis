@@ -3,6 +3,10 @@
 
 #include "Clustering/clusters.h"
 
+enum dataTypesId
+{
+  RSESRulesId
+};
 
 class generalSettings
 {

@@ -13,8 +13,6 @@
 
 #include "groupingdatapreparator_rsesrules.h"
 
-#include "enum_datatype.h"
-
 typedef std::shared_ptr<qreal> qreal_ptr;
 typedef std::vector<qreal_ptr> clusterSimilarityData;
 typedef std::shared_ptr<clusterSimilarityData> simData;

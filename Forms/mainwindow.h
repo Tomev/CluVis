@@ -14,7 +14,7 @@
 
 #include "../Clustering/clusterinfoincludes.h"
 
-#include "../Interference/interferencer.h"
+#include "../Interference/clusterInterferencer.h"
 
 enum languagesId
 {
@@ -27,9 +27,6 @@ enum reportTypesId
     XmlReportId = 0,
     TxtReportId = 1
 };
-
-#include "enum_datatype.h"
-
 
 namespace Ui
 {
@@ -100,7 +97,7 @@ private slots:
     void on_actionLoadFactsBase_triggered();
 
 private:
-    interferencer ruleInterferencer;
+    clusterInterferencer ruleInterferencer;
     QTranslator* translator;
 
     Ui::MainWindow *ui;
