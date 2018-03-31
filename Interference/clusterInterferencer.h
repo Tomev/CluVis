@@ -1,11 +1,9 @@
 #ifndef CLUSTERINTERFERENCER_H
 #define CLUSTERINTERFERENCER_H
 
-#include <QHash>
+#include "interferencer.h"
 
-#include "../Clustering/groupingthread.h"
-
-class clusterInterferencer
+class clusterInterferencer : public interferencer
 {
   public:
 
@@ -29,23 +27,8 @@ class clusterInterferencer
     int getNumberOfFacts();
     int getNumberOfNewFacts();
 
-    QHash<QString, QSet<QString>> facts;
-    QStringList allFacts;
-    QHash<QString, QSet<QString>> target;
 
-    QStringList availableRuleIndexes;
-
-    int targetAchiveable;
-    int targetAchieved;
-
-    cluster* mostSimilarRule;
-
-    QList<int> factsBasePercents;
-
-    bool zeroRepresentativeOccured = false;
-    long zeroRepresentativeOccurenceNumber = 0;
-
-  private:
+  protected:
 
     groupingThread* grpThread;
 
@@ -57,14 +40,14 @@ class clusterInterferencer
     int findMostSimiliarClusterToFactRule(cluster* factRule);
     int findRulesToFireInCluster(cluster* fc, cluster* c);
 
-    bool canRuleBeFired(ruleCluster *c);
-
     int countNumberOfPossibleFacts();
     int saveAllFactsToBase(QString path);
     int saveRandomNFactsToBase(int numOfFacts, QString path);
       int insertFactsToBase(QSet<QString> *factsBase, QString path);
 
     int findMostSimilarRule(cluster *fc, cluster *c);
+
+    bool canRuleBeFired(ruleCluster *c);
 };
 
 #endif // CLUSTERINTERFERENCER_H
