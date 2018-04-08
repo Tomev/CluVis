@@ -557,7 +557,6 @@ struct ruleCluster : cluster
 
         int support;
 
-        // TODO: Add pointer to these (?)
         QSet<QString> decisionAttributes;
         QSet<QString> premiseAttributes;
 
