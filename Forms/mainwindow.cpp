@@ -1510,7 +1510,10 @@ void MainWindow::on_pushButtonStandard_clicked()
         // Set targetDir to point at current KB folder
         targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
 
-        ruleInterferencer.loadFactsFromPath(targetDir + ".fct");
+        QString factBasePath = targetDir + ".fct";
+
+        ruleInterferencer.loadFactsFromPath(factBasePath);
+        classicInterferencer.loadFactsFromPath(factBasePath.toStdString());
 
         // Check if folder with the same name  as KB doesn't exist.
         QDir kbFolder(targetDir);
@@ -1758,8 +1761,6 @@ void MainWindow::on_pushButtonInterfere_clicked()
     ruleInterferencer.factsBasePercents = {factPercent};
 
     ruleInterferencer.interfere();
-
-    //qDebug() << ruleInterferencer.availableRuleIndexes;
 
     if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
     {

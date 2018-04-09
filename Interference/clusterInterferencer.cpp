@@ -92,7 +92,7 @@ int clusterInterferencer::loadFactsFromPath(QString path)
   QTextStream stream(&factsBase);
   QString line;
 
-  QStringList fact, tar;
+  QStringList tar;
 
   if(factsBase.open(QIODevice::ReadWrite))
   {
@@ -101,8 +101,6 @@ int clusterInterferencer::loadFactsFromPath(QString path)
       line = stream.readLine();
       if(line.startsWith("Target:")) break;
       if(line.startsWith("#")) continue;
-      //fact = line.split("=");
-      //allFacts[fact.at(0)] += fact.at(1);
       allFacts.push_back(line);
     }
 

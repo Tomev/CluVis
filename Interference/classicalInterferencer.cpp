@@ -1,5 +1,8 @@
 #include "classicalInterferencer.h"
 
+#include <iostream>
+#include <fstream>
+
 enum ruleFiringErrors
 {
   ruleIndexBelowZero = -1,
@@ -11,7 +14,7 @@ classicalInterferencer::classicalInterferencer()
 
 }
 
-/** classicalInterferencer::interfere()
+/** classicalInterferencer::interfere
  * @brief This is the main functionality of this class. Takes a vector of rules
  *        and basing on given facts.
  *
@@ -46,10 +49,119 @@ int classicalInterferencer::interfere()
   return newFacts.size();
 }
 
-/** classicalInterferencer::canRuleBeFired(rule r)
+/** classicalInterferencer::loadFactsFromPath
+ *
+ * Finds out if there's a file in the given path. If not it reports. Is so,
+ * then it loads
+ *
+ * @brief Reads facts and target of interference from facts base at given path.
+ *
+ * @param path Path to facts base.
+ *
+ * @return Number of facts loaded.
+ */
+
+int classicalInterferencer::loadFactsFromPath(std::string path)
+{
+  allFacts.clear();
+  target.clear();
+
+  std::ifstream factsBase(path);
+  std::string line;
+  int factsCount = 0;
+
+  std::string targetPrefix = "Target:";
+  std::string commentPrefix = "#";
+
+  if(factsBase.is_open())
+  {
+    while(std::getline(factsBase, line))
+    {
+      if(!line.compare(0, targetPrefix.size(), targetPrefix)) break;
+      if(!line.compare(0, commentPrefix.size(), commentPrefix)) continue;
+      // # in facts base means comment.
+      allFacts.push_back(line);
+      /*
+       * Facts are stored in a vector instead of parsed structure, as it is
+       * easier to retrive their random number.
+      */
+      ++factsCount;
+    }
+
+    while(std::getline(factsBase, line))
+    {
+      if(!line.compare(0, commentPrefix.size(), commentPrefix)) continue;
+      // # in facts base means comment.
+      addTargetFromLine(line);
+    }
+  }
+
+  factsBase.close();
+
+  return factsCount;
+}
+
+/** classicalInterferencer::addFactsFromLine
+ *
+ * Parses line read from facts base into the form that can easily be stored
+ * and read by interferencer.
+ *
+ * @brief From given line adds fact to allFacts.
+ *
+ * @param line Line that contains
+ *
+ * @return 0 if success.
+ */
+
+int classicalInterferencer::addFactFromLine(std::string line)
+{
+  std::string delimiter = "=";
+
+  int delimiterPosition = line.find(delimiter);
+  std::string attributeName = line.substr(0, delimiterPosition);
+
+  line.erase(0, delimiterPosition + delimiter.length());
+
+  std::string attributeValue = line;
+
+  facts[attributeName].insert(attributeValue);
+
+  return 0;
+}
+
+/** classicalInterferencer::addTargetFromLine
+ *
+ *
+ *
+ * @brief Adds parsed target from given line.
+ *
+ * @param line Line read from facts base.
+ *
+ * @return 0 if finished correctly.
+ */
+
+int classicalInterferencer::addTargetFromLine(std::string line)
+{
+  std::string delimiter = "=";
+
+  int delimiterPosition = line.find(delimiter);
+  std::string attributeName = line.substr(0, delimiterPosition);
+
+  line.erase(0, delimiterPosition + delimiter.length());
+
+  std::string attributeValue = line;
+
+  facts[attributeName].insert(attributeValue);
+
+  return 0;
+}
+
+/** classicalInterferencer::canRuleBeFired
+ *
+ * Checks rule permise with current facts base. If all permises are in the facts
+ * base, then the rule can be fired.
+ *
  * @brief Checks if given rule can be fired according to current facts base.
- *
- *
  *
  * @param r Rule which permise attributes are set.
  *
@@ -95,7 +207,7 @@ std::vector<std::string> classicalInterferencer::getRulePermiseAttributesNamesVe
   return attributesVector;
 }
 
-/** classicalInterferencer::fireRule
+/** classicalIntrerferencer::fireRule
  * @brief Fires given rule given by index in given rule set.
  *
  * Fires selected rule, which implies, that it's conclusion attributes and
@@ -156,5 +268,3 @@ std::vector<std::string> classicalInterferencer::getRuleConclusionAttributesName
 
   return attributesVector;
 }
-
-

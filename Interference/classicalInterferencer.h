@@ -23,17 +23,26 @@ class classicalInterferencer
     classicalInterferencer();
 
     int interfere();
+    int loadFactsFromPath(std::string path);
 
   private:
+
+    std::vector<std::string> allFacts;
+    std::unordered_map<std::string, std::unordered_set<std::string>> target;
 
     std::unordered_map<std::string, std::unordered_set<std::string>> facts;
     std::unordered_map<std::string, std::unordered_set<std::string>> newFacts;
     std::vector<rule> rules;
 
+    int addFactFromLine(std::string line);
+    int addTargetFromLine(std::string line);
+
     bool canRuleBeFired(rule r);
       std::vector<std::string> getRulePermiseAttributesNamesVector(rule r);
     int fireRule(std::vector<rule> *ruleSet, unsigned int ruleIndex);
       std::vector<std::string> getRuleConclusionAttributesNamesVector(rule r);
+
+
 
 
 };
