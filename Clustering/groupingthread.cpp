@@ -1379,8 +1379,8 @@ double groupingThread::updateGiniIndex(long c1Size, long c2Size)
 
 double groupingThread::countGiniIndex()
 {
-  long n = settings->objectsNumber;
-  QVector<long> nonincreasinglySortedSizes = sortClusterSizesNonincreasingly();
+  QVector<double> nonincreasinglySortedSizes = sortClusterSizesNonincreasingly();
+  double n = nonincreasinglySortedSizes.size();
   double result = 0.0;
   double denumerator = 0.0;
 
@@ -1404,11 +1404,11 @@ double groupingThread::countGiniIndex()
 
 double groupingThread::countBonferroniIndex()
 {
-  QVector<long> nonincreasinglySortedSizes = sortClusterSizesNonincreasingly();
-  long n = settings->objectsNumber;
+  QVector<double> nonincreasinglySortedSizes = sortClusterSizesNonincreasingly();
+  long n = nonincreasinglySortedSizes.size();
 
   double result = 0.0;
-  long sum;
+  double sum;
 
   for(int i = 0; i < n; ++i)
   {
@@ -1419,12 +1419,14 @@ double groupingThread::countBonferroniIndex()
       sum += nonincreasinglySortedSizes[j];
     }
 
-    result += sum / (n - i + 1);
+    // i+1, because in the formula indexing starts with 1,
+    // here it starts with 0, which may lead to problems.
+    result += sum / (n - (i+1) + 1);
   }
 
   sum = 0;
 
-  for(long size : nonincreasinglySortedSizes)
+  for(double size : nonincreasinglySortedSizes)
     sum += size;
 
   result /= sum;
@@ -1434,9 +1436,9 @@ double groupingThread::countBonferroniIndex()
   return result;
 }
 
-QVector<long> groupingThread::sortClusterSizesNonincreasingly()
+QVector<double> groupingThread::sortClusterSizesNonincreasingly()
 {
-  QVector<long> sortedSizes;
+  QVector<double> sortedSizes;
   int i = 0;
 
   for(std::shared_ptr<cluster> c : clusters)

@@ -62,7 +62,7 @@ protected:
       double updateGiniIndex(long c1Size, long c2Size);
       double countGiniIndex();
       double countBonferroniIndex();
-        QVector<long> sortClusterSizesNonincreasingly();
+        QVector<double> sortClusterSizesNonincreasingly();
 
 
 private:
