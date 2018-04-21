@@ -1726,7 +1726,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Was zero representative found during interference,"
              << "Zero representatives checked number,"
 
-             << "Interferention type,"
+             << "Interference type,"
+             << "Interference time[s],"
              << "Number of new facts,"
              << "Was rule fired,"
              << "Number of clusters searched,"
@@ -1786,7 +1787,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << ruleInterferencer.zeroRepresentativeOccured << ","
               << ruleInterferencer.zeroRepresentativeOccurenceNumber << ","
 
-              << QString::fromStdString(ruleInterferencer.getInterferentionType()) << ","
+              << QString::fromStdString(ruleInterferencer.getInterferenceType()) << ","
+              << ruleInterferencer.getInterferenceTime() << ","
               << ruleInterferencer.getNumberOfNewFacts() << ","
               << ruleInterferencer.wasRuleFired() << ","
               << ruleInterferencer.numberOfClustersSearched << ","

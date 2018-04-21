@@ -19,8 +19,8 @@ class clusterInterferencer : public interferencer
     int loadFactsFromPath(QString path);
     int interfere();
 
-    std::string getInterferentionType();
-    void setInterferentionTYpe(int newInterferentionType);
+    std::string getInterferenceType();
+    void setInterferenceType(int newInterferenceType);
 
     int fillAvailableRuleIndexes();
     int canTargetBeAchieved();
@@ -36,12 +36,13 @@ class clusterInterferencer : public interferencer
     int getNumberOfFacts();
     int getNumberOfNewFacts();
 
+    double getInterferenceTime();
 
   protected:
 
     groupingThread* grpThread;
 
-    int initializeInterferention();
+    int initializeInterference();
     int interfereGreedy();
     int interfereExhaustive();
 
@@ -62,7 +63,8 @@ class clusterInterferencer : public interferencer
 
     bool canRuleBeFired(ruleCluster *c);
 
-    int interferentionType = 0;
+    int interferenceType = 0;
+    double interferenceTime = 0;
 };
 
 #endif // CLUSTERINTERFERENCER_H

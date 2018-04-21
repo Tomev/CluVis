@@ -2,6 +2,7 @@
 
 #include <QFile>
 #include <QDebug>
+#include <ctime>
 
 #include "../Clustering/clusters.h"
 
@@ -62,6 +63,11 @@ int clusterInterferencer::getNumberOfNewFacts()
     result += newFacts[fact].size();
 
   return result;
+}
+
+double clusterInterferencer::getInterferenceTime()
+{
+  return interferenceTime;
 }
 
 int clusterInterferencer::interfereGreedy()
@@ -184,24 +190,32 @@ int clusterInterferencer::loadFactsFromPath(QString path)
 
 int clusterInterferencer::interfere()
 {
-  switch (interferentionType) {
+  int returnCode = -1;
+
+  clock_t start = clock();
+
+  switch (interferenceType) {
     case GREEDY:
-      return interfereGreedy();
+      returnCode =  interfereGreedy();
+      break;
     case EXHAUSTIVE:
-      return interfereExhaustive();
+      returnCode =  interfereExhaustive();
+      break;
     default:
-      return -1;
+      returnCode = -2;
       break;
   }
 
-  return -2;
+  interferenceTime = (clock() - start) / (double) CLOCKS_PER_SEC;
+
+  return returnCode;
 }
 
 
 
-std::string clusterInterferencer::getInterferentionType()
+std::string clusterInterferencer::getInterferenceType()
 {
-  switch (interferentionType)
+  switch (interferenceType)
   {
     case GREEDY:
       return "Greedy cluster interferencer";
@@ -216,9 +230,9 @@ std::string clusterInterferencer::getInterferentionType()
   return "ERROR: Unknown interferention type, after switch.";
 }
 
-void clusterInterferencer::setInterferentionTYpe(int newInterferentionType)
+void clusterInterferencer::setInterferenceType(int newInterferenceType)
 {
-  interferentionType = newInterferentionType;
+  interferenceType = newInterferenceType;
 }
 
 int clusterInterferencer::fillAvailableRuleIndexes()

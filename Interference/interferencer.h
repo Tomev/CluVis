@@ -27,8 +27,9 @@ class interferencer
 
     bool canRuleBeFired(ruleCluster *c);
 
-    virtual std::string getInterferentionType() = 0;
-    virtual void setInterferentionTYpe(int newInterferentionType) = 0;
+    virtual std::string getInterferenceType() = 0;
+    virtual void setInterferenceType(int newInterferentionType) = 0;
+    virtual double getInterferenceTime() = 0;
 
 };
 
