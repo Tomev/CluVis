@@ -41,6 +41,9 @@ class clusterInterferencer : public interferencer
 
     groupingThread* grpThread;
 
+    int interfereGreedy();
+    int interfereExhaustive();
+
     ruleCluster createFactRule();
     QVector<cluster*> fireableRules;
 

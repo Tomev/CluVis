@@ -64,8 +64,48 @@ int clusterInterferencer::getNumberOfNewFacts()
   return result;
 }
 
+int clusterInterferencer::interfereGreedy()
+{
+  zeroRepresentativeOccured = false;
+
+  for(int basePercent : factsBasePercents)
+  {
+    qDebug() << "Number of facts: " << fillFacts(basePercent);
+
+    fillAvailableRuleIndexes();
+
+    // Cluster facts so implemented similarity measures can be used.
+    ruleCluster factRule = createFactRule();
+
+    int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
+
+    numberOfClustersSearched = 0;
+    fireableRules.clear();
+
+    findRulesToFireInCluster(&factRule,
+                             grpThread->settings
+                             ->clusters->at(mostSimiliarClusterIdx).get());
+
+    canTargetBeAchieved();
+
+    numberOfRulesFired = fireableRules.size();
+
+    findMostSimilarRule(&factRule, grpThread->settings
+                        ->clusters->at(mostSimiliarClusterIdx).get());
+
+    wasTargetAchieved();
+  }
+
+  return 0;
+}
+
+int clusterInterferencer::interfereExhaustive()
+{
+  return 0;
+}
+
 int clusterInterferencer::generateRandomFactsBase(QString path,
-                                           int desiredNumberOfFacts)
+                                                  int desiredNumberOfFacts)
 {
   //return saveAllFactsToBase(path);
 
@@ -120,38 +160,20 @@ int clusterInterferencer::loadFactsFromPath(QString path)
 
 int clusterInterferencer::interfere()
 {
-  zeroRepresentativeOccured = false;
-
-  for(int basePercent : factsBasePercents)
-  {
-    qDebug() << "Number of facts: " << fillFacts(basePercent);
-
-    fillAvailableRuleIndexes();
-
-    // Cluster facts so implemented similarity measures can be used.
-    ruleCluster factRule = createFactRule();
-
-    int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
-
-    numberOfClustersSearched = 0;
-    fireableRules.clear();
-
-    findRulesToFireInCluster(&factRule,
-                             grpThread->settings
-                             ->clusters->at(mostSimiliarClusterIdx).get());
-
-    canTargetBeAchieved();
-
-    numberOfRulesFired = fireableRules.size();
-
-    findMostSimilarRule(&factRule, grpThread->settings
-                        ->clusters->at(mostSimiliarClusterIdx).get());
-
-    wasTargetAchieved();
+  switch (interferentionType) {
+    case GREEDY:
+      return interfereGreedy();
+    case EXHAUSTIVE:
+      return interfereExhaustive();
+    default:
+      return -1;
+      break;
   }
 
-  return 0;
+  return -2;
 }
+
+
 
 std::string clusterInterferencer::getInterferentionType()
 {
