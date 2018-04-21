@@ -1703,6 +1703,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
   QFile file(path);
 
+  // Create file if it doesn't exist.
   if(!file.exists())
   {
     if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
@@ -1725,6 +1726,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Was zero representative found during interference,"
              << "Zero representatives checked number,"
 
+             << "Interferention type,"
              << "Number of new facts,"
              << "Was rule fired,"
              << "Number of clusters searched,"
@@ -1756,6 +1758,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
   QList<int> factsPercents = {100, 75, 50, 25, 10, 1};
 
+  // Run interference
   for(int factPercent : factsPercents)
   {
     ruleInterferencer.factsBasePercents = {factPercent};
@@ -1783,6 +1786,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << ruleInterferencer.zeroRepresentativeOccured << ","
               << ruleInterferencer.zeroRepresentativeOccurenceNumber << ","
 
+              << QString::fromStdString(ruleInterferencer.getInterferentionType()) << ","
               << ruleInterferencer.getNumberOfNewFacts() << ","
               << ruleInterferencer.wasRuleFired() << ","
               << ruleInterferencer.numberOfClustersSearched << ","

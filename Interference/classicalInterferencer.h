@@ -25,7 +25,9 @@ class classicalInterferencer
     int interfere();
     int loadFactsFromPath(std::string path);
 
-  private:
+    std::string getInterferentionType();
+
+  protected:
 
     std::vector<std::string> allFacts;
     std::unordered_map<std::string, std::unordered_set<std::string>> target;

@@ -101,6 +101,11 @@ int classicalInterferencer::loadFactsFromPath(std::string path)
   return factsCount;
 }
 
+std::string classicalInterferencer::getInterferentionType()
+{
+  return "Classical interference.";
+}
+
 /** classicalInterferencer::addFactsFromLine
  *
  * Parses line read from facts base into the form that can easily be stored

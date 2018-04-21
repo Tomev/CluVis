@@ -153,6 +153,28 @@ int clusterInterferencer::interfere()
   return 0;
 }
 
+std::string clusterInterferencer::getInterferentionType()
+{
+  switch (interferentionType)
+  {
+    case GREEDY:
+      return "Greedy cluster interferencer";
+      break;
+    case EXHAUSTIVE:
+      return "Exhaustive cluster interferencer";
+    default:
+      return "ERROR: Unknown interferenction type.";
+      break;
+  }
+
+  return "ERROR: Unknown interferention type, after switch.";
+}
+
+void clusterInterferencer::setInterferentionTYpe(int newInterferentionType)
+{
+  interferentionType = newInterferentionType;
+}
+
 int clusterInterferencer::fillAvailableRuleIndexes()
 {
   if(grpThread == 0) return -1;

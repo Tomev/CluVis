@@ -29,7 +29,6 @@ SOURCES +=      Forms/about.cpp \
                 Clustering/groupingsettings_rsesrules.cpp \
                 main.cpp \
                 generalsettings.cpp \
-    Interference/interferencer.cpp \
     Object/attribute.cpp \
     Object/numericattribute.cpp \
     Object/categoricalattribute.cpp \

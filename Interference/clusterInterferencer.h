@@ -3,6 +3,12 @@
 
 #include "interferencer.h"
 
+enum interferentionType
+{
+  GREEDY      = 0,
+  EXHAUSTIVE  = 1
+};
+
 class clusterInterferencer : public interferencer
 {
   public:
@@ -12,6 +18,9 @@ class clusterInterferencer : public interferencer
     int generateRandomFactsBase(QString path, int desiredNumberOfFacts);
     int loadFactsFromPath(QString path);
     int interfere();
+
+    std::string getInterferentionType();
+    void setInterferentionTYpe(int newInterferentionType);
 
     int fillAvailableRuleIndexes();
     int canTargetBeAchieved();
@@ -48,6 +57,8 @@ class clusterInterferencer : public interferencer
     int findMostSimilarRule(cluster *fc, cluster *c);
 
     bool canRuleBeFired(ruleCluster *c);
+
+    int interferentionType = 0;
 };
 
 #endif // CLUSTERINTERFERENCER_H
