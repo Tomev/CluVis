@@ -41,6 +41,7 @@ class clusterInterferencer : public interferencer
 
     groupingThread* grpThread;
 
+    int initializeInterferention();
     int interfereGreedy();
     int interfereExhaustive();
 

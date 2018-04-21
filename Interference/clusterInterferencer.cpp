@@ -12,7 +12,7 @@
 clusterInterferencer::clusterInterferencer()
 {
   grpThread = 0;
-  factsBasePercents = {100, 75, 50, 25, 10, 1};
+  factsBasePercent = 100;
 }
 
 void clusterInterferencer::setGroupingThread(groupingThread *newGrpThread)
@@ -68,39 +68,63 @@ int clusterInterferencer::interfereGreedy()
 {
   zeroRepresentativeOccured = false;
 
-  for(int basePercent : factsBasePercents)
-  {
-    qDebug() << "Number of facts: " << fillFacts(basePercent);
+  qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
 
-    fillAvailableRuleIndexes();
+  fillAvailableRuleIndexes();
 
-    // Cluster facts so implemented similarity measures can be used.
-    ruleCluster factRule = createFactRule();
+  // Cluster facts so implemented similarity measures can be used.
+  ruleCluster factRule = createFactRule();
 
-    int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
+  int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
 
-    numberOfClustersSearched = 0;
-    fireableRules.clear();
+  numberOfClustersSearched = 0;
+  fireableRules.clear();
 
-    findRulesToFireInCluster(&factRule,
+  findRulesToFireInCluster(&factRule,
                              grpThread->settings
                              ->clusters->at(mostSimiliarClusterIdx).get());
 
-    canTargetBeAchieved();
+  canTargetBeAchieved();
 
-    numberOfRulesFired = fireableRules.size();
+  numberOfRulesFired = fireableRules.size();
 
-    findMostSimilarRule(&factRule, grpThread->settings
+  findMostSimilarRule(&factRule, grpThread->settings
                         ->clusters->at(mostSimiliarClusterIdx).get());
 
-    wasTargetAchieved();
-  }
+  wasTargetAchieved();
 
   return 0;
 }
 
 int clusterInterferencer::interfereExhaustive()
 {
+  zeroRepresentativeOccured = false;
+
+  qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
+
+  fillAvailableRuleIndexes();
+
+  // Cluster facts so implemented similarity measures can be used.
+  ruleCluster factRule = createFactRule();
+
+  int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
+
+  numberOfClustersSearched = 0;
+  fireableRules.clear();
+
+  findRulesToFireInCluster(&factRule,
+                           grpThread->settings
+                           ->clusters->at(mostSimiliarClusterIdx).get());
+
+  canTargetBeAchieved();
+
+  numberOfRulesFired = fireableRules.size();
+
+  findMostSimilarRule(&factRule, grpThread->settings
+                      ->clusters->at(mostSimiliarClusterIdx).get());
+
+  wasTargetAchieved();
+
   return 0;
 }
 

@@ -1761,7 +1761,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   // Run interference
   for(int factPercent : factsPercents)
   {
-    ruleInterferencer.factsBasePercents = {factPercent};
+    ruleInterferencer.factsBasePercent = factPercent;
 
     ruleInterferencer.interfere();
 

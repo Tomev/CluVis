@@ -18,7 +18,7 @@ class interferencer
 
     cluster* mostSimilarRule;
 
-    QList<int> factsBasePercents;
+    int factsBasePercent;
 
     bool zeroRepresentativeOccured = false;
     long zeroRepresentativeOccurenceNumber = 0;
