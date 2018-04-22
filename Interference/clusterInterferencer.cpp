@@ -112,6 +112,7 @@ int clusterInterferencer::interfereExhaustive()
   fireableRules.clear();
   fillAvailableRuleIndexes();
   canTargetBeAchieved();
+  rulesFiredDuringInterference.clear();
 
   qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
 
@@ -123,17 +124,23 @@ int clusterInterferencer::interfereExhaustive()
 
   while(canAnyRuleBeFired && !wasTargetAchieved())
   {
+    //qDebug() << "Creating fact rule.";
     factRule = createFactRule();
+
+    //qDebug() << "Filling clusters order.";
     fillOrderOfClustersToSearchExhaustively(&factRule);
 
+    //qDebug() << "Looking for rule to fire.";
     ruleToFire = exhaustivelySearchForRuleToFire(&factRule);
 
     if(ruleToFire == nullptr)
     {
+      //qDebug() << "No rules to fire.";
       canAnyRuleBeFired = false;
     }
     else
     {
+      //qDebug() << "Firing rule.";
       if(mostSimilarRule == nullptr) mostSimilarRule = ruleToFire;
 
       fireRule(ruleToFire);
@@ -141,7 +148,15 @@ int clusterInterferencer::interfereExhaustive()
     }
   }
 
+  //qDebug() << "Checking if target was achived.";
   wasTargetAchieved();
+
+  // Emergency finding for most similar rule
+  if(mostSimilarRule == nullptr)
+  {
+    findMostSimilarRule(&factRule,
+                        grpThread->clusters[orderedClustersIndexesForExhaustiveSearch[0]].get());
+  }
 
   return numberOfRulesFired;
 }
