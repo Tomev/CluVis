@@ -1756,6 +1756,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
   gSettings->interClusterSimMeasureID = CentroidLinkId;
 
   ruleInterferencer.setGroupingThread(this->gThread);
+  ruleInterferencer.setInterferenceType(EXHAUSTIVE);
+
 
   QList<int> factsPercents = {100, 75, 50, 25, 10, 1};
 

@@ -192,11 +192,84 @@ int clusterInterferencer::fillOrderOfClustersToSearchExhaustively(ruleCluster *f
 
 ruleCluster *clusterInterferencer::exhaustivelySearchForRuleToFire(ruleCluster *factRule)
 {
-  // Find most similiar cluster available
+  ++ numberOfClustersSearched;
 
+  ruleCluster *ruleToFire = nullptr;
+  cluster *consideredCluster = nullptr;
 
+  for(int clusterIndex : orderedClustersIndexesForExhaustiveSearch)
+  {
+    consideredCluster = grpThread->clusters[clusterIndex].get();
+    ruleToFire = exhaustivelySearchForRuleToFireInCluster(consideredCluster, factRule);
 
-  return nullptr;
+    if(ruleToFire != nullptr)
+    {
+      // Add it to the list of unavailable rules and break the loop
+      rulesFiredDuringInterference.insert(ruleToFire->name().toStdString());
+      break;
+    }
+  }
+
+  return ruleToFire;
+}
+
+ruleCluster *clusterInterferencer::exhaustivelySearchForRuleToFireInCluster(cluster *clusterToSearch, ruleCluster *factRule)
+{
+  ++ numberOfClustersSearched;
+
+  ruleCluster *consideredCluster =
+    static_cast<ruleCluster*>(clusterToSearch);
+
+  ruleCluster *ruleFound = nullptr;
+
+  std::vector<std::shared_ptr<cluster>> subclustersConsiderationOrder;
+  double leftNodeSimilarity = 0.0;
+  double rightNodeSimilarity = 0.0;
+
+  if(consideredCluster->size() == 1)
+  {
+    if(canRuleBeFired(consideredCluster) &&
+       !wasRuleFiredDuringInterference(consideredCluster->name().toStdString()))
+    {
+      ruleFound = consideredCluster;
+    }
+  }
+  else // if it's a cluster not a rule
+  {
+    // determine which cluster should be looked up first
+    leftNodeSimilarity = grpThread->getClustersSimilarityValue(
+         consideredCluster->leftNode.get(), factRule);
+    rightNodeSimilarity = grpThread->getClustersSimilarityValue(
+         consideredCluster->rightNode.get(), factRule);
+
+    if(rightNodeSimilarity > leftNodeSimilarity)
+    {
+      subclustersConsiderationOrder.push_back(consideredCluster->rightNode);
+      subclustersConsiderationOrder.push_back(consideredCluster->leftNode);
+    }
+    else
+    {
+      subclustersConsiderationOrder.push_back(consideredCluster->leftNode);
+      subclustersConsiderationOrder.push_back(consideredCluster->rightNode);
+    }
+
+    ruleFound =
+      exhaustivelySearchForRuleToFireInCluster(subclustersConsiderationOrder[0].get(), factRule);
+
+    if(ruleFound == nullptr)
+      ruleFound =
+        exhaustivelySearchForRuleToFireInCluster(subclustersConsiderationOrder[1].get(), factRule);
+  }
+
+  return ruleFound;
+}
+
+bool clusterInterferencer::wasRuleFiredDuringInterference(std::string clusterName)
+{
+  if(rulesFiredDuringInterference.find(clusterName) != rulesFiredDuringInterference.end())
+    return true;
+
+  return false;
 }
 
 int clusterInterferencer::fireRule(ruleCluster *ruleToFire)

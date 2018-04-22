@@ -53,7 +53,9 @@ class clusterInterferencer : public interferencer
     int interfereGreedy();
     int interfereExhaustive();
       int fillOrderOfClustersToSearchExhaustively(ruleCluster *factRule);
-      ruleCluster* exhaustivelySearchForRuleToFire(ruleCluster* factRule);
+      ruleCluster* exhaustivelySearchForRuleToFire(ruleCluster *factRule);
+        ruleCluster* exhaustivelySearchForRuleToFireInCluster(cluster *clusterToSearch, ruleCluster *factRule);
+          bool wasRuleFiredDuringInterference(std::string clusterName);
       int fireRule(ruleCluster* ruleToFire);
 
     ruleCluster createFactRule();
