@@ -3,6 +3,10 @@
 
 #include "interferencer.h"
 
+#include <unordered_set>
+#include <string>
+#include <vector>
+
 enum interferentionType
 {
   GREEDY      = 0,
@@ -42,9 +46,15 @@ class clusterInterferencer : public interferencer
 
     groupingThread* grpThread;
 
+    std::unordered_set<std::string> rulesFiredDuringInterference;
+    std::vector<int> orderedClustersIndexesForExhaustiveSearch;
+
     int initializeInterference();
     int interfereGreedy();
     int interfereExhaustive();
+      int fillOrderOfClustersToSearchExhaustively(ruleCluster *factRule);
+      ruleCluster* exhaustivelySearchForRuleToFire(ruleCluster* factRule);
+      int fireRule(ruleCluster* ruleToFire);
 
     ruleCluster createFactRule();
     QVector<cluster*> fireableRules;

@@ -562,8 +562,6 @@ struct ruleCluster : cluster
 
         //Methods
 
-            //Other
-
         QString rule()
         {
             // If clusters size is higher than 1, then it's not a rule.

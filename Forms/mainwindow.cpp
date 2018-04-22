@@ -1710,13 +1710,13 @@ void MainWindow::on_pushButtonInterfere_clicked()
     {
       QTextStream stream(&file);
 
-      stream << "First rule that could be fired,"
-             << "Last rule that could be fired,"
+      stream << "First rule that could initially be fired,"
+             << "Last rule that could initially be fired,"
              << "Number of facts,"
-             << "Number of rules that could be fired,"
-             << "Percent of rules that could be fired,"
+             << "Number of rules that could initially be fired,"
+             << "Percent of rules that could initially be fired,"
              << "Was target set,"
-             << "Is target achiveable,"
+             << "Is target initially achiveable,"
              << "Number of rules fired,"
              << "Most similiar rule,"
              << "Was target achieved,"

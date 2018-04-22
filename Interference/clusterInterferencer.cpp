@@ -3,6 +3,7 @@
 #include <QFile>
 #include <QDebug>
 #include <ctime>
+#include <utility>
 
 #include "../Clustering/clusters.h"
 
@@ -105,31 +106,108 @@ int clusterInterferencer::interfereGreedy()
 int clusterInterferencer::interfereExhaustive()
 {
   zeroRepresentativeOccured = false;
+  numberOfClustersSearched = 0;
+  numberOfRulesFired = 0;
+
+  fireableRules.clear();
+  fillAvailableRuleIndexes();
+  canTargetBeAchieved();
 
   qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
 
-  fillAvailableRuleIndexes();
+  bool canAnyRuleBeFired = true;
+  ruleCluster factRule;
+  ruleCluster* ruleToFire = nullptr;
 
-  // Cluster facts so implemented similarity measures can be used.
-  ruleCluster factRule = createFactRule();
+  mostSimilarRule = nullptr;
 
-  int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
+  while(canAnyRuleBeFired && !wasTargetAchieved())
+  {
+    factRule = createFactRule();
+    fillOrderOfClustersToSearchExhaustively(&factRule);
 
-  numberOfClustersSearched = 0;
-  fireableRules.clear();
+    ruleToFire = exhaustivelySearchForRuleToFire(&factRule);
 
-  findRulesToFireInCluster(&factRule,
-                           grpThread->settings
-                           ->clusters->at(mostSimiliarClusterIdx).get());
+    if(ruleToFire == nullptr)
+    {
+      canAnyRuleBeFired = false;
+    }
+    else
+    {
+      if(mostSimilarRule == nullptr) mostSimilarRule = ruleToFire;
 
-  canTargetBeAchieved();
-
-  numberOfRulesFired = fireableRules.size();
-
-  findMostSimilarRule(&factRule, grpThread->settings
-                      ->clusters->at(mostSimiliarClusterIdx).get());
+      fireRule(ruleToFire);
+      ++numberOfRulesFired;
+    }
+  }
 
   wasTargetAchieved();
+
+  return numberOfRulesFired;
+}
+
+int clusterInterferencer::fillOrderOfClustersToSearchExhaustively(ruleCluster *factRule)
+{
+  orderedClustersIndexesForExhaustiveSearch.clear();
+  std::vector<std::pair<int, double>> clustersSimilarityValues;
+
+  double similarityValue = 0.0;
+
+  for(int index = 0; index < grpThread->clusters.size(); ++index)
+  {
+    similarityValue =
+      grpThread->getClustersSimilarityValue(factRule, grpThread->clusters.at(index).get());
+
+    clustersSimilarityValues.push_back(std::pair<int, double>(index, similarityValue));
+  }
+
+  double highestSimValue = -1;
+  int highestSimClusterIdx = 0;
+  int eraseOffset = 0;
+
+  while(clustersSimilarityValues.size() != 0)
+  {
+    highestSimValue = -1;
+    highestSimClusterIdx = 0;
+    eraseOffset = 0;
+
+    // Find highest similarity cluster
+    for(int i = 0; i < clustersSimilarityValues.size(); ++ i)
+    {
+      if(clustersSimilarityValues[i].second > highestSimValue)
+      {
+        highestSimValue = clustersSimilarityValues[i].second;
+        highestSimClusterIdx = clustersSimilarityValues[i].first;
+        eraseOffset = i;
+      }
+    }
+
+    // Add it to target vector and remove from working vector
+    orderedClustersIndexesForExhaustiveSearch.push_back(highestSimClusterIdx);
+    clustersSimilarityValues.erase(clustersSimilarityValues.begin() + eraseOffset);
+  }
+
+  return orderedClustersIndexesForExhaustiveSearch.size();
+}
+
+ruleCluster *clusterInterferencer::exhaustivelySearchForRuleToFire(ruleCluster *factRule)
+{
+  // Find most similiar cluster available
+
+
+
+  return nullptr;
+}
+
+int clusterInterferencer::fireRule(ruleCluster *ruleToFire)
+{
+  for(QString decisionAttribute : ruleToFire->decisionAttributes)
+  {
+    for(QString value : *(ruleToFire->attributesValues[decisionAttribute]))
+    {
+      facts[decisionAttribute].insert(value);
+    }
+  }
 
   return 0;
 }
@@ -210,7 +288,6 @@ int clusterInterferencer::interfere()
 
   return returnCode;
 }
-
 
 
 std::string clusterInterferencer::getInterferenceType()
@@ -355,7 +432,7 @@ int clusterInterferencer::wasTargetAchieved()
 
   targetAchieved = 1;
 
-  return 0;
+  return 1;
 }
 
 int clusterInterferencer::wasRuleFired()
