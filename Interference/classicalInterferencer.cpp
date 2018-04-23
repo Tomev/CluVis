@@ -35,6 +35,7 @@ int classicalInterferencer::interfere()
   bool wasRuleFired = true;
   fillFacts();
   findIndexesOfInitiallyAvailableRules();
+  numberOfStructuresSearchedDuringInterference = 0;
 
   clock_t start = clock();
 
@@ -50,6 +51,7 @@ int classicalInterferencer::interfere()
       {
         wasRuleFired = true;
         fireRule(&workingRules, i);
+        break;
       }
     }
   }
@@ -564,7 +566,6 @@ int classicalInterferencer::fireRule(std::vector<rule>* ruleSet, unsigned int ru
       facts[attributeName].insert(attributesValue);
     }
   }
-
 
   ruleSet->erase(ruleSet->begin() + ruleIndex);
 
