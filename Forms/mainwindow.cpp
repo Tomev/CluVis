@@ -1854,38 +1854,46 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
     // For classical interferencer
 
+    qDebug() << "Setting rules to classic interferencer.";
+
     classicInterferencer.setRules(getRulesFromRulesClusters());
+
+    qDebug() << "Setting facts base percents to classic interfetencer.";
+
     classicInterferencer.setFactsBasePercent(factPercent);
+
+    qDebug() << "Interfering with classic interferencer.";
+
     classicInterferencer.interfere();
 
-
+    qDebug() << "Saving interference data from classic interferencer to report.";
 
     if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
     {
       QTextStream stream(&file);
 
-      stream  << classicInterferencer.getFirstRuleThatCouldInitiallyBeFired() << ","
-              << classicInterferencer.getLastRuleThatCouldInitiallyBeFired() << ","
-              << classicInterferencer.getInitialNumberOfFacts() << ","
-              << classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired() << ","
-              << qreal(100 * classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired()
-                      / settings->objectsNumber ) << ","
-              << classicInterferencer.wasTargetSet() << ","
-              << classicInterferencer.isTargetAchiveable() <<","
-              << classicInterferencer.getNumberOfStructuresSearched() << ","
-              << "not applicable" << ","
-              << classicInterferencer.wasTargetAchieved(nullptr) << ","
+      stream  //<< classicInterferencer.getFirstRuleThatCouldInitiallyBeFired() << ","
+              //<< classicInterferencer.getLastRuleThatCouldInitiallyBeFired() << ","
+              //<< classicInterferencer.getInitialNumberOfFacts() << ","
+              //<< classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired() << ","
+              //<< qreal(100 * classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired()
+              //        / settings->objectsNumber ) << ","
+              //<< classicInterferencer.wasTargetSet() << ","
+              //<< classicInterferencer.isTargetAchiveable() <<","
+              //<< classicInterferencer.getNumberOfStructuresSearched() << ","
+              //<< "not applicable" << ","
+              //<< classicInterferencer.wasTargetAchieved(nullptr) << ","
 
               << gSettings->zeroRepresentativeClusterOccurence << ","
               << gSettings->zeroRepresentativesNumber << ","
               << "not applicable" << ","
               << "not applicable" << ","
 
-              << QString::fromStdString(classicInterferencer.getInterferentionType()) << ","
-              << classicInterferencer.getInterferenceTime() << ","
-              << classicInterferencer.getNumberOfNewFacts() << ","
-              << classicInterferencer.wasAnyRuleFired() << ","
-              << classicInterferencer.getNumberOfStructuresSearched() << ","
+              //<< QString::fromStdString(classicInterferencer.getInterferentionType()) << ","
+              //<< classicInterferencer.getInterferenceTime() << ","
+              //<< classicInterferencer.getNumberOfNewFacts() << ","
+              //<< classicInterferencer.wasAnyRuleFired() << ","
+              //<< classicInterferencer.getNumberOfStructuresSearched() << ","
               << settings->stopCondition << ","
               << ui->comboBoxInterClusterSimMeasure->currentText() << ","
               << ui->comboBoxInterObjectSimMeasure->currentText() << ","

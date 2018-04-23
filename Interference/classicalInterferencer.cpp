@@ -324,17 +324,21 @@ bool classicalInterferencer::wasTargetAchieved(std::unordered_map<std::string, s
 
 std::string classicalInterferencer::getRulesThatCouldInitiallyBeFired()
 {
+  if(initiallyAvailableRuleIndexes.size() == 0)
+    return "";
+
   std::string result = "";
   std::string separator = " & ";
   int i = 0;
 
   for(i = 0; i < initiallyAvailableRuleIndexes.size() - 1; ++i)
   {
+    std::cout << result;
     result += std::to_string(initiallyAvailableRuleIndexes[i]);
     result += separator;
   }
 
-  result += std::to_string(initiallyAvailableRuleIndexes[i + 1]);
+  result += std::to_string(initiallyAvailableRuleIndexes[i]);
 
   return result;
 }
@@ -351,9 +355,16 @@ void classicalInterferencer::setFactsBasePercent(double newFactsBasePercent)
   factsBasePercent = newFactsBasePercent;
 }
 
+/** classicalInterferencer::setRules
+ *
+ * @brief Setter for rules.
+ *
+ * @param newRules
+ */
+
 void classicalInterferencer::setRules(std::vector<rule> newRules)
 {
-
+  rules = newRules;
 }
 
 /** classicalInterferencer::fillFacts
