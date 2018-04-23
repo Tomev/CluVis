@@ -1319,8 +1319,8 @@ std::vector<rule> MainWindow::getRulesFromRulesClusters()
 
   QList<cluster*> ruleClusters;
 
-  for(auto c : gThread->clusters)
-    ruleClusters.append(c->getObjects());
+  for(int i = 0; i < settings->stopCondition; ++i)
+    ruleClusters.append(gThread->clusters[i]->getObjects());
 
   for(cluster* c : ruleClusters)
   {
