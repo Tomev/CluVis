@@ -392,7 +392,7 @@ int classicalInterferencer::fillFacts()
   {
     delimiterPosition = allFacts[i].find(delimiter);
     attribute = allFacts[i].substr(0, delimiterPosition);
-    value = allFacts[i].substr(delimiterPosition, allFacts[i].length() - 1);
+    value = allFacts[i].substr(delimiterPosition+1, allFacts[i].length() - 1);
     facts[attribute].insert(value);
   }
 
