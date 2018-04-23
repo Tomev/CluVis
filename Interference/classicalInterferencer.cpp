@@ -36,12 +36,15 @@ int classicalInterferencer::interfere()
   fillFacts();
   findIndexesOfInitiallyAvailableRules();
   numberOfStructuresSearchedDuringInterference = 0;
+  numberOfRulesFired = 0;
+  numberOfIterations = 0;
 
   clock_t start = clock();
 
   while(wasRuleFired)
   {
     wasRuleFired = false;
+    ++numberOfIterations;
 
     for(int i = workingRules.size() - 1; i >= 0; --i)
     {
@@ -51,6 +54,7 @@ int classicalInterferencer::interfere()
       {
         wasRuleFired = true;
         fireRule(&workingRules, i);
+        ++numberOfRulesFired;
         break;
       }
     }
@@ -343,6 +347,30 @@ std::string classicalInterferencer::getRulesThatCouldInitiallyBeFired()
   result += std::to_string(initiallyAvailableRuleIndexes[i]);
 
   return result;
+}
+
+/** classicalInterferencer::getNumberOfRulesFired
+ *
+ * @brief Getter for number of rules fired.
+ *
+ * @return numberOfRulesFired
+ */
+
+int classicalInterferencer::getNumberOfRulesFired()
+{
+  return numberOfRulesFired;
+}
+
+/** classicalInterferencer::getNumberOfIterations
+ *
+ * @brief Getter for numberOfIterations.
+ *
+ * @return numberOfIterations
+ */
+
+int classicalInterferencer::getNumberOfIterations()
+{
+  return numberOfIterations;
 }
 
 /** classicalInterferencer::setFactsBasePercent

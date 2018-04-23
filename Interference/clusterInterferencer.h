@@ -39,12 +39,19 @@ class clusterInterferencer : public interferencer
     int getNumberOfRulesThatCanBeFired();
     int getNumberOfFacts();
     int getNumberOfNewFacts();
+    int getInitialNumberOfFacts();
+    int getNumberOfIterations();
 
     double getInterferenceTime();
 
   protected:
 
     groupingThread* grpThread;
+
+    int interferenceType = 0;
+    double interferenceTime = 0;
+    int initialNumberOfFacts = 0;
+    int numberOfIterations = 0;
 
     std::unordered_set<std::string> rulesFiredDuringInterference;
     std::vector<int> orderedClustersIndexesForExhaustiveSearch;
@@ -75,8 +82,7 @@ class clusterInterferencer : public interferencer
 
     bool canRuleBeFired(ruleCluster *c);
 
-    int interferenceType = 0;
-    double interferenceTime = 0;
+
 };
 
 #endif // CLUSTERINTERFERENCER_H

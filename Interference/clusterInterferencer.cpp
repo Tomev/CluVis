@@ -66,6 +66,22 @@ int clusterInterferencer::getNumberOfNewFacts()
   return result;
 }
 
+int clusterInterferencer::getInitialNumberOfFacts()
+{
+  return initialNumberOfFacts;
+}
+
+int clusterInterferencer::getNumberOfIterations()
+{
+  if(interferenceType == GREEDY)
+    return 1;
+
+  if(interferenceType == EXHAUSTIVE)
+    return numberOfIterations;
+
+  return -1;
+}
+
 double clusterInterferencer::getInterferenceTime()
 {
   return interferenceTime;
@@ -75,7 +91,8 @@ int clusterInterferencer::interfereGreedy()
 {
   zeroRepresentativeOccured = false;
 
-  qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
+  //qDebug() << "Number of facts: " <<
+  fillFacts(factsBasePercent);
 
   fillAvailableRuleIndexes();
 
@@ -98,6 +115,9 @@ int clusterInterferencer::interfereGreedy()
   findMostSimilarRule(&factRule, grpThread->settings
                         ->clusters->at(mostSimiliarClusterIdx).get());
 
+  for(auto rCluster : fireableRules)
+    fireRule(static_cast<ruleCluster*>(rCluster));
+
   wasTargetAchieved();
 
   return 0;
@@ -105,11 +125,13 @@ int clusterInterferencer::interfereGreedy()
 
 int clusterInterferencer::interfereExhaustive()
 {
-  qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
+  //qDebug() << "Number of facts: " <<
+  fillFacts(factsBasePercent);
 
   zeroRepresentativeOccured = false;
   numberOfClustersSearched = 0;
   numberOfRulesFired = 0;
+  numberOfIterations = 0;
 
   fireableRules.clear();
   fillAvailableRuleIndexes();
@@ -124,6 +146,8 @@ int clusterInterferencer::interfereExhaustive()
 
   while(canAnyRuleBeFired && !wasTargetAchieved())
   {
+    ++numberOfIterations;
+
     //qDebug() << "Creating fact rule.";
     factRule = createFactRule();
 
@@ -383,7 +407,6 @@ int clusterInterferencer::interfere()
   return returnCode;
 }
 
-
 std::string clusterInterferencer::getInterferenceType()
 {
   switch (interferenceType)
@@ -499,6 +522,21 @@ int clusterInterferencer::wasTargetAchieved()
 {
   targetAchieved = 0;
 
+
+  for(QString attributeName : target.keys())
+  {
+    for(QString attributeValue : target[attributeName])
+    {
+      if(!facts[attributeName].contains(attributeValue))
+        return 0;
+    }
+  }
+
+  targetAchieved = 1;
+
+  return 1;
+
+  /*
   bool oneOfRulesContainsDescriptor = false;
 
   if(numberOfRulesFired == 0) return 0;
@@ -522,11 +560,7 @@ int clusterInterferencer::wasTargetAchieved()
       if(!oneOfRulesContainsDescriptor)
         return 0;
     }
-  }
-
-  targetAchieved = 1;
-
-  return 1;
+  }*/
 }
 
 int clusterInterferencer::wasRuleFired()

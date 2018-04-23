@@ -39,6 +39,8 @@ class classicalInterferencer
     bool isTargetAchiveable();
     bool wasTargetAchieved(std::unordered_map<std::string, std::unordered_set<std::string>>* consideredFacts);
     std::string getRulesThatCouldInitiallyBeFired();
+    int getNumberOfRulesFired();
+    int getNumberOfIterations();
 
     void setFactsBasePercent(double newFactsBasePercent);
     void setRules(std::vector<rule> newRules);
@@ -50,6 +52,8 @@ class classicalInterferencer
     double interferenceTime = -1.0;
     double factsBasePercent = 100;
     int initialNumberOfFacts = 0;
+    int numberOfRulesFired = 0;
+    int numberOfIterations = 0;
 
     std::vector<std::string> allFacts;
     std::unordered_map<std::string, std::unordered_set<std::string>> target;
