@@ -1749,6 +1749,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Is target initially achiveable,"
              << "Number of rules fired,"
              << "Most similiar rule,"
+             << "Was most similar rule fired,"
              << "Was target achieved,"
 
              << "Zero representative occurence,"
@@ -1757,7 +1758,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Zero representatives checked number,"
 
              << "Interference type,"
-             << "Interference time[s],"
+             << "Interference time [s],"
              << "Number of new facts,"
              << "Was rule fired,"
              << "Number of iterations,"
@@ -1819,6 +1820,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
                 << ruleInterferencer.targetAchiveable <<","
                 << ruleInterferencer.numberOfRulesFired << ","
                 << ruleInterferencer.mostSimilarRule->name() << ","
+                << ruleInterferencer.wasMostImportantRuleFired() << ","
                 << ruleInterferencer.targetAchieved << ","
 
                 << gSettings->zeroRepresentativeClusterOccurence << ","
@@ -1883,6 +1885,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
               << classicInterferencer.wasTargetSet() << ","
               << classicInterferencer.isTargetAchiveable() <<","
               << classicInterferencer.getNumberOfRulesFired() << ","
+              << "not applicable" << ","
               << "not applicable" << ","
               << classicInterferencer.wasTargetAchieved(nullptr) << ","
 

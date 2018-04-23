@@ -30,6 +30,7 @@ class clusterInterferencer : public interferencer
     int canTargetBeAchieved();
     int wasTargetAchieved();
     int wasRuleFired();
+    bool wasMostImportantRuleFired();
 
     void setGroupingThread(groupingThread* newGrpThread);
 

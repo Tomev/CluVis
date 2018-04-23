@@ -117,6 +117,7 @@ void groupingThread::groupObjects()
 
     stepNumber = 0;
     inequityIndex = 0;
+    updateInequityIndex(1, 1);
 
     for(int i = 0; i < settings->objectsNumber - settings->stopCondition; ++i)
     {

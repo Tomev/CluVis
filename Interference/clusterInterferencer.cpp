@@ -90,6 +90,7 @@ double clusterInterferencer::getInterferenceTime()
 int clusterInterferencer::interfereGreedy()
 {
   zeroRepresentativeOccured = false;
+  rulesFiredDuringInterference.clear();
 
   //qDebug() << "Number of facts: " <<
   fillFacts(factsBasePercent);
@@ -116,7 +117,10 @@ int clusterInterferencer::interfereGreedy()
                         ->clusters->at(mostSimiliarClusterIdx).get());
 
   for(auto rCluster : fireableRules)
+  {
     fireRule(static_cast<ruleCluster*>(rCluster));
+    rulesFiredDuringInterference.insert(static_cast<ruleCluster*>(rCluster)->name().toStdString());
+  }
 
   wasTargetAchieved();
 
@@ -568,6 +572,12 @@ int clusterInterferencer::wasRuleFired()
   if(numberOfRulesFired > 0) return 1;
 
   return 0;
+}
+
+bool clusterInterferencer::wasMostImportantRuleFired()
+{
+  return rulesFiredDuringInterference.find(
+        mostSimilarRule->name().toStdString()) != rulesFiredDuringInterference.end();
 }
 
 ruleCluster clusterInterferencer::createFactRule()
