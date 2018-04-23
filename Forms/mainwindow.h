@@ -191,6 +191,8 @@ private:
     void groupObjects();
     void visualize();
 
+    std::vector<rule> getRulesFromRulesClusters();
+
     void resizeEvent(QResizeEvent *);
 };
 

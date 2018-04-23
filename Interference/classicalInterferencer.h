@@ -27,14 +27,40 @@ class classicalInterferencer
 
     std::string getInterferentionType();
 
+    int getFirstRuleThatCouldInitiallyBeFired();
+    int getLastRuleThatCouldInitiallyBeFired();
+    bool wasAnyRuleFired();
+    int getNumberOfNewFacts();
+    long getNumberOfStructuresSearched();
+    double getInterferenceTime();
+    int getInitialNumberOfFacts();
+    int getNumberOfRulesThatCouldInitiallyBeFired();
+    bool wasTargetSet();
+    bool isTargetAchiveable();
+    bool wasTargetAchieved(std::unordered_map<std::string, std::unordered_set<std::string>>* consideredFacts);
+    std::string getRulesThatCouldInitiallyBeFired();
+
+    void setFactsBasePercent(double newFactsBasePercent);
+    void setRules(std::vector<rule> newRules);
+
   protected:
+
+    std::vector<int> initiallyAvailableRuleIndexes;
+    long numberOfStructuresSearchedDuringInterference = -1;
+    double interferenceTime = -1.0;
+    double factsBasePercent = 100;
+    int initialNumberOfFacts = 0;
 
     std::vector<std::string> allFacts;
     std::unordered_map<std::string, std::unordered_set<std::string>> target;
 
     std::unordered_map<std::string, std::unordered_set<std::string>> facts;
     std::unordered_map<std::string, std::unordered_set<std::string>> newFacts;
+    std::unordered_map<std::string, std::unordered_set<std::string>> interferenceTarget;
     std::vector<rule> rules;
+
+    int fillFacts();
+    int findIndexesOfInitiallyAvailableRules();
 
     int addFactFromLine(std::string line);
     int addTargetFromLine(std::string line);

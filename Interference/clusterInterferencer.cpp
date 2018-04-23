@@ -105,6 +105,8 @@ int clusterInterferencer::interfereGreedy()
 
 int clusterInterferencer::interfereExhaustive()
 {
+  qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
+
   zeroRepresentativeOccured = false;
   numberOfClustersSearched = 0;
   numberOfRulesFired = 0;
@@ -113,8 +115,6 @@ int clusterInterferencer::interfereExhaustive()
   fillAvailableRuleIndexes();
   canTargetBeAchieved();
   rulesFiredDuringInterference.clear();
-
-  qDebug() << "Number of facts: " << fillFacts(factsBasePercent);
 
   bool canAnyRuleBeFired = true;
   ruleCluster factRule;
@@ -230,6 +230,12 @@ ruleCluster *clusterInterferencer::exhaustivelySearchForRuleToFire(ruleCluster *
 
 ruleCluster *clusterInterferencer::exhaustivelySearchForRuleToFireInCluster(cluster *clusterToSearch, ruleCluster *factRule)
 {
+  if(clusterToSearch->representativeAttributesValues.keys().size() == 0)
+  {
+    zeroRepresentativeOccured = true;
+    ++zeroRepresentativeOccurenceNumber;
+  }
+
   ++ numberOfClustersSearched;
 
   ruleCluster *consideredCluster =

@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-enum interferentionType
+enum interferenceType
 {
   GREEDY      = 0,
   EXHAUSTIVE  = 1

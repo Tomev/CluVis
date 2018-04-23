@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <ctime>
+#include <math.h>
 
 enum ruleFiringErrors
 {
@@ -31,6 +33,10 @@ int classicalInterferencer::interfere()
 {
   std::vector<rule> workingRules = rules;
   bool wasRuleFired = true;
+  fillFacts();
+  findIndexesOfInitiallyAvailableRules();
+
+  clock_t start = clock();
 
   while(wasRuleFired)
   {
@@ -38,6 +44,8 @@ int classicalInterferencer::interfere()
 
     for(int i = workingRules.size() - 1; i >= 0; --i)
     {
+      ++ numberOfStructuresSearchedDuringInterference;
+
       if(canRuleBeFired(workingRules[i]))
       {
         wasRuleFired = true;
@@ -45,6 +53,8 @@ int classicalInterferencer::interfere()
       }
     }
   }
+
+  interferenceTime = (clock() - start) / (double) CLOCKS_PER_SEC;
 
   return newFacts.size();
 }
@@ -106,6 +116,301 @@ std::string classicalInterferencer::getInterferentionType()
   return "Classical interference.";
 }
 
+/** classicalInterferencer::getFirstRuleThatCouldInitiallyBeFired
+ *
+ * @brief Returns first rule idx from initially available rules.
+ *
+ * @return First rule that could initially be fired.
+ */
+
+int classicalInterferencer::getFirstRuleThatCouldInitiallyBeFired()
+{
+  if(initiallyAvailableRuleIndexes.size() == 0)
+    return -1;
+
+  return initiallyAvailableRuleIndexes.at(0);
+}
+
+/** classicalInterferencer::getLastRuleThatCouldInitiallyBeFired
+ *
+ * @brief Returns last rule idx from initially available rules.
+ *
+ * @return Last rule that could initially be fired.
+ */
+
+int classicalInterferencer::getLastRuleThatCouldInitiallyBeFired()
+{
+  if(initiallyAvailableRuleIndexes.size() == 0)
+    return -1;
+
+  return initiallyAvailableRuleIndexes.at(initiallyAvailableRuleIndexes.size() - 1);
+}
+
+/** classicalInterferencer::wasAnyRuleFired
+ *
+ * If any rule was fired, it should return true, else false. Rule firing is
+ * determined by checking new facts size. If anything was fired it should be
+ * greater than zero.
+ *
+ * @brief Checks if any rule was fired.
+ * @return Boolean value describing if rule was fired.
+ */
+
+bool classicalInterferencer::wasAnyRuleFired()
+{
+  return newFacts.size();
+}
+
+/** classicalInterferencer::getNumberOfNewFacts
+ * @brief Counts and returns new facts.
+ *
+ * As facts can have many values for one attribute, this method cannot
+ * simply return size of new facts. Size of each value list has to be
+ * added to the result.
+ *
+ * @return Number of new facts generated during interference.
+ */
+
+int classicalInterferencer::getNumberOfNewFacts()
+{
+  int numberOfNewFacts = 0;
+
+  for(const auto& attrVal : newFacts)
+    numberOfNewFacts += attrVal.second.size();
+
+  return numberOfNewFacts;
+}
+
+/** classicalInterferencer::getNumberOfStructuresSearched
+ *
+ * @brief Getter for numberOfStructuresSearchedDuringInterference.
+ *
+ * @return Number of rules searched during interference.
+ */
+
+long classicalInterferencer::getNumberOfStructuresSearched()
+{
+  return numberOfStructuresSearchedDuringInterference;
+}
+
+/** classicalInterferencer::getInterferenceTime
+ *
+ * @brief Getter for interferenceTime.
+ *
+ * @return Interference time.
+ */
+
+double classicalInterferencer::getInterferenceTime()
+{
+  return interferenceTime;
+}
+
+/** classicalInterferencer::getInitialNumberOfFacts
+ *
+ * @brief Getter for initialNumberOfFacts;
+ *
+ * @return initialNumberOfFacts
+ */
+
+int classicalInterferencer::getInitialNumberOfFacts()
+{
+  return initialNumberOfFacts;
+}
+
+/** classicalInterferencer::getNumberOfRulesThatCouldInitiallyBeFired
+ *
+ * Check initiallyAvailableRuleIndexes vector and returns it's size.
+ *
+ * @brief Counts and returns number of rules that could initially be fired.
+ *
+ * @return Number of rules that could initially be fired.
+ */
+
+int classicalInterferencer::getNumberOfRulesThatCouldInitiallyBeFired()
+{
+  return initiallyAvailableRuleIndexes.size();
+}
+
+/** classicalInterferencer::wasTargetSet
+ *
+ * Checks if target was set. If it was, thet interferenceTarget size should
+ * be higher than 0 as it contains it's attribute data.
+ *
+ * @brief Checks if target was set.
+ *
+ * @return True if target was set, false otherwise.
+ */
+
+bool classicalInterferencer::wasTargetSet()
+{
+  return interferenceTarget.size() != 0;
+}
+
+/** classicalInterferencer::isTargetAchiveable
+ *
+ * Checks if target is achiveable. To do so, workingFacts storage containing
+ * every rule decision and facts is created and then check if wasTargetAchieved
+ * is performed.
+ *
+ * @brief Checks if target is achiveable.
+ * @return
+ */
+
+bool classicalInterferencer::isTargetAchiveable()
+{
+  std::unordered_map<std::string, std::unordered_set<std::string>> workingFacts
+      = facts;
+
+  std::string attributeName;
+  std::unordered_set<std::string> attributesValues;
+
+  for(rule r : rules)
+  {
+    for(auto kv : r.conclusions)
+    {
+      attributeName = kv.first;
+      attributesValues = kv.second;
+
+      for(std::string attributesValue : attributesValues)
+        workingFacts[attributeName].insert(attributesValue);
+    }
+  }
+
+  return wasTargetAchieved(&workingFacts);
+}
+
+/** classicalInterferencer::wasTargetAchieved
+ *
+ * Checks if interference target was achieved. To do this, each value of each
+ * attribute of the target is compared with contained facts. If any value is
+ * missing from the facts storage, then returns false.
+ *
+ * @brief Checks if interference target was achieved.
+ *
+ * @return True if was achieved, otherwise false.
+ */
+
+bool classicalInterferencer::wasTargetAchieved(std::unordered_map<std::string, std::unordered_set<std::string>> *consideredFacts)
+{
+  std::unordered_map<std::string, std::unordered_set<std::string>> *factsForCheck;
+
+  if(consideredFacts == nullptr)
+    factsForCheck = &facts;
+  else
+    factsForCheck = consideredFacts;
+
+  for(auto attrVal : interferenceTarget)
+  {
+    for(auto val : attrVal.second)
+    {
+      if((*factsForCheck)[attrVal.first].find(val) == (*factsForCheck)[attrVal.first].end())
+      {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+/** classicalInterferencer::getRulesThatCouldInitiallyBeFired
+ *
+ * @brief Constructs and returns string of rule indexes that could initially be
+ * fired separated by specified separator
+ *
+ * @return String of rule indexes that could initially be fired separated by
+ * specified separator.
+ */
+
+std::string classicalInterferencer::getRulesThatCouldInitiallyBeFired()
+{
+  std::string result = "";
+  std::string separator = " & ";
+  int i = 0;
+
+  for(i = 0; i < initiallyAvailableRuleIndexes.size() - 1; ++i)
+  {
+    result += std::to_string(initiallyAvailableRuleIndexes[i]);
+    result += separator;
+  }
+
+  result += std::to_string(initiallyAvailableRuleIndexes[i + 1]);
+
+  return result;
+}
+
+/** classicalInterferencer::setFactsBasePercent
+ *
+ * @brief Setter for factsBasePercent.
+ *
+ * @param newFactsBasePercent
+ */
+
+void classicalInterferencer::setFactsBasePercent(double newFactsBasePercent)
+{
+  factsBasePercent = newFactsBasePercent;
+}
+
+void classicalInterferencer::setRules(std::vector<rule> newRules)
+{
+
+}
+
+/** classicalInterferencer::fillFacts
+ *
+ * In order for this method to work properly facts should be given in following
+ * form: attribute=value. It'd then fill facts with the percent of facts from
+ * allFacts vector.
+ *
+ * @brief Filling facts with given (by percentage) number of facts from all
+ * facts.
+ *
+ * @return Number of facts filled.
+ */
+
+int classicalInterferencer::fillFacts()
+{
+  facts.clear();
+
+  initialNumberOfFacts = ceil(allFacts.size() * factsBasePercent / 100.0);
+  std::string delimiter = "=";
+  std::string attribute, value;
+  int delimiterPosition = 0;
+
+  for(int i = 0; i < initialNumberOfFacts; ++i)
+  {
+    delimiterPosition = allFacts[i].find(delimiter);
+    attribute = allFacts[i].substr(0, delimiterPosition);
+    value = allFacts[i].substr(delimiterPosition, allFacts[i].length() - 1);
+    facts[attribute].insert(value);
+  }
+
+  return initialNumberOfFacts;
+}
+
+/** classicalInterferencer::findIndexesOfInitiallyAvailableRules
+ *
+ * Counts and return number of rules that could be fired from initial facts base.
+ * It requires filled facts base to work properly, otherwise may return rubbish.
+ *
+ * @brief Returns number of rules that could be fired with initial facts base.
+ *
+ * @return Number of initially available rules.
+ */
+
+int classicalInterferencer::findIndexesOfInitiallyAvailableRules()
+{
+  initiallyAvailableRuleIndexes.clear();
+
+  for(int i = 0; i < rules.size(); ++i)
+  {
+    if(canRuleBeFired(rules[i]))
+      initiallyAvailableRuleIndexes.push_back(i);
+  }
+
+  return initiallyAvailableRuleIndexes.size();
+}
+
 /** classicalInterferencer::addFactsFromLine
  *
  * Parses line read from facts base into the form that can easily be stored
@@ -156,7 +461,7 @@ int classicalInterferencer::addTargetFromLine(std::string line)
 
   std::string attributeValue = line;
 
-  facts[attributeName].insert(attributeValue);
+  interferenceTarget[attributeName].insert(attributeValue);
 
   return 0;
 }

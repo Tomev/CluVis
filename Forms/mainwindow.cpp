@@ -1313,6 +1313,36 @@ void MainWindow::visualize()
     ui->actionGenerateReport->setEnabled(true);
 }
 
+std::vector<rule> MainWindow::getRulesFromRulesClusters()
+{
+  std::vector<rule> rules;
+
+  QList<cluster*> ruleClusters;
+
+  for(auto c : gThread->clusters)
+    ruleClusters.append(c->getObjects());
+
+  for(cluster* c : ruleClusters)
+  {
+    ruleCluster *rCluster = static_cast<ruleCluster*>(c);
+    rules.push_back(rule());
+
+    for(QString permiseAttribute : rCluster->premiseAttributes)
+    {
+      for(QString attributesValue : (*rCluster->attributesValues[permiseAttribute]))
+        rules.back().premises[permiseAttribute.toStdString()].insert(attributesValue.toStdString());
+    }
+
+    for(QString decisionAttribute : rCluster->decisionAttributes)
+    {
+      for(QString attributesValue : (*rCluster->attributesValues[decisionAttribute]))
+        rules.back().conclusions[decisionAttribute.toStdString()].insert(attributesValue.toStdString());
+    }
+  }
+
+  return rules;
+}
+
 void MainWindow::gotMDIData(qreal MDI, qreal maxMDI, int maxMDIClustersNumber)
 {
     this->MDI = MDI;
@@ -1756,50 +1786,112 @@ void MainWindow::on_pushButtonInterfere_clicked()
   gSettings->interClusterSimMeasureID = CentroidLinkId;
 
   ruleInterferencer.setGroupingThread(this->gThread);
-  ruleInterferencer.setInterferenceType(EXHAUSTIVE);
-
+  std::vector<int> clusterInterferenceTypes;
+  clusterInterferenceTypes.push_back(GREEDY);
+  clusterInterferenceTypes.push_back(EXHAUSTIVE);
 
   QList<int> factsPercents = {100, 75, 50, 25, 10, 1};
 
   // Run interference
   for(int factPercent : factsPercents)
   {
-    ruleInterferencer.factsBasePercent = factPercent;
+    for(int type : clusterInterferenceTypes)
+    {
+      ruleInterferencer.setInterferenceType(type);
 
-    ruleInterferencer.interfere();
+      ruleInterferencer.factsBasePercent = factPercent;
+
+      ruleInterferencer.interfere();
+
+      // For rule interferencer
+      if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
+      {
+        QTextStream stream(&file);
+
+        stream  << ruleInterferencer.availableRuleIndexes.first() << ","
+                << ruleInterferencer.availableRuleIndexes.last() << ","
+                << ruleInterferencer.getNumberOfFacts() << ","
+                << ruleInterferencer.getNumberOfRulesThatCanBeFired() << ","
+                << qreal(100 * ruleInterferencer.getNumberOfRulesThatCanBeFired()
+                        / settings->objectsNumber ) << ","
+                << ruleInterferencer.target.size() << ","
+                << ruleInterferencer.targetAchiveable <<","
+                << ruleInterferencer.numberOfRulesFired << ","
+                << ruleInterferencer.mostSimilarRule->name() << ","
+                << ruleInterferencer.targetAchieved << ","
+
+                << gSettings->zeroRepresentativeClusterOccurence << ","
+                << gSettings->zeroRepresentativesNumber << ","
+                << ruleInterferencer.zeroRepresentativeOccured << ","
+                << ruleInterferencer.zeroRepresentativeOccurenceNumber << ","
+
+                << QString::fromStdString(ruleInterferencer.getInterferenceType()) << ","
+                << ruleInterferencer.getInterferenceTime() << ","
+                << ruleInterferencer.getNumberOfNewFacts() << ","
+                << ruleInterferencer.wasRuleFired() << ","
+                << ruleInterferencer.numberOfClustersSearched << ","
+                << settings->stopCondition << ","
+                << ui->comboBoxInterClusterSimMeasure->currentText() << ","
+                << ui->comboBoxInterObjectSimMeasure->currentText() << ","
+                << ui->comboBoxRepresentativeCreationStrategy->currentText() << ","
+                << ui->spinBoxRepresentativeAttributePercent->text() << ","
+                << ruleInterferencer.availableRuleIndexes.join(" & ") << ","
+                << findSmallestCluster()->size() << ","
+
+                << findBiggestCluster()->size() << ","
+                << countUngroupedObjects() << ","
+                << getSmallestRepresentativeLength() << ","
+                << getAverageRepresentativeLength() << ","
+                << getBiggestRepresentativeLength() << ","
+                << settings->objectsNumber << ","
+                << gSettings->attributesNumber << ","
+                << gSettings->giniIndex << ","
+                << gSettings->bonferroniIndex << "\n";
+      }
+
+      file.close();
+    }
+
+    // For classical interferencer
+
+    classicInterferencer.setRules(getRulesFromRulesClusters());
+    classicInterferencer.setFactsBasePercent(factPercent);
+    classicInterferencer.interfere();
+
+
 
     if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
     {
       QTextStream stream(&file);
 
-      stream  << ruleInterferencer.availableRuleIndexes.first() << ","
-              << ruleInterferencer.availableRuleIndexes.last() << ","
-              << ruleInterferencer.getNumberOfFacts() << ","
-              << ruleInterferencer.getNumberOfRulesThatCanBeFired() << ","
-              << qreal(100 * ruleInterferencer.getNumberOfRulesThatCanBeFired()
+      stream  << classicInterferencer.getFirstRuleThatCouldInitiallyBeFired() << ","
+              << classicInterferencer.getLastRuleThatCouldInitiallyBeFired() << ","
+              << classicInterferencer.getInitialNumberOfFacts() << ","
+              << classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired() << ","
+              << qreal(100 * classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired()
                       / settings->objectsNumber ) << ","
-              << ruleInterferencer.target.size() << ","
-              << ruleInterferencer.targetAchiveable <<","
-              << ruleInterferencer.numberOfRulesFired << ","
-              << ruleInterferencer.mostSimilarRule->name() << ","
-              << ruleInterferencer.targetAchieved << ","
+              << classicInterferencer.wasTargetSet() << ","
+              << classicInterferencer.isTargetAchiveable() <<","
+              << classicInterferencer.getNumberOfStructuresSearched() << ","
+              << "not applicable" << ","
+              << classicInterferencer.wasTargetAchieved(nullptr) << ","
 
               << gSettings->zeroRepresentativeClusterOccurence << ","
               << gSettings->zeroRepresentativesNumber << ","
-              << ruleInterferencer.zeroRepresentativeOccured << ","
-              << ruleInterferencer.zeroRepresentativeOccurenceNumber << ","
+              << "not applicable" << ","
+              << "not applicable" << ","
 
-              << QString::fromStdString(ruleInterferencer.getInterferenceType()) << ","
-              << ruleInterferencer.getInterferenceTime() << ","
-              << ruleInterferencer.getNumberOfNewFacts() << ","
-              << ruleInterferencer.wasRuleFired() << ","
-              << ruleInterferencer.numberOfClustersSearched << ","
+              << QString::fromStdString(classicInterferencer.getInterferentionType()) << ","
+              << classicInterferencer.getInterferenceTime() << ","
+              << classicInterferencer.getNumberOfNewFacts() << ","
+              << classicInterferencer.wasAnyRuleFired() << ","
+              << classicInterferencer.getNumberOfStructuresSearched() << ","
               << settings->stopCondition << ","
               << ui->comboBoxInterClusterSimMeasure->currentText() << ","
               << ui->comboBoxInterObjectSimMeasure->currentText() << ","
               << ui->comboBoxRepresentativeCreationStrategy->currentText() << ","
               << ui->spinBoxRepresentativeAttributePercent->text() << ","
-              << ruleInterferencer.availableRuleIndexes.join(" & ") << ","
+              << QString::fromStdString(classicInterferencer.getRulesThatCouldInitiallyBeFired()) << ","
               << findSmallestCluster()->size() << ","
 
               << findBiggestCluster()->size() << ","
