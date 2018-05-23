@@ -33,11 +33,13 @@ int classicalInterferencer::interfere()
 {
   std::vector<rule> workingRules = rules;
   bool wasRuleFired = true;
-  fillFacts();
+  //fillFacts();
+  facts = getInitialFacts();
   findIndexesOfInitiallyAvailableRules();
   numberOfStructuresSearchedDuringInterference = 0;
   numberOfRulesFired = 0;
   numberOfIterations = 0;
+  newFacts.clear();
 
   clock_t start = clock();
 
@@ -265,7 +267,7 @@ bool classicalInterferencer::wasTargetSet()
 bool classicalInterferencer::isTargetAchiveable()
 {
   std::unordered_map<std::string, std::unordered_set<std::string>> workingFacts
-      = facts;
+      = getInitialFacts();
 
   std::string attributeName;
   std::unordered_set<std::string> attributesValues;
@@ -339,7 +341,6 @@ std::string classicalInterferencer::getRulesThatCouldInitiallyBeFired()
 
   for(i = 0; i < initiallyAvailableRuleIndexes.size() - 1; ++i)
   {
-    std::cout << result;
     result += std::to_string(initiallyAvailableRuleIndexes[i]);
     result += separator;
   }
@@ -427,6 +428,39 @@ int classicalInterferencer::fillFacts()
   }
 
   return initialNumberOfFacts;
+}
+
+/**
+ * @brief classicalInterferencer::getInitialFacts
+ *
+ * In order for this method to work properly facts should be given in following
+ * form: attribute=value. It'd then create facts map with the percent of facts
+ * from allFacts vector.
+ *
+ * @brief Creating map of facts with given (by percentage) number of facts from
+ * all facts.
+ *
+ * @return Unordered map with initial facts attributes and their values.
+ */
+
+std::unordered_map<std::string, std::unordered_set<std::string> > classicalInterferencer::getInitialFacts()
+{
+  std::unordered_map<std::string, std::unordered_set<std::string> > initialFacts;
+
+  initialNumberOfFacts = ceil(allFacts.size() * factsBasePercent / 100.0);
+  std::string delimiter = "=";
+  std::string attribute, value;
+  int delimiterPosition = 0;
+
+  for(int i = 0; i < initialNumberOfFacts; ++i)
+  {
+    delimiterPosition = allFacts[i].find(delimiter);
+    attribute = allFacts[i].substr(0, delimiterPosition);
+    value = allFacts[i].substr(delimiterPosition+1, allFacts[i].length() - 1);
+    initialFacts[attribute].insert(value);
+  }
+
+  return initialFacts;
 }
 
 /** classicalInterferencer::findIndexesOfInitiallyAvailableRules

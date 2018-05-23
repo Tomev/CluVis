@@ -89,32 +89,53 @@ double clusterInterferencer::getInterferenceTime()
 
 int clusterInterferencer::interfereGreedy()
 {
+  qDebug() << "Greedy stuff.";
+
   zeroRepresentativeOccured = false;
+
+  //qDebug() << "Occurence";
+
   rulesFiredDuringInterference.clear();
+
+  //qDebug() << "Filling facts.";
 
   //qDebug() << "Number of facts: " <<
   fillFacts(factsBasePercent);
 
+  //qDebug() << "Filling available rules.";
+
   fillAvailableRuleIndexes();
+
+  //qDebug() << "Creating fact rule.";
 
   // Cluster facts so implemented similarity measures can be used.
   ruleCluster factRule = createFactRule();
+
+  qDebug() << "Finding most similar rule.";
 
   int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
 
   numberOfClustersSearched = 0;
   fireableRules.clear();
 
+  //qDebug() << "Finding rules to fire.";
+
   findRulesToFireInCluster(&factRule,
                              grpThread->settings
                              ->clusters->at(mostSimiliarClusterIdx).get());
+
+  //qDebug() << "Checking if target can be achieved.";
 
   canTargetBeAchieved();
 
   numberOfRulesFired = fireableRules.size();
 
+  //qDebug() << "Finding most similar rule.";
+
   findMostSimilarRule(&factRule, grpThread->settings
                         ->clusters->at(mostSimiliarClusterIdx).get());
+
+  //qDebug() << "Firing rules.";
 
   for(auto rCluster : fireableRules)
   {
@@ -129,7 +150,12 @@ int clusterInterferencer::interfereGreedy()
 
 int clusterInterferencer::interfereExhaustive()
 {
+  qDebug() << "Exhaustive.";
+
   //qDebug() << "Number of facts: " <<
+
+  //qDebug() << "Filling facts.";
+
   fillFacts(factsBasePercent);
 
   zeroRepresentativeOccured = false;
@@ -138,7 +164,13 @@ int clusterInterferencer::interfereExhaustive()
   numberOfIterations = 0;
 
   fireableRules.clear();
+
+  //qDebug() << "Filling avi rules.";
+
   fillAvailableRuleIndexes();
+
+  //qDebug() << "Can target be achieved.";
+
   canTargetBeAchieved();
   rulesFiredDuringInterference.clear();
 
@@ -176,7 +208,7 @@ int clusterInterferencer::interfereExhaustive()
     }
   }
 
-  //qDebug() << "Checking if target was achived.";
+  qDebug() << "Checking if target was achived.";
   wasTargetAchieved();
 
   // Emergency finding for most similar rule
@@ -196,6 +228,7 @@ int clusterInterferencer::fillOrderOfClustersToSearchExhaustively(ruleCluster *f
 
   double similarityValue = 0.0;
 
+  //qDebug() << "First for.";
   for(int index = 0; index < grpThread->clusters.size(); ++index)
   {
     similarityValue =
@@ -208,12 +241,14 @@ int clusterInterferencer::fillOrderOfClustersToSearchExhaustively(ruleCluster *f
   int highestSimClusterIdx = 0;
   int eraseOffset = 0;
 
+  //qDebug() << "While.";
   while(clustersSimilarityValues.size() != 0)
   {
     highestSimValue = -1;
     highestSimClusterIdx = 0;
     eraseOffset = 0;
 
+    //qDebug() << "Inner for.";
     // Find highest similarity cluster
     for(int i = 0; i < clustersSimilarityValues.size(); ++ i)
     {
@@ -242,8 +277,15 @@ ruleCluster *clusterInterferencer::exhaustivelySearchForRuleToFire(ruleCluster *
 
   for(int clusterIndex : orderedClustersIndexesForExhaustiveSearch)
   {
+    //qDebug() << orderedClustersIndexesForExhaustiveSearch;
+
     consideredCluster = grpThread->clusters[clusterIndex].get();
+
+    //qDebug() << "After get";
+
     ruleToFire = exhaustivelySearchForRuleToFireInCluster(consideredCluster, factRule);
+
+    //qDebug() << "Found rule to fire.";
 
     if(ruleToFire != nullptr)
     {
@@ -302,13 +344,20 @@ ruleCluster *clusterInterferencer::exhaustivelySearchForRuleToFireInCluster(clus
       subclustersConsiderationOrder.push_back(consideredCluster->rightNode);
     }
 
+    //qDebug() << subclustersConsiderationOrder.size();
+
     ruleFound =
       exhaustivelySearchForRuleToFireInCluster(subclustersConsiderationOrder[0].get(), factRule);
+
+    //qDebug() << "After rule found.";
 
     if(ruleFound == nullptr)
       ruleFound =
         exhaustivelySearchForRuleToFireInCluster(subclustersConsiderationOrder[1].get(), factRule);
+      //qDebug() << "Second rule found.";
   }
+
+  //qDebug() << "Leaving exhaustivelySearchForRuleToFireInCluster.";
 
   return ruleFound;
 }

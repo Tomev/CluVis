@@ -1689,6 +1689,8 @@ void MainWindow::on_pushButtonStandard_clicked()
         }
     }
 
+
+
     qDebug() << "A splendid finish.";
 }
 
@@ -1733,7 +1735,9 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
   QFile file(path);
 
-  // Create file if it doesn't exist.
+  QList<int> factsPercents = {100, 75, 50, 25, 10, 1};
+
+  // Create file if it doesn't exist. Add classical interference data.
   if(!file.exists())
   {
     if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
@@ -1783,6 +1787,79 @@ void MainWindow::on_pushButtonInterfere_clicked()
     }
 
     file.close();
+
+    for(int factPercent : factsPercents)
+    {
+      // For classical interferencer
+
+      //qDebug() << "Setting rules to classic interferencer.";
+
+      classicInterferencer.setRules(getRulesFromRulesClusters());
+
+      //qDebug() << "Setting facts base percents to classic interfetencer.";
+
+      classicInterferencer.setFactsBasePercent(factPercent);
+
+      //qDebug() << "Interfering with classic interferencer.";
+
+      classicInterferencer.interfere();
+
+      //qDebug() << "Saving interference data from classic interferencer to report.";
+
+      if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
+      {
+        QTextStream stream(&file);
+
+        stream  << classicInterferencer.getFirstRuleThatCouldInitiallyBeFired() << ","
+                << classicInterferencer.getLastRuleThatCouldInitiallyBeFired() << ","
+                << classicInterferencer.getInitialNumberOfFacts() << ","
+                << classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired() << ","
+                << qreal(100 * classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired()
+                        / settings->objectsNumber ) << ","
+                << classicInterferencer.wasTargetSet() << ","
+                << classicInterferencer.wasTargetAchieved(nullptr) << ","
+                /* Was target achieved is used instead, as it fires all possible
+                 * rules. isTargetAchiveable checks if there is a conclusion
+                 * existing in rules, that could satisfy the target, which in
+                 * this case is not what one expects. */
+                //<< classicInterferencer.isTargetAchiveable() <<","
+                << classicInterferencer.getNumberOfRulesFired() << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << classicInterferencer.wasTargetAchieved(nullptr) << ","
+
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+
+                << QString::fromStdString(classicInterferencer.getInterferentionType()) << ","
+                << classicInterferencer.getInterferenceTime() << ","
+                << classicInterferencer.getNumberOfNewFacts() << ","
+                << classicInterferencer.wasAnyRuleFired() << ","
+                << classicInterferencer.getNumberOfIterations() << ","
+                << classicInterferencer.getNumberOfStructuresSearched() << ","
+                << settings->stopCondition << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << QString::fromStdString(classicInterferencer.getRulesThatCouldInitiallyBeFired()) << ","
+                << "not applicable" << ","
+
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << "not applicable" << ","
+                << settings->objectsNumber << ","
+                << gSettings->attributesNumber << ","
+                << "not applicable" << ","
+                << "not applicable" << "\n";
+      }
+
+      file.close();
+    }
   }
 
   gSettings->interClusterSimMeasureID = CentroidLinkId;
@@ -1790,13 +1867,13 @@ void MainWindow::on_pushButtonInterfere_clicked()
   ruleInterferencer.setGroupingThread(this->gThread);
   std::vector<int> clusterInterferenceTypes;
   clusterInterferenceTypes.push_back(GREEDY);
-  clusterInterferenceTypes.push_back(EXHAUSTIVE);
-
-  QList<int> factsPercents = {100, 75, 50, 25, 10, 1};
+  //clusterInterferenceTypes.push_back(EXHAUSTIVE);
 
   // Run interference
   for(int factPercent : factsPercents)
   {
+    qDebug() << "Running interference.";
+
     for(int type : clusterInterferenceTypes)
     {
       ruleInterferencer.setInterferenceType(type);
@@ -1804,6 +1881,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
       ruleInterferencer.factsBasePercent = factPercent;
 
       ruleInterferencer.interfere();
+
+      qDebug() << "Generating report.";
 
       // For rule interferencer
       if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
@@ -1855,71 +1934,6 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
       file.close();
     }
-
-    // For classical interferencer
-
-    //qDebug() << "Setting rules to classic interferencer.";
-
-    classicInterferencer.setRules(getRulesFromRulesClusters());
-
-    //qDebug() << "Setting facts base percents to classic interfetencer.";
-
-    classicInterferencer.setFactsBasePercent(factPercent);
-
-    //qDebug() << "Interfering with classic interferencer.";
-
-    classicInterferencer.interfere();
-
-    //qDebug() << "Saving interference data from classic interferencer to report.";
-
-    if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
-    {
-      QTextStream stream(&file);
-
-      stream  << classicInterferencer.getFirstRuleThatCouldInitiallyBeFired() << ","
-              << classicInterferencer.getLastRuleThatCouldInitiallyBeFired() << ","
-              << classicInterferencer.getInitialNumberOfFacts() << ","
-              << classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired() << ","
-              << qreal(100 * classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired()
-                      / settings->objectsNumber ) << ","
-              << classicInterferencer.wasTargetSet() << ","
-              << classicInterferencer.isTargetAchiveable() <<","
-              << classicInterferencer.getNumberOfRulesFired() << ","
-              << "not applicable" << ","
-              << "not applicable" << ","
-              << classicInterferencer.wasTargetAchieved(nullptr) << ","
-
-              << gSettings->zeroRepresentativeClusterOccurence << ","
-              << gSettings->zeroRepresentativesNumber << ","
-              << "not applicable" << ","
-              << "not applicable" << ","
-
-              << QString::fromStdString(classicInterferencer.getInterferentionType()) << ","
-              << classicInterferencer.getInterferenceTime() << ","
-              << classicInterferencer.getNumberOfNewFacts() << ","
-              << classicInterferencer.wasAnyRuleFired() << ","
-              << classicInterferencer.getNumberOfIterations() << ","
-              << classicInterferencer.getNumberOfStructuresSearched() << ","
-              << settings->stopCondition << ","
-              << ui->comboBoxInterClusterSimMeasure->currentText() << ","
-              << ui->comboBoxInterObjectSimMeasure->currentText() << ","
-              << ui->comboBoxRepresentativeCreationStrategy->currentText() << ","
-              << ui->spinBoxRepresentativeAttributePercent->text() << ","
-              << QString::fromStdString(classicInterferencer.getRulesThatCouldInitiallyBeFired()) << ","
-              << findSmallestCluster()->size() << ","
-
-              << findBiggestCluster()->size() << ","
-              << countUngroupedObjects() << ","
-              << getSmallestRepresentativeLength() << ","
-              << getAverageRepresentativeLength() << ","
-              << getBiggestRepresentativeLength() << ","
-              << settings->objectsNumber << ","
-              << gSettings->attributesNumber << ","
-              << gSettings->giniIndex << ","
-              << gSettings->bonferroniIndex << "\n";
-    }
-
-    file.close();
   }
 
   qDebug() << "End interfering.";

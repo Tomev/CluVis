@@ -64,6 +64,7 @@ class classicalInterferencer
     std::vector<rule> rules;
 
     int fillFacts();
+    std::unordered_map<std::string, std::unordered_set<std::string>> getInitialFacts();
     int findIndexesOfInitiallyAvailableRules();
 
     int addFactFromLine(std::string line);
