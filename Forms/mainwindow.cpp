@@ -1891,7 +1891,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
         stream  << ruleInterferencer.availableRuleIndexes.first() << ","
                 << ruleInterferencer.availableRuleIndexes.last() << ","
-                << ruleInterferencer.getNumberOfFacts() << ","
+                << ruleInterferencer.getInitialNumberOfFacts() << ","
                 << ruleInterferencer.getNumberOfRulesThatCanBeFired() << ","
                 << qreal(100 * ruleInterferencer.getNumberOfRulesThatCanBeFired()
                         / settings->objectsNumber ) << ","
