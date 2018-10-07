@@ -172,7 +172,7 @@ private:
         cluster* findBiggestCluster();
         cluster* findSmallestCluster();
         long getClusteringTreeLevel();
-          long getClustersTreeLevel(std::shared_ptr<cluster> c);
+          long getClustersTreeLevel(std::shared_ptr<cluster> c, long currentLevel);
         int getBiggestRepresentativeLength();
         int getSmallestRepresentativeLength();
         qreal getAverageRepresentativeLength();
