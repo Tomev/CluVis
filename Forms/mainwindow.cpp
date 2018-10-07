@@ -468,7 +468,7 @@ long MainWindow::getClusteringTreeLevel()
   {
     if(!c->hasBothNodes())
     {
-      clusteringTreeLevel = 1;
+      currentClusterTreeLevel = 0;
     }
     else
     {
