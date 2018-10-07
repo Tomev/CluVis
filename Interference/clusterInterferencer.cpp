@@ -116,6 +116,8 @@ int clusterInterferencer::interfereGreedy()
 
   fillAvailableRuleIndexes();
   initiallyFireableRuleIndexes = availableRuleIndexes;
+  if(availableRuleIndexes[0].endsWith("-1"))
+    initiallyFireableRuleIndexes.clear();
 
   //qDebug() << "Creating fact rule.";
 
@@ -179,6 +181,8 @@ int clusterInterferencer::interfereExhaustive()
 
   fillAvailableRuleIndexes();
   initiallyFireableRuleIndexes = availableRuleIndexes;
+  if(availableRuleIndexes[0].endsWith("-1"))
+    initiallyFireableRuleIndexes.clear();
 
   //qDebug() << "Can target be achieved.";
 
