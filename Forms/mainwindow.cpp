@@ -516,7 +516,7 @@ int MainWindow::getBiggestRepresentativeLength()
 
 int MainWindow::getSmallestRepresentativeLength()
 {
-    int smallestRepSize = 0;
+    int smallestRepSize = INT_MAX;
     ruleCluster* c;
 
     for(int i = 0; i < settings->stopCondition; ++i)
@@ -1735,7 +1735,6 @@ void MainWindow::on_pushButtonStandard_clicked()
         = (clock() - start) / (double) CLOCKS_PER_SEC;
 
     qDebug() << "Raport generation time: " << raportGenerationTime << " s.";
-
 }
 
 void MainWindow::on_pushButtonInterfere_clicked()
