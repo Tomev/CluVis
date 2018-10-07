@@ -42,27 +42,12 @@ int clusterInterferencer::getNumberOfFacts()
 
 int clusterInterferencer::getNumberOfNewFacts()
 {
-  QHash<QString, QSet<QString>> newFacts;
+  long numberOfNewFacts = 0;
 
-  for(cluster* clus : fireableRules)
-  {
-    ruleCluster* c = static_cast<ruleCluster*>(clus);
+  for(QSet<QString> attributesValues : newFacts)
+    numberOfNewFacts += attributesValues.size();
 
-    for(QString dec : c->decisionAttributes)
-    {
-      for(QString decVal : *c->attributesValues[dec])
-      {
-        newFacts[dec].insert(decVal);
-      }
-    }
-  }
-
-  int result = 0;
-
-  for(QString fact : newFacts.keys())
-    result += newFacts[fact].size();
-
-  return result;
+  return numberOfNewFacts;
 }
 
 int clusterInterferencer::getInitialNumberOfFacts()
@@ -72,7 +57,7 @@ int clusterInterferencer::getInitialNumberOfFacts()
   for(QSet<QString> attributesValues : initialFacts)
     initialNumberOfFacts += attributesValues.size();
 
-  return initialFacts.size();
+  return initialNumberOfFacts;
 }
 
 int clusterInterferencer::getNumberOfIterations()
@@ -404,6 +389,7 @@ int clusterInterferencer::fireRule(ruleCluster *ruleToFire)
     for(QString value : *(ruleToFire->attributesValues[decisionAttribute]))
     {
       facts[decisionAttribute].insert(value);
+      newFacts[decisionAttribute].insert(value);
     }
   }
 

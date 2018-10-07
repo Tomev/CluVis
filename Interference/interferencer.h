@@ -10,6 +10,7 @@ class interferencer
   public:
 
     QHash<QString, QSet<QString>> facts;
+    QHash<QString, QSet<QString>> newFacts;
     QHash<QString, QSet<QString>> initialFacts;
     QHash<QString, QSet<QString>> target;
     QStringList allFacts;
