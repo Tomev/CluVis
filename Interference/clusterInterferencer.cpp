@@ -67,6 +67,11 @@ int clusterInterferencer::getNumberOfNewFacts()
 
 int clusterInterferencer::getInitialNumberOfFacts()
 {
+  long initialNumberOfFacts = 0;
+
+  for(QSet<QString> attributesValues : initialFacts)
+    initialNumberOfFacts += attributesValues.size();
+
   return initialFacts.size();
 }
 
