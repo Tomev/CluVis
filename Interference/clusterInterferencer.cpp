@@ -96,7 +96,7 @@ std::string clusterInterferencer::whyWasntTargetConfirmed()
       wasRuleFired() ? "" : "rule wasnt fired; ";
 
   failureReasons +=
-      target.keys().size() < 1 ? "" : "target not set; ";
+      target.keys().size() < 1 ? "target not set; " : "";
 
   failureReasons +=
       zeroRepresentativeOccured ? "zero representative occurence; " : "";
