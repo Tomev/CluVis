@@ -121,7 +121,7 @@ int classicalInterferencer::loadFactsFromPath(std::string path)
 
 std::string classicalInterferencer::getInterferentionType()
 {
-  return "Classical interference.";
+  return "Classical interference";
 }
 
 /** classicalInterferencer::getFirstRuleThatCouldInitiallyBeFired
