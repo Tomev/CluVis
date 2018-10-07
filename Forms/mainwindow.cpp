@@ -1734,7 +1734,7 @@ void MainWindow::on_pushButtonStandard_clicked()
     long raportGenerationTime
         = (clock() - start) / (double) CLOCKS_PER_SEC;
 
-    qDebug() << "Raport generation time: " << raportMessage << " s.";
+    qDebug() << "Raport generation time: " << raportGenerationTime << " s.";
 
 }
 
