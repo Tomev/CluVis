@@ -459,12 +459,14 @@ cluster *MainWindow::findSmallestCluster()
 
 long MainWindow::getClusteringTreeLevel()
 {
-  long clusteringTreeLevel = 0;
-  long currentClusterTreeLevel, leftNodeTreeSize, rightNodeTreeSize;
+  long  clusteringTreeLevel = 0,
+        currentClusterTreeLevel = 0,
+        leftNodeTreeSize = 0,
+        rightNodeTreeSize = 0;
 
   for(std::shared_ptr<cluster> c : clusters)
   {
-    if(c->size() == 1)
+    if(!c->hasBothNodes())
     {
       clusteringTreeLevel = 1;
     }
@@ -487,7 +489,7 @@ long MainWindow::getClustersTreeLevel(std::shared_ptr<cluster> c)
 {
   long clusterTreeLevel = 0;
 
-  if(c->size() == 1) return 1;
+  if(!c->hasBothNodes()) return 1;
 
   long leftNodeTreeSize = getClustersTreeLevel(c->leftNode),
        rightNodeTreeSize = getClustersTreeLevel(c->rightNode);
