@@ -34,8 +34,9 @@ class clusterInterferencer : public interferencer
 
     void setGroupingThread(groupingThread* newGrpThread);
 
-    int numberOfClustersSearched = 0;
-    int numberOfRulesFired = 0;
+    long numberOfClustersSearched = 0;
+    long numberOfRulesFired = 0;
+    long zeroRepresentativeOccurenceStep = 0;
 
     int getNumberOfRulesThatCanBeFired();
     int getNumberOfFacts();
@@ -45,6 +46,8 @@ class clusterInterferencer : public interferencer
 
     double getInterferenceTime();
 
+    std::string whyWasntTargetConfirmed();
+
   protected:
 
     groupingThread* grpThread;
@@ -53,6 +56,7 @@ class clusterInterferencer : public interferencer
     double interferenceTime = 0;
     int initialNumberOfFacts = 0;
     int numberOfIterations = 0;
+    long currentStep = 0;
 
     std::unordered_set<std::string> rulesFiredDuringInterference;
     std::vector<int> orderedClustersIndexesForExhaustiveSearch;

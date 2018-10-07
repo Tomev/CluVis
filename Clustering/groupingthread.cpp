@@ -62,7 +62,7 @@ void groupingThread::initializeDataPreparator()
     {
         case RSESRulesId:
         {
-            emit passLogMsg(tr("log.rsesGroupingStarted"));
+            //emit passLogMsg(tr("log.rsesGroupingStarted"));
 
             groupingSettings* sets = new groupingSettings();
             sets->dGrpSet = dGrpSettings;
@@ -75,8 +75,8 @@ void groupingThread::initializeDataPreparator()
         }
         default:
         {
-            emit passLogMsg(tr("log.unknownObjectsType"));
-            emit passLogMsg(tr("log.operationWontStart"));
+            //emit passLogMsg(tr("log.unknownObjectsType"));
+            //emit passLogMsg(tr("log.operationWontStart"));
 
             return;
         }
@@ -89,13 +89,13 @@ void groupingThread::groupObjects()
     grpSettings->zeroRepresentativeClusterOccurence = -1;
     grpSettings->zeroRepresentativesNumber = 0;
 
-    emit passLogMsg(tr("log.gatheringAttributesData"));
+    //emit passLogMsg(tr("log.gatheringAttributesData"));
 
     grpDataPrep->fillAttributesData(&attributes);
 
     // Clusters are initialized here, so they wont be deleted after
     // prep method finishes.
-    emit passLogMsg(tr("log.placingObjectsInClusters"));
+    //emit passLogMsg(tr("log.placingObjectsInClusters"));
 
     grpDataPrep->clusterObjects(&clusters, &attributes);
 
@@ -105,13 +105,13 @@ void groupingThread::groupObjects()
 
     //qDebug() << "Attributes data filled.";
 
-    emit passLogMsg(tr("log.creatingSimMatrix"));
+    //emit passLogMsg(tr("log.creatingSimMatrix"));
 
     fillSimMatrix(settings->objectsNumber);
 
     //qDebug() << "Sim matrix filled.";
 
-    emit passLogMsg(tr("log.groupingProcessStarted"));
+    //emit passLogMsg(tr("log.groupingProcessStarted"));
 
     //groupingProgress->show();
 
@@ -127,8 +127,8 @@ void groupingThread::groupObjects()
 
         if(wasGroupingCanceled)
         {
-            emit passLogMsg(tr("log.groupingCancelled"));
-            emit passLogMsg(tr("log.visualizationImpossible"));
+            //emit passLogMsg(tr("log.groupingCancelled"));
+            //emit passLogMsg(tr("log.visualizationImpossible"));
             //return;
         }
 
@@ -170,6 +170,7 @@ void groupingThread::groupObjects()
         countMDBI(simMatrix.size());
     }
 
+    /*
     emit passLogMsg(
         QString(tr("log.clustersNumber"))
         .arg(QString::number(settings->stopCondition))
@@ -185,8 +186,9 @@ void groupingThread::groupObjects()
         .arg(QString::number(MDBI))
     );
 
-    emit passLogMsg(tr("log.groupingFinished"));
-    emit passLogMsg(tr("log.sendingResultatntStructure"));
+    //emit passLogMsg(tr("log.groupingFinished"));
+    //emit passLogMsg(tr("log.sendingResultatntStructure"));
+    */
 
     settings->clusters->clear();
 

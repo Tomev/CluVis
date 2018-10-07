@@ -171,6 +171,8 @@ private:
         int countUngroupedObjects();
         cluster* findBiggestCluster();
         cluster* findSmallestCluster();
+        long getClusteringTreeLevel();
+          long getClustersTreeLevel(std::shared_ptr<cluster> c);
         int getBiggestRepresentativeLength();
         int getSmallestRepresentativeLength();
         qreal getAverageRepresentativeLength();

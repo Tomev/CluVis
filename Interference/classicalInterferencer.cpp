@@ -169,6 +169,42 @@ bool classicalInterferencer::wasAnyRuleFired()
   return newFacts.size();
 }
 
+/** classicalInterferencer::wasInterferenceTargetInitiallyConfirmable()
+ *
+ * Checks if initially fireable rules conclusions confirms the target.
+ *
+ * @brief Checks if initially fireable rules conclusions confirms the target.
+ *
+ * @return If target was initially achieveable.
+ */
+
+bool classicalInterferencer::wasInterferenceTargetInitiallyConfirmable()
+{
+  if(target.size() < 1) return false;
+
+  std::unordered_map<std::string, std::unordered_set<std::string>>
+      initiallyObtainableFacts;
+
+  initiallyObtainableFacts = getInitialFacts();
+
+  std::string attributeName;
+  std::unordered_set<std::string> attributesValues;
+
+  for(int ruleIndex : initiallyAvailableRuleIndexes)
+  {
+    for(auto kv : rules[ruleIndex].conclusions)
+    {
+      attributeName = kv.first;
+      attributesValues = kv.second;
+
+      for(std::string attributesValue : attributesValues)
+        initiallyObtainableFacts[attributeName].insert(attributesValue);
+    }
+  }
+
+  return wasTargetAchieved(&initiallyObtainableFacts);
+}
+
 /** classicalInterferencer::getNumberOfNewFacts
  * @brief Counts and returns new facts.
  *
@@ -298,7 +334,8 @@ bool classicalInterferencer::isTargetAchiveable()
  * @return True if was achieved, otherwise false.
  */
 
-bool classicalInterferencer::wasTargetAchieved(std::unordered_map<std::string, std::unordered_set<std::string>> *consideredFacts)
+bool classicalInterferencer::wasTargetAchieved(
+    std::unordered_map<std::string, std::unordered_set<std::string>> *consideredFacts)
 {
   std::unordered_map<std::string, std::unordered_set<std::string>> *factsForCheck;
 
@@ -374,6 +411,32 @@ int classicalInterferencer::getNumberOfIterations()
   return numberOfIterations;
 }
 
+/** classicalInterferencer::whyWasntTargetConfirmed
+ *
+ * Returns possible reasons why target wasn't confirmed. If target was
+ * confirmed it returns empty string.
+ *
+ * @brief Returns possible reasons why target wasn't confirmed.
+ *
+ * @return failure reasons
+ */
+std::string classicalInterferencer::whyWasntTargetConfirmed()
+{
+  if(wasTargetAchieved(nullptr)) return "";
+
+  std::string failureReasons = "";
+
+  failureReasons +=
+      wasAnyRuleFired() ? "" : "rule wasnt fired; ";
+
+  failureReasons +=
+      wasTargetSet() ? "" : "target not set; ";
+
+  failureReasons = failureReasons.empty() ? "other case" : failureReasons;
+
+  return failureReasons;
+}
+
 /** classicalInterferencer::setFactsBasePercent
  *
  * @brief Setter for factsBasePercent.
@@ -430,8 +493,7 @@ int classicalInterferencer::fillFacts()
   return initialNumberOfFacts;
 }
 
-/**
- * @brief classicalInterferencer::getInitialFacts
+/** classicalInterferencer::getInitialFacts
  *
  * In order for this method to work properly facts should be given in following
  * form: attribute=value. It'd then create facts map with the percent of facts
@@ -443,7 +505,8 @@ int classicalInterferencer::fillFacts()
  * @return Unordered map with initial facts attributes and their values.
  */
 
-std::unordered_map<std::string, std::unordered_set<std::string> > classicalInterferencer::getInitialFacts()
+std::unordered_map<std::string, std::unordered_set<std::string>>
+  classicalInterferencer::getInitialFacts()
 {
   std::unordered_map<std::string, std::unordered_set<std::string> > initialFacts;
 

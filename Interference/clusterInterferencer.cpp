@@ -8,8 +8,7 @@
 #include "../Clustering/clusters.h"
 
 /* This class is diabolicaly ugly, but it was made in hurry, so I
- * don't really care that much. It shall be rewritten.
- */
+ * don't really care that much. It shall be rewritten one day. */
 
 clusterInterferencer::clusterInterferencer()
 {
@@ -68,7 +67,7 @@ int clusterInterferencer::getNumberOfNewFacts()
 
 int clusterInterferencer::getInitialNumberOfFacts()
 {
-  return initialNumberOfFacts;
+  return initialFacts.size();
 }
 
 int clusterInterferencer::getNumberOfIterations()
@@ -87,15 +86,36 @@ double clusterInterferencer::getInterferenceTime()
   return interferenceTime;
 }
 
+std::string clusterInterferencer::whyWasntTargetConfirmed()
+{
+  if(wasTargetAchieved()) return "";
+
+  std::string failureReasons = "";
+
+  failureReasons +=
+      wasRuleFired() ? "" : "rule wasnt fired; ";
+
+  failureReasons +=
+      target.keys().size() < 1 ? "" : "target not set; ";
+
+  failureReasons +=
+      zeroRepresentativeOccured ? "zero representative occurence; " : "";
+
+  failureReasons = failureReasons.empty() ? "other case" : failureReasons;
+
+  return failureReasons;
+}
+
 int clusterInterferencer::interfereGreedy()
 {
-  qDebug() << "Greedy stuff.";
+  //qDebug() << "Greedy stuff.";
 
   zeroRepresentativeOccured = false;
 
   //qDebug() << "Occurence";
 
   rulesFiredDuringInterference.clear();
+  currentStep = 1;
 
   //qDebug() << "Filling facts.";
 
@@ -105,13 +125,14 @@ int clusterInterferencer::interfereGreedy()
   //qDebug() << "Filling available rules.";
 
   fillAvailableRuleIndexes();
+  initiallyFireableRuleIndexes = availableRuleIndexes;
 
   //qDebug() << "Creating fact rule.";
 
   // Cluster facts so implemented similarity measures can be used.
   ruleCluster factRule = createFactRule();
 
-  qDebug() << "Finding most similar rule.";
+  //qDebug() << "Finding most similar rule.";
 
   int mostSimiliarClusterIdx = findMostSimiliarClusterToFactRule(&factRule);
 
@@ -130,11 +151,6 @@ int clusterInterferencer::interfereGreedy()
 
   numberOfRulesFired = fireableRules.size();
 
-  //qDebug() << "Finding most similar rule.";
-
-  findMostSimilarRule(&factRule, grpThread->settings
-                        ->clusters->at(mostSimiliarClusterIdx).get());
-
   //qDebug() << "Firing rules.";
 
   for(auto rCluster : fireableRules)
@@ -143,6 +159,8 @@ int clusterInterferencer::interfereGreedy()
     rulesFiredDuringInterference.insert(static_cast<ruleCluster*>(rCluster)->name().toStdString());
   }
 
+  //qDebug() << "Was target achived.";
+
   wasTargetAchieved();
 
   return 0;
@@ -150,7 +168,7 @@ int clusterInterferencer::interfereGreedy()
 
 int clusterInterferencer::interfereExhaustive()
 {
-  qDebug() << "Exhaustive.";
+  //qDebug() << "Exhaustive.";
 
   //qDebug() << "Number of facts: " <<
 
@@ -159,6 +177,8 @@ int clusterInterferencer::interfereExhaustive()
   fillFacts(factsBasePercent);
 
   zeroRepresentativeOccured = false;
+  zeroRepresentativeOccurenceStep = 0;
+  currentStep = 0;
   numberOfClustersSearched = 0;
   numberOfRulesFired = 0;
   numberOfIterations = 0;
@@ -168,6 +188,7 @@ int clusterInterferencer::interfereExhaustive()
   //qDebug() << "Filling avi rules.";
 
   fillAvailableRuleIndexes();
+  initiallyFireableRuleIndexes = availableRuleIndexes;
 
   //qDebug() << "Can target be achieved.";
 
@@ -183,6 +204,7 @@ int clusterInterferencer::interfereExhaustive()
   while(canAnyRuleBeFired && !wasTargetAchieved())
   {
     ++numberOfIterations;
+    ++currentStep;
 
     //qDebug() << "Creating fact rule.";
     factRule = createFactRule();
@@ -208,7 +230,7 @@ int clusterInterferencer::interfereExhaustive()
     }
   }
 
-  qDebug() << "Checking if target was achived.";
+  //qDebug() << "Checking if target was achived.";
   wasTargetAchieved();
 
   // Emergency finding for most similar rule
@@ -482,6 +504,7 @@ void clusterInterferencer::setInterferenceType(int newInterferenceType)
   interferenceType = newInterferenceType;
 }
 
+// Returns indexes of rules that can be fired
 int clusterInterferencer::fillAvailableRuleIndexes()
 {
   if(grpThread == 0) return -1;
@@ -521,10 +544,10 @@ int clusterInterferencer::canTargetBeAchieved()
 
   if(target.size() < 1)
   {
-    targetAchiveable = 1;
+    targetAchiveable = 0;
     return 0;
   }
-  if(grpThread == 0) return -1;
+  if(grpThread == nullptr) return -1;
 
   QHash<QString, QSet<QString>> decisions;
 
@@ -574,7 +597,6 @@ int clusterInterferencer::canTargetBeAchieved()
 int clusterInterferencer::wasTargetAchieved()
 {
   targetAchieved = 0;
-
 
   for(QString attributeName : target.keys())
   {
@@ -668,6 +690,8 @@ int clusterInterferencer::fillFacts(int basePercent)
     facts[fact.at(0)] += fact.at(1);
   }
 
+  initialFacts = facts;
+
   return numberOfFacts;
 }
 
@@ -692,6 +716,8 @@ int clusterInterferencer::findMostSimiliarClusterToFactRule(cluster* factRule)
 
     if(clusters->at(idx).get()->representativeAttributesValues.keys().size() == 0)
     {
+      zeroRepresentativeOccurenceStep =
+          zeroRepresentativeOccurenceStep == 0 ? currentStep : zeroRepresentativeOccurenceStep;
       zeroRepresentativeOccured = true;
       ++zeroRepresentativeOccurenceNumber;
     }

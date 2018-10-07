@@ -10,6 +10,7 @@ class interferencer
   public:
 
     QHash<QString, QSet<QString>> facts;
+    QHash<QString, QSet<QString>> initialFacts;
     QHash<QString, QSet<QString>> target;
     QStringList allFacts;
 
@@ -24,6 +25,7 @@ class interferencer
     long zeroRepresentativeOccurenceNumber = 0;
 
     QStringList availableRuleIndexes;
+    QStringList initiallyFireableRuleIndexes;
 
     bool canRuleBeFired(ruleCluster *c);
 

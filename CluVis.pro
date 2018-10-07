@@ -29,12 +29,12 @@ SOURCES +=      Forms/about.cpp \
                 Clustering/groupingsettings_rsesrules.cpp \
                 main.cpp \
                 generalsettings.cpp \
-    Object/attribute.cpp \
-    Object/numericattribute.cpp \
-    Object/categoricalattribute.cpp \
-    Validators/rsesrulebasevalidator.cpp \
-    Interference/clusterInterferencer.cpp \
-    Interference/classicalInterferencer.cpp
+                Object/attribute.cpp \
+                Object/numericattribute.cpp \
+                Object/categoricalattribute.cpp \
+                Validators/rsesrulebasevalidator.cpp \
+                Interference/clusterInterferencer.cpp \
+                Interference/classicalInterferencer.cpp
 
 
 HEADERS  +=     Forms/about.h \
@@ -58,14 +58,14 @@ HEADERS  +=     Forms/about.h \
                 Clustering/groupingsettings_rsesrules.h \
                 generalsettings.h \
                 generalincludes.h \
-    Interference/interferencer.h \
-    Object/attribute.h \
-    Object/numericattribute.h \
-    Object/categoricalattribute.h \
-    Validators/validator.h \
-    Validators/rsesrulebasevalidator.h \
-    Interference/clusterInterferencer.h \
-    Interference/classicalInterferencer.h
+                Interference/interferencer.h \
+                Object/attribute.h \
+                Object/numericattribute.h \
+                Object/categoricalattribute.h \
+                Validators/validator.h \
+                Validators/rsesrulebasevalidator.h \
+                Interference/clusterInterferencer.h \
+                Interference/classicalInterferencer.h
 
 FORMS    +=     Forms/about.ui \
                 Forms/clusterinfo_rsesrules.ui \

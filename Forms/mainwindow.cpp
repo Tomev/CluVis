@@ -14,8 +14,6 @@
 #include <QDesktopWidget>
 #include <QTime>
 
-
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -58,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     translator = new QTranslator();
     translate(english);
 
-    addLogMessage(tr("log.applicationStart"));
+    //addLogMessage(tr("log.applicationStart"));
 }
 
 MainWindow::~MainWindow()
@@ -457,6 +455,47 @@ cluster *MainWindow::findSmallestCluster()
     }
 
     return smallest;
+}
+
+long MainWindow::getClusteringTreeLevel()
+{
+  long clusteringTreeLevel = 0;
+  long currentClusterTreeLevel, leftNodeTreeSize, rightNodeTreeSize;
+
+  for(std::shared_ptr<cluster> c : clusters)
+  {
+    if(c->size() == 1)
+    {
+      clusteringTreeLevel = 1;
+    }
+    else{
+      leftNodeTreeSize = getClustersTreeLevel(c->leftNode);
+      rightNodeTreeSize = getClustersTreeLevel(c->rightNode);
+
+      currentClusterTreeLevel = rightNodeTreeSize > leftNodeTreeSize ?
+          rightNodeTreeSize : leftNodeTreeSize;
+    }
+
+    clusteringTreeLevel = clusteringTreeLevel > currentClusterTreeLevel ?
+        clusteringTreeLevel : currentClusterTreeLevel;
+  }
+
+  return clusteringTreeLevel;
+}
+
+long MainWindow::getClustersTreeLevel(std::shared_ptr<cluster> c)
+{
+  long clusterTreeLevel = 0;
+
+  if(c->size() == 1) return 1;
+
+  long leftNodeTreeSize = getClustersTreeLevel(c->leftNode),
+       rightNodeTreeSize = getClustersTreeLevel(c->rightNode);
+
+  clusterTreeLevel = rightNodeTreeSize > leftNodeTreeSize ?
+        rightNodeTreeSize : leftNodeTreeSize;
+
+  return clusterTreeLevel;
 }
 
 int MainWindow::getBiggestRepresentativeLength()
@@ -1263,10 +1302,10 @@ void MainWindow::groupObjects()
 
     int timeElapsed = tim->elapsed();
 
-    QString logText = QString(tr("log.groupingThreadFinishedIn"))
-            .arg(QString::number(timeElapsed));
+    /*QString logText = QString(tr("log.groupingThreadFinishedIn"))
+            .arg(QString::number(timeElapsed));*/
 
-    addLogMessage(logText);
+    //addLogMessage(logText);
 
     ui->pushButtonVisualize->setEnabled(true);
     ui->pushButtonGroup->setEnabled(true);
@@ -1501,6 +1540,8 @@ void MainWindow::on_spinBoxInterObjectMargin_valueChanged(int arg1)
 
 void MainWindow::on_pushButtonStandard_clicked()
 {
+    clock_t start = clock();
+
     // TODO: Change for editable dir.
     // TODO: D:/ANB/ must exists for this to work. Eliminate this problem.
     QString baseDir = "D:/Dysk Google/Rules/",
@@ -1583,7 +1624,7 @@ void MainWindow::on_pushButtonStandard_clicked()
         numberOfIterations *= 2;
 
         // For each inter object similarity measure
-        for(int osm = 0; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
+        for(int osm = GowersMeasureId; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
         {
             // Reset target dir.
             targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
@@ -1610,7 +1651,7 @@ void MainWindow::on_pushButtonStandard_clicked()
             }
 
             // For each inter cluster similarity measure
-            for(int csm = 0; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
+            for(int csm = SingleLinkId; csm < ui->comboBoxInterClusterSimMeasure->count(); ++csm)
             {
                 // Change index of cluster similarity measure combobox
                 ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
@@ -1661,11 +1702,11 @@ void MainWindow::on_pushButtonStandard_clicked()
 
                     desiredClustersNumber -= rulesNumberOnePercent;
 
-                    qDebug() << "Continuing grouping.";
+                    //qDebug() << "Continuing grouping.";
 
                     while(desiredClustersNumber > 0)
                     {
-                      qDebug() << desiredClustersNumber;
+                      //qDebug() << desiredClustersNumber;
 
                       // Perform grouping for given clusters number with default settings.
                       ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
@@ -1682,16 +1723,19 @@ void MainWindow::on_pushButtonStandard_clicked()
                       desiredClustersNumber -= rulesNumberOnePercent;
                     }
 
-                    qDebug() << "Next measure.";
+                    //qDebug() << "Next measure.";
                   }
                 }
             }
         }
     }
 
-
-
     qDebug() << "A splendid finish.";
+    long raportGenerationTime
+        = (clock() - start) / (double) CLOCKS_PER_SEC;
+
+    qDebug() << "Raport generation time: " << raportMessage << " s.";
+
 }
 
 void MainWindow::on_pushButtonInterfere_clicked()
@@ -1724,11 +1768,12 @@ void MainWindow::on_pushButtonInterfere_clicked()
   ruleInterferencer.generateRandomFactsBase(path, 100000);
   */
 
-  qDebug() << "Interfering";
+  //qDebug() << "Interfering";
 
   QString fileName = ui->labelObjectBaseName->text();
   fileName.chop(8);
   fileName.remove(0, 3);
+  QString baseName = fileName;
   fileName += ".csv";
 
   QString path = "D:\\Dysk Google\\Rules\\" + fileName;
@@ -1736,6 +1781,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   QFile file(path);
 
   QList<int> factsPercents = {100, 75, 50, 25, 10, 1};
+  QHash<int, int> numberOfRulesThatCouldBeFiredFromGivenFacts;
 
   // Create file if it doesn't exist. Add classical interference data.
   if(!file.exists())
@@ -1744,46 +1790,46 @@ void MainWindow::on_pushButtonInterfere_clicked()
     {
       QTextStream stream(&file);
 
-      stream << "First rule that could initially be fired,"
-             << "Last rule that could initially be fired,"
-             << "Number of facts,"
-             << "Number of rules that could initially be fired,"
-             << "Percent of rules that could initially be fired,"
-             << "Was target set,"
-             << "Is target initially achiveable,"
-             << "Number of rules fired,"
-             << "Most similiar rule,"
-             << "Was most similar rule fired,"
-             << "Was target achieved,"
-
-             << "Zero representative occurence,"
-             << "Zero representatives number,"
-             << "Was zero representative found during interference,"
-             << "Zero representatives checked number,"
-
-             << "Interference type,"
-             << "Interference time [s],"
-             << "Number of new facts,"
-             << "Was rule fired,"
-             << "Number of iterations,"
-             << "Number of clusters searched,"
-             << "Number of clusters,"
-             << "Clustering Similarity Method,"
-             << "Object Similarity Method,"
-             << "Representative Generation Method,"
-             << "Rep. Threshold,"
-             << "Rules that could be fired,"
-             << "Smallest cluster size,"
-
-             << "Biggest cluster size,"
-             << "Number of outliers,"
-             << "Smallest representative length,"
-             << "Average representative length,"
-             << "Biggest representative length,"
+      stream // Base
+             << "Knowledge base name,"
              << "Number of attributes,"
              << "Number of rules,"
-             << "Gini Index,"
-             << "Bonferroni Index\n";
+             // Clustering
+             << "Clustering similarity measure,"
+             << "Object similarity measure,"
+             << "Representative generation method,"
+             << "Representative threshold,"
+             << "Smallest cluster size,"
+             << "Biggest cluster size,"
+             << "Number of outliesrs,"
+             << "Smallest representative length,"
+             << "Average representative length,"
+             << "Biggesr representative length,"
+             << "Zero representatives number,"
+             << "Gini index,"
+             << "Bonferroni index,"
+             << "Number of clusters,"
+             << "Number of levels in the tree,"
+             // Interference
+             << "Interference type,"
+             << "Facts base percent,"
+             << "Number of initial facts,"
+             << "Number of rules that could initially be fired,"
+             << "Was interference target set,"
+             << "Was interference target initially confirmable,"
+             << "Number of interference iterations,"
+             << "Was any rule fired,"
+             << "Number of rules that were fired,"
+             << "Number of new facts,"
+             << "Was interference target confirmed,"
+             << "Was new knowledge explored,"
+             << "Was zero representative met,"
+             << "Zero representative occurence step,"
+             << "Number of zero representatives found during interference,"
+             << "Number of clusters searched,"
+             << "Number of rules that could be fired,"
+             << "Why wasn't interference target confirmed,"
+             << "Interference time [s]\n";
     }
 
     file.close();
@@ -1806,56 +1852,65 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
       //qDebug() << "Saving interference data from classic interferencer to report.";
 
+      numberOfRulesThatCouldBeFiredFromGivenFacts[factPercent] =
+          classicInterferencer.getNumberOfRulesFired();
+
       if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
       {
         QTextStream stream(&file);
 
-        stream  << classicInterferencer.getFirstRuleThatCouldInitiallyBeFired() << ","
-                << classicInterferencer.getLastRuleThatCouldInitiallyBeFired() << ","
-                << classicInterferencer.getInitialNumberOfFacts() << ","
-                << classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired() << ","
-                << qreal(100 * classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired()
-                        / settings->objectsNumber ) << ","
-                << classicInterferencer.wasTargetSet() << ","
-                << classicInterferencer.wasTargetAchieved(nullptr) << ","
-                /* Was target achieved is used instead, as it fires all possible
-                 * rules. isTargetAchiveable checks if there is a conclusion
-                 * existing in rules, that could satisfy the target, which in
-                 * this case is not what one expects. */
-                //<< classicInterferencer.isTargetAchiveable() <<","
-                << classicInterferencer.getNumberOfRulesFired() << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << classicInterferencer.wasTargetAchieved(nullptr) << ","
-
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-
-                << QString::fromStdString(classicInterferencer.getInterferentionType()) << ","
-                << classicInterferencer.getInterferenceTime() << ","
-                << classicInterferencer.getNumberOfNewFacts() << ","
-                << classicInterferencer.wasAnyRuleFired() << ","
-                << classicInterferencer.getNumberOfIterations() << ","
-                << classicInterferencer.getNumberOfStructuresSearched() << ","
-                << settings->stopCondition << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << QString::fromStdString(classicInterferencer.getRulesThatCouldInitiallyBeFired()) << ","
-                << "not applicable" << ","
-
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << "not applicable" << ","
-                << settings->objectsNumber << ","
-                << gSettings->attributesNumber << ","
-                << "not applicable" << ","
-                << "not applicable" << "\n";
+        stream // Base
+               << baseName << "," // Knowledge base name
+               << gSettings->attributesNumber << "," // Number of attributes
+               << settings->objectsNumber << "," // Number of rules
+               // Clustering
+               << "Not applicable" << "," // Clustering similarity measure
+               << "Not applicable" << "," // Object similarity measure
+               << "Not applicable" << "," // Representative generation method
+               << "Not applicable" << "," // Representative threshold
+               << "Not applicable" << "," // Smallest cluster size
+               << "Not applicable" << "," // Biggest cluster size
+               << "Not applicable" << "," // Number of outliers
+               << "Not applicable" << "," // Smallest representative len.
+               << "Not applicable" << "," // Average rep. len.
+               << "Not applicable" << "," // Biggest rep. len.
+               << "Not applicable" << "," // Zero rep. num.
+               << "Not applicable" << "," // Gini
+               << "Not applicable" << "," // Bonferroni
+               << "Not applicable" << "," // Number of clusters
+               << "Not applicable" << "," // Number of levels in the tree
+               // Interference
+               << QString::fromStdString(
+                    classicInterferencer.getInterferentionType()
+                  ) << "," // Interference type
+               << factPercent << "," // Facts base percent
+               << classicInterferencer
+                  .getInitialNumberOfFacts() << "," // Number of initial facts
+               << classicInterferencer
+                    .getNumberOfRulesThatCouldInitiallyBeFired() << "," // Number of rules that could initially be fired
+               << classicInterferencer
+                    .wasTargetSet() << "," // Was interference target set
+               << classicInterferencer
+                    .wasInterferenceTargetInitiallyConfirmable() << "," // Was interference target initially confirmable
+               << classicInterferencer
+                    .getNumberOfIterations() << "," // Number of interference iterations
+               << classicInterferencer
+                    .wasAnyRuleFired()<< "," // Was any rule fired
+               << classicInterferencer
+                    .getNumberOfRulesFired() << "," // Number of rules that were fired
+               << classicInterferencer
+                    .getNumberOfNewFacts() << "," // Number of new facts
+               << classicInterferencer
+                    .wasTargetAchieved(nullptr) << "," // Was interference target confirmed
+               << (classicInterferencer.getNumberOfNewFacts() > 0) << "," // Was new knowledge explored
+               << "Not applicable" << "," // Was zero rep. met
+               << "Not applicable" << "," // Zero rep. occurence step
+               << "Not applicable" << "," // Number of zero reps found during interference
+               << classicInterferencer
+                    .getNumberOfStructuresSearched() << "," // Number of clusters searched
+               << numberOfRulesThatCouldBeFiredFromGivenFacts[factPercent] << "," // Number of rules that could be fired
+               << QString::fromStdString(classicInterferencer.whyWasntTargetConfirmed()) << "," // Why wasn't interference target confirmed
+               << classicInterferencer.getInterferenceTime() << "\n" ; // Interference time [s]
       }
 
       file.close();
@@ -1867,12 +1922,12 @@ void MainWindow::on_pushButtonInterfere_clicked()
   ruleInterferencer.setGroupingThread(this->gThread);
   std::vector<int> clusterInterferenceTypes;
   clusterInterferenceTypes.push_back(GREEDY);
-  //clusterInterferenceTypes.push_back(EXHAUSTIVE);
+  clusterInterferenceTypes.push_back(EXHAUSTIVE);
 
   // Run interference
   for(int factPercent : factsPercents)
   {
-    qDebug() << "Running interference.";
+    //qDebug() << "Running interference.";
 
     for(int type : clusterInterferenceTypes)
     {
@@ -1882,61 +1937,67 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
       ruleInterferencer.interfere();
 
-      qDebug() << "Generating report.";
+      //qDebug() << "Generating report.";
 
       // For rule interferencer
       if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
       {
         QTextStream stream(&file);
 
-        stream  << ruleInterferencer.availableRuleIndexes.first() << ","
-                << ruleInterferencer.availableRuleIndexes.last() << ","
-                << ruleInterferencer.getNumberOfFacts() << ","
-                << ruleInterferencer.getNumberOfRulesThatCanBeFired() << ","
-                << qreal(100 * ruleInterferencer.getNumberOfRulesThatCanBeFired()
-                        / settings->objectsNumber ) << ","
-                << ruleInterferencer.target.size() << ","
-                << ruleInterferencer.targetAchiveable <<","
-                << ruleInterferencer.numberOfRulesFired << ","
-                << ruleInterferencer.mostSimilarRule->name() << ","
-                << ruleInterferencer.wasMostImportantRuleFired() << ","
-                << ruleInterferencer.targetAchieved << ","
-
-                << gSettings->zeroRepresentativeClusterOccurence << ","
-                << gSettings->zeroRepresentativesNumber << ","
-                << ruleInterferencer.zeroRepresentativeOccured << ","
-                << ruleInterferencer.zeroRepresentativeOccurenceNumber << ","
-
-                << QString::fromStdString(ruleInterferencer.getInterferenceType()) << ","
-                << ruleInterferencer.getInterferenceTime() << ","
-                << ruleInterferencer.getNumberOfNewFacts() << ","
-                << ruleInterferencer.wasRuleFired() << ","
-                << ruleInterferencer.getNumberOfIterations() << ","
-                << ruleInterferencer.numberOfClustersSearched << ","
-                << settings->stopCondition << ","
-                << ui->comboBoxInterClusterSimMeasure->currentText() << ","
-                << ui->comboBoxInterObjectSimMeasure->currentText() << ","
-                << ui->comboBoxRepresentativeCreationStrategy->currentText() << ","
-                << ui->spinBoxRepresentativeAttributePercent->text() << ","
-                << ruleInterferencer.availableRuleIndexes.join(" & ") << ","
-                << findSmallestCluster()->size() << ","
-
-                << findBiggestCluster()->size() << ","
-                << countUngroupedObjects() << ","
-                << getSmallestRepresentativeLength() << ","
-                << getAverageRepresentativeLength() << ","
-                << getBiggestRepresentativeLength() << ","
-                << settings->objectsNumber << ","
-                << gSettings->attributesNumber << ","
-                << gSettings->giniIndex << ","
-                << gSettings->bonferroniIndex << "\n";
+        stream // Base
+               << baseName << "," // Knowledge base name
+               << gSettings->attributesNumber << "," // Number of attributes
+               << settings->objectsNumber << "," // Number of rules
+               // Clustering
+               << ui->comboBoxInterClusterSimMeasure->currentText() << "," // Clustering similarity measure
+               << ui->comboBoxInterObjectSimMeasure->currentText() << "," // Object similarity measure
+               << ui->comboBoxRepresentativeCreationStrategy->currentText() << "," // Representative generation method
+               << ui->spinBoxRepresentativeAttributePercent->value() << "," // Representative threshold
+               << findSmallestCluster()->size() << "," // Smallest cluster size
+               << findBiggestCluster()->size() << "," // Biggest cluster size
+               << countUngroupedObjects() << "," // Number of outliers
+               << getSmallestRepresentativeLength() << "," // Smallest representative len
+               << getAverageRepresentativeLength() << "," // Average rep. len.
+               << getBiggestRepresentativeLength() << "," // Biggest rep. len.
+               << gSettings->zeroRepresentativesNumber << "," // Zero rep. num.
+               << gSettings->giniIndex << "," // Gini
+               << gSettings->bonferroniIndex << "," // Bonferroni
+               << settings->stopCondition << "," // Number of clusters
+               << getClusteringTreeLevel() << "," // Number of levels in the tree
+               // Interference
+               << QString::fromStdString(
+                    ruleInterferencer.getInterferenceType()
+                  ) << "," // Interference type
+               << factPercent << "," // Facts base percent
+               << ruleInterferencer.getInitialNumberOfFacts() << "," // Number of initial facts
+               << ruleInterferencer.initiallyFireableRuleIndexes.size() << "," // Number of rules that could initially be fired
+               << (ruleInterferencer.target.size() > 0) << "," // Was interference target set
+               << ruleInterferencer.targetAchiveable << "," // Was interference target initially confirmable
+               << ruleInterferencer
+                    .getNumberOfIterations() << "," // Number of interference iterations
+               << ruleInterferencer
+                    .wasRuleFired()<< "," // Was any rule fired
+               << ruleInterferencer
+                    .numberOfRulesFired << "," // Number of rules that were fired
+               << ruleInterferencer
+                    .getNumberOfNewFacts() << "," // Number of new facts
+               << ruleInterferencer
+                    .targetAchieved << "," // Was interference target confirmed
+               << (ruleInterferencer.getNumberOfNewFacts() > 0) << "," // Was new knowledge explored
+               << ruleInterferencer.zeroRepresentativeOccured << "," // Was zero rep. met
+               << ruleInterferencer.zeroRepresentativeOccurenceStep << "," // Zero rep. occurence step
+               << ruleInterferencer.zeroRepresentativeOccurenceNumber << "," // Number of zero reps found during interference
+               << ruleInterferencer.numberOfClustersSearched << "," // Number of clusters searched
+               << numberOfRulesThatCouldBeFiredFromGivenFacts[factPercent] << "," // Number of rules that could be fired
+               << QString::fromStdString(ruleInterferencer.whyWasntTargetConfirmed()) << "," // Why wasn't interference target confirmed
+               << ruleInterferencer.getInterferenceTime() << "\n" ; // Interference time [s]
       }
 
       file.close();
     }
   }
 
-  qDebug() << "End interfering.";
+  //qDebug() << "End interfering.";
 
 }
 

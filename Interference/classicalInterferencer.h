@@ -30,6 +30,7 @@ class classicalInterferencer
     int getFirstRuleThatCouldInitiallyBeFired();
     int getLastRuleThatCouldInitiallyBeFired();
     bool wasAnyRuleFired();
+    bool wasInterferenceTargetInitiallyConfirmable();
     int getNumberOfNewFacts();
     long getNumberOfStructuresSearched();
     double getInterferenceTime();
@@ -41,6 +42,7 @@ class classicalInterferencer
     std::string getRulesThatCouldInitiallyBeFired();
     int getNumberOfRulesFired();
     int getNumberOfIterations();
+    std::string whyWasntTargetConfirmed();
 
     void setFactsBasePercent(double newFactsBasePercent);
     void setRules(std::vector<rule> newRules);
