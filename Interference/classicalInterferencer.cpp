@@ -180,7 +180,7 @@ bool classicalInterferencer::wasAnyRuleFired()
 
 bool classicalInterferencer::wasInterferenceTargetInitiallyConfirmable()
 {
-  if(target.size() < 1) return false;
+  if(!wasTargetSet()) return false;
 
   std::unordered_map<std::string, std::unordered_set<std::string>>
       initiallyObtainableFacts;
