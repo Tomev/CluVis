@@ -457,6 +457,7 @@ int clusterInterferencer::loadFactsFromPath(QString path)
 int clusterInterferencer::interfere()
 {
   int returnCode = -1;
+  newFacts.clear();
 
   clock_t start = clock();
 
