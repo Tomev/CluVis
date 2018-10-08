@@ -13,6 +13,8 @@
 
 #include "groupingdatapreparator_rsesrules.h"
 
+#define THREADSNUM 4;
+
 typedef std::shared_ptr<qreal> qreal_ptr;
 typedef std::vector<qreal_ptr> clusterSimilarityData;
 typedef std::shared_ptr<clusterSimilarityData> simData;
