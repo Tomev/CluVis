@@ -86,6 +86,10 @@ void groupingThread::initializeDataPreparator()
 
 void groupingThread::groupObjects()
 {   
+    clock_t start = clock();
+
+    _groupingTime = 0;
+
     // Clear zero representative cluster data
     grpSettings->zeroRepresentativeClusterOccurence = -1;
     grpSettings->zeroRepresentativesNumber = 0;
@@ -184,6 +188,8 @@ void groupingThread::groupObjects()
 
     for(int i = 0; i < settings->stopCondition; ++i)
       settings->clusters->push_back(clusters[i]);
+
+    _groupingTime += (clock() - start) / (double) CLOCKS_PER_SEC;
 }
 
 void groupingThread::fillSimMatrix(int simMatrixSize)
@@ -1064,7 +1070,7 @@ void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ)
 
   qreal highestSim = -1;
 
-  #pragma omp parallel num_threads(THREADSNUM)
+  #pragma omp parallel num_threads(THREADSNUM) shared(targetI, targetJ, highestSim)
   {
     int private_i = 0, private_j = 0;
     qreal private_highestSim = -1;
@@ -1074,7 +1080,7 @@ void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ)
     {
         for(unsigned int j = 0; j < i; ++j)
         {
-            if(*(simMatrix.at(i)->at(j)) > highestSim)
+            if(*(simMatrix.at(i)->at(j)) > private_highestSim)
             {
               private_i = i;
               private_j = j;
@@ -1105,7 +1111,7 @@ void groupingThread::findHighestSimilarityIndicesWithSmallestCluster(int *target
   for(std::shared_ptr<cluster> c : clusters)
     if(c->size() < smallestSize) smallestSize = c->size();
 
-  #pragma omp parallel num_threads(THREADSNUM)
+  #pragma omp parallel num_threads(THREADSNUM) shared(targetI, targetJ, highestSim)
   {
     int private_i = 0, private_j = 0;
     qreal private_highestSim = -1;
@@ -1117,7 +1123,7 @@ void groupingThread::findHighestSimilarityIndicesWithSmallestCluster(int *target
 
       for(unsigned int j = 0; j < i; ++j)
       {
-        if(*(simMatrix.at(i)->at(j)) > highestSim)
+        if(*(simMatrix.at(i)->at(j)) > private_highestSim)
         {
           private_i = i;
           private_j = j;
@@ -1372,6 +1378,8 @@ void groupingThread::countMDBI(int clustersNum)
 
 void groupingThread::continueGrouping()
 {
+  clock_t start = clock();
+
   for(unsigned int i = settings->stopCondition; i < settings->clusters->size(); ++i)
   {
     joinMostSimilarClusters();
@@ -1383,6 +1391,8 @@ void groupingThread::continueGrouping()
 
   for(int i = 0; i < settings->stopCondition; ++i)
     settings->clusters->push_back(clusters[i]);
+
+  _groupingTime += (clock() - start) / (double) CLOCKS_PER_SEC;
 }
 
 int groupingThread::updateInequityIndex(long c1Size, long c2Size)
@@ -1504,4 +1514,9 @@ QVector<double> groupingThread::sortClusterSizesNonincreasingly()
   }
 
   return sortedSizes;
+}
+
+long groupingThread::getGroupingTime()
+{
+  return _groupingTime;
 }

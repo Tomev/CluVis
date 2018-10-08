@@ -66,6 +66,7 @@ protected:
       double countBonferroniIndex();
         QVector<double> sortClusterSizesNonincreasingly();
 
+    long getGroupingTime();
 
 private:
 
@@ -74,6 +75,8 @@ private:
         //Variables
 
     groupingDataPreparator* grpDataPrep;
+
+    long _groupingTime = 0;
 
     bool wasGroupingCanceled;
     bool wasAverageRuleDenumeratorSet;
