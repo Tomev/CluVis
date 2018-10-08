@@ -49,6 +49,8 @@ public:
 
     std::vector<std::shared_ptr<cluster>> clusters;
 
+    long getGroupingTime();
+
 signals:
 
     void passLogMsg(QString);
@@ -66,7 +68,6 @@ protected:
       double countBonferroniIndex();
         QVector<double> sortClusterSizesNonincreasingly();
 
-    long getGroupingTime();
 
 private:
 

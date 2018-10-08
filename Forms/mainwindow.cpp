@@ -1801,9 +1801,10 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Object similarity measure,"
              << "Representative generation method,"
              << "Representative threshold,"
+             << "Grouping time [s]"
              << "Smallest cluster size,"
              << "Biggest cluster size,"
-             << "Number of outliesrs,"
+             << "Number of outliers,"
              << "Smallest representative length,"
              << "Average representative length,"
              << "Biggesr representative length,"
@@ -1870,6 +1871,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
                << "Not applicable" << "," // Object similarity measure
                << "Not applicable" << "," // Representative generation method
                << "Not applicable" << "," // Representative threshold
+               << "Not applicable" << "," // Grouping time [s]
                << "Not applicable" << "," // Smallest cluster size
                << "Not applicable" << "," // Biggest cluster size
                << "Not applicable" << "," // Number of outliers
@@ -1955,6 +1957,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
                << ui->comboBoxInterObjectSimMeasure->currentText() << "," // Object similarity measure
                << ui->comboBoxRepresentativeCreationStrategy->currentText() << "," // Representative generation method
                << ui->spinBoxRepresentativeAttributePercent->value() << "," // Representative threshold
+               << gThread->getGroupingTime() << "," // Grouping time [s]
                << findSmallestCluster()->size() << "," // Smallest cluster size
                << findBiggestCluster()->size() << "," // Biggest cluster size
                << countUngroupedObjects() << "," // Number of outliers
