@@ -26,7 +26,6 @@ enum languagesId
 enum reportTypesId
 {
     XmlReportId = 0,
-    TxtReportId = 1
 };
 
 namespace Ui

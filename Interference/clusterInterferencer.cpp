@@ -665,6 +665,7 @@ int clusterInterferencer::fillFacts(int basePercent)
   facts.clear();
 
   int numberOfFacts = qCeil(allFacts.size() * basePercent / 100.0);
+  initialNumberOfFacts = numberOfFacts;
   QStringList fact;
 
   for(int i = 0; i < numberOfFacts; ++i)

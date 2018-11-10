@@ -338,8 +338,6 @@ int MainWindow::getFileType(QChar t)
 {
     if(t=='l')
         return XmlReportId;
-    if(t=='t')
-        return TxtReportId;
 
     return -1;
 }
@@ -350,88 +348,12 @@ QString MainWindow::createReportContent(int type)
 
     switch(type)
     {
-    case TxtReportId:
-        content = createTXTReportContent();
-        break;
     case XmlReportId:
         content = createXMLReportContent();
         break;
     default:
         break;
     }
-
-    return content;
-}
-
-// TODO: Reconsider txt report formatting.
-
-QString MainWindow::createTXTReportContent()
-{
-    QString content = "===" + tr("report.report") + "===";
-    //===Raport===
-    content += "\n==" + tr("report.knowledgeBaseInformation") + "==\n";
-    // Informacje o bazie wiedzy
-    content += "\n" + tr("report.nameOfBase") + ": "
-            + formatThickString(ui->labelObjectBaseName->text());
-    // Nazwa bazy
-    content += "\n" + tr("report.attributesNumber") + ": "
-            + QString::number(gSettings->attributesNumber);
-    // Liczba atrybutów
-    content += "\n" + tr("report.objectsNumber") + ": "
-            + QString::number(getObjectsNumber());
-    // Liczba obiektów
-    content += "\n" + tr("report.clustersNumber") + ": "
-            + QString::number(settings->stopCondition);
-    // Liczba skupień
-    content += "\n" + tr("report.coverageSum") + ": "
-            + QString::number(countCoverageSum());
-    // Suma pokryciowa
-    content += "\n\n==" + tr("report.settings") + "==\n";
-    // Ustawienia
-    content += "\n" + tr("report.groupingAlgorithmUsed") + ": "
-            + formatThickString(ui->labelAlgorithmGroupingValue->text());
-    // Wykorzystany algorytm grupowania
-    content += "\n" + tr("report.objectsSimilarityMeasure") + ": "
-            + ui->comboBoxInterObjectSimMeasure->currentText();
-    // Wybrana miara podobieństwa obiektów
-    content += "\n" + tr("report.clustersSimilarityMeasure") + ": "
-            + ui->comboBoxInterClusterSimMeasure->currentText();
-    // Wybrana miara podobieństwa skupień
-    content += "\n" + tr("report.selectedVisualizationAlgorithm") + ": "
-            + ui->comboBoxAlgorithmVisualization->currentText();
-    // Wybrany algorytm wizualizacji
-    content += "\n" + tr("report.groupedRulePart") + ": "
-            + ui->comboBoxRuleGroupedPart->currentText();
-    // Grupowana część reguły
-    content += "\n\n==" + tr("report.clustersInformation") + "==\n";
-    // Dane skupień
-    content += "\n" + tr("report.biggestCluster") + ": "
-            + findBiggestCluster()->name();
-    // Najliczniejsza grupa
-    content += "\n" + tr("report.smallestCluster") + ": "
-            + findSmallestCluster()->name();
-    // Najmniej liczna grupa
-    content += "\n\n==" + tr("report.clustersDetails") + "==\n";
-    // Szczegóły skupień
-
-    for(int i = 0; i < settings->stopCondition; i++)
-    {
-        content += "\n=" + tr("report.clustersName") + ": "
-                + clusters[i]->name() + "=";
-        // Nazwa skupienia
-        content += "\n\t" + tr("report.clustersSize") + ": "
-                + QString::number(clusters[i]->size());
-        // Liczba reguł w grupie
-        content += "\n\t" + tr("report.clustersCoverage") + ": "
-                + QString::number((((ruleCluster*)(clusters[i].get()))->support*100)/countCoverageSum()) + "%";
-        // Pokrycie skupienia
-        //content += "\n\t" + tr("report.clustersRepresentative") + ": "
-                //+ ((ruleCluster*)clusters[i])->representative;
-        // Reprezentant skupienia
-    }
-
-    content += "\n\n===" + tr("report.end") + "===";
-    // Koniec
 
     return content;
 }
