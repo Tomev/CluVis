@@ -967,25 +967,17 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>550</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>Plik</string>
     </property>
-    <widget class="QMenu" name="menuRaporty">
-     <property name="title">
-      <string>Raporty</string>
-     </property>
-     <addaction name="actionGenerateReport"/>
-     <addaction name="actionMergeReports"/>
-    </widget>
     <addaction name="actionLoadObjectBase"/>
     <addaction name="actionLoadFactsBase"/>
     <addaction name="separator"/>
     <addaction name="actionSaveVisualization"/>
-    <addaction name="menuRaporty"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>

@@ -23,11 +23,6 @@ enum languagesId
     polish = 1
 };
 
-enum reportTypesId
-{
-    XmlReportId = 0,
-};
-
 namespace Ui
 {
   class MainWindow;
@@ -45,11 +40,7 @@ public:
 private slots:  
 
     void on_actionLoadObjectBase_triggered();
-
-
     void on_actionSaveVisualization_triggered();
-    void on_actionGenerateReport_triggered();
-    void on_actionMergeReports_triggered();
     void on_actionExit_triggered();
 
     //Help
