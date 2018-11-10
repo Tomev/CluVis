@@ -160,11 +160,11 @@ int clusterInterferencer::interfereGreedy()
 
 int clusterInterferencer::interfereExhaustive()
 {
-  //qDebug() << "Exhaustive.";
+  qDebug() << "Exhaustive.";
 
   //qDebug() << "Number of facts: " <<
 
-  //qDebug() << "Filling facts.";
+  qDebug() << "Filling facts.";
 
   fillFacts(factsBasePercent);
 
@@ -177,14 +177,14 @@ int clusterInterferencer::interfereExhaustive()
 
   fireableRules.clear();
 
-  //qDebug() << "Filling avi rules.";
+  qDebug() << "Filling avi rules.";
 
   fillAvailableRuleIndexes();
   initiallyFireableRuleIndexes = availableRuleIndexes;
   if(availableRuleIndexes[0].endsWith("-1"))
     initiallyFireableRuleIndexes.clear();
 
-  //qDebug() << "Can target be achieved.";
+  qDebug() << "Can target be achieved.";
 
   canTargetBeAchieved();
   rulesFiredDuringInterference.clear();
@@ -224,15 +224,18 @@ int clusterInterferencer::interfereExhaustive()
     }
   }
 
-  //qDebug() << "Checking if target was achived.";
+  qDebug() << "Checking if target was achived.";
   wasTargetAchieved();
 
+  qDebug() << "Checked. Looking for most similar rule if it's stull nullptr.";
   // Emergency finding for most similar rule
   if(mostSimilarRule == nullptr)
   {
     findMostSimilarRule(&factRule,
                         grpThread->clusters[orderedClustersIndexesForExhaustiveSearch[0]].get());
   }
+
+  qDebug() << "Finished. Returning.";
 
   return numberOfRulesFired;
 }
@@ -592,7 +595,13 @@ int clusterInterferencer::canTargetBeAchieved()
 
 int clusterInterferencer::wasTargetAchieved()
 {
-  targetAchieved = 0;
+  targetAchiveable = 0;
+
+  qDebug() << "Target size check.";
+
+  if(target.size() < 1) return 0;
+
+  qDebug() << "Attributes check.";
 
   for(QString attributeName : target.keys())
   {
@@ -603,35 +612,13 @@ int clusterInterferencer::wasTargetAchieved()
     }
   }
 
+  qDebug() << "Setting.";
+
   targetAchieved = 1;
 
+  qDebug() <<"Returning.";
+
   return 1;
-
-  /*
-  bool oneOfRulesContainsDescriptor = false;
-
-  if(numberOfRulesFired == 0) return 0;
-
-  for(QString key : target.keys())
-  {
-    for(QString val : target[key].values())
-    {
-      oneOfRulesContainsDescriptor = false;
-
-      for(cluster* clus : fireableRules)
-      {
-        ruleCluster* c = static_cast<ruleCluster*>(clus);
-
-        if(!c->decisionAttributes.contains(key)) continue;
-
-        if(c->attributesValues[key]->contains(val))
-          oneOfRulesContainsDescriptor = true;
-      }
-
-      if(!oneOfRulesContainsDescriptor)
-        return 0;
-    }
-  }*/
 }
 
 int clusterInterferencer::wasRuleFired()

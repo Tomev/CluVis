@@ -1627,7 +1627,7 @@ void MainWindow::on_pushButtonStandard_clicked()
         numberOfIterations *= 2;
 
         // For each inter object similarity measure
-        for(int osm = GowersMeasureId; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
+        for(int osm = SingleLinkId; osm < ui->comboBoxInterObjectSimMeasure->count(); ++osm)
         {
             // Reset target dir.
             targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
@@ -1673,7 +1673,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                     thresholds = {30, 25, 50, 75};
                   }
                   else
-                    thresholds = {30};
+                    thresholds = {0};
 
                   // For each threshold
                   for(int tres : thresholds)
@@ -1705,11 +1705,10 @@ void MainWindow::on_pushButtonStandard_clicked()
 
                     desiredClustersNumber -= rulesNumberOnePercent;
 
-                    //qDebug() << "Continuing grouping.";
-
                     while(desiredClustersNumber > 0)
                     {
-                      //qDebug() << desiredClustersNumber;
+                      qDebug() << "Continuing grouping to "
+                               << desiredClustersNumber << " clusters.";
 
                       // Perform grouping for given clusters number with default settings.
                       ui->spinBoxStopConditionValue->setValue(desiredClustersNumber);
@@ -1721,6 +1720,9 @@ void MainWindow::on_pushButtonStandard_clicked()
                       // Generate report of this grouping in dir.
                       //QString reportName = ui->comboBoxInterClusterSimMeasure->currentText() + " " + QString::number(desiredClustersNumber);
                       //generateReport(targetDir + "/" + reportName + ".xml");
+
+                      qDebug() << "Grouped.";
+
                       on_pushButtonInterfere_clicked();
 
                       desiredClustersNumber -= rulesNumberOnePercent;
@@ -1801,7 +1803,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Object similarity measure,"
              << "Representative generation method,"
              << "Representative threshold,"
-             << "Grouping time [s]"
+             << "Grouping time [s],"
              << "Smallest cluster size,"
              << "Biggest cluster size,"
              << "Number of outliers,"
@@ -1931,10 +1933,10 @@ void MainWindow::on_pushButtonInterfere_clicked()
   // Run interference
   for(int factPercent : factsPercents)
   {
-    //qDebug() << "Running interference.";
-
     for(int type : clusterInterferenceTypes)
     {
+      qDebug() << "Running interference " << type << ".";
+
       ruleInterferencer.setInterferenceType(type);
 
       ruleInterferencer.factsBasePercent = factPercent;
@@ -2002,7 +2004,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
     }
   }
 
-  //qDebug() << "End interfering.";
+  qDebug() << "End interfering.";
 
 }
 
