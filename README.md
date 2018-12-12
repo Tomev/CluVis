@@ -1,6 +1,9 @@
-# Project Title
+# CluVis - Cluster Visualizer
 
-One Paragraph of project description goes here
+CluVis is an appliaction written as part of my eng. thesis. It was primarily meant to cluster and visualize, using at least two different visualization algorithms, RSES generated rule-sets. During the 
+course of time it's functionalities were extended to the point it started to allow interferencing on generated rule clusters.
+
+The application is going to be rewritten in the future, as it became a huge (but functional!) mess.
 
 ## Getting Started
 
@@ -8,81 +11,39 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+For development I'm using:
+* C++11 compatible MinGW,
+* QT v. 5.10.
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
+In my case it all went down to installing Qt Creator with MinGW. 
 
 ### And coding style tests
 
-Explain what these tests test and why
-
-```
-Give an example
-```
+To be filled after major refactor.
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+To be added...
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+I'm using Qt Creator for building. 
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+I'll be using [SemVer](http://semver.org/) for versioning.
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **M.Sc. Eng. Tomasz Rybotycki** - *Initial work* - [Tomev](https://github.com/Tomev)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GNU GPL v. 3 License - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Special thanks to Agnieszka Nowak-Brzezińska Ph.D. and Tomasz Xięski Ph.D. for making the appliaction what it is now and setting its initial course.
 
