@@ -45,7 +45,7 @@ This project is licensed under the GNU GPL v. 3 License - see the [LICENSE.md](L
 
 ## Acknowledgments
 
-* Special thanks to Agnieszka Nowak-Brzezińska Ph.D. and Tomasz Xięski Ph.D. for making the appliaction what it is now and setting its initial course.
+* Special thanks to **Agnieszka Nowak-Brzezińska** Ph.D. and **Tomasz Xięski** Ph.D. for making the appliaction what it is now and setting its initial course.
 * [Billie Thompson](https://github.com/PurpleBooth) for great readme.md template.
 * [Andreas Renberg](https://github.com/IQAndreas) and contributors of [markdown-licenses] for md version of GNU GPL 3.
 
