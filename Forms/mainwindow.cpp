@@ -1300,7 +1300,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Number of outliers,"
              << "Smallest representative length,"
              << "Average representative length,"
-             << "Biggesr representative length,"
+             << "Biggest representative length,"
              << "Zero representatives number,"
              << "Gini index,"
              << "Bonferroni index,"
