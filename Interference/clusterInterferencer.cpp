@@ -595,11 +595,19 @@ int clusterInterferencer::canTargetBeAchieved()
 
 int clusterInterferencer::wasTargetAchieved()
 {
-  targetAchiveable = 0;
+  // If no target was set
+  if(target.size() == 0){
 
-  qDebug() << "Target size check.";
+    if(newFacts.size() > 0)
+      targetAchieved = 1;
+    else
+      targetAchieved = 0;
 
-  if(target.size() < 1) return 0;
+    return targetAchieved;
+  }
+
+  // Else proceed with normal determining
+  targetAchieved = 0;
 
   qDebug() << "Attributes check.";
 

@@ -15,8 +15,8 @@ class interferencer
     QHash<QString, QSet<QString>> target;
     QStringList allFacts;
 
-    int targetAchiveable;
-    int targetAchieved;
+    int targetAchiveable = 0;
+    int targetAchieved = 0;
 
     cluster* mostSimilarRule;
 
