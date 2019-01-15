@@ -337,6 +337,13 @@ bool classicalInterferencer::isTargetAchiveable()
 bool classicalInterferencer::wasTargetAchieved(
     std::unordered_map<std::string, std::unordered_set<std::string>> *consideredFacts)
 {
+  // First consider situation with no target.
+  if(! wasTargetSet())
+  {
+    return getNumberOfNewFacts() > 0;
+  }
+
+  // Proceed with classic check.
   std::unordered_map<std::string, std::unordered_set<std::string>> *factsForCheck;
 
   if(consideredFacts == nullptr)

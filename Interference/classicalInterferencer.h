@@ -77,9 +77,6 @@ class classicalInterferencer
     int fireRule(std::vector<rule> *ruleSet, unsigned int ruleIndex);
       std::vector<std::string> getRuleConclusionAttributesNamesVector(rule r);
 
-
-
-
 };
 
 #endif // CLASSICALINTERFERENCER_H
