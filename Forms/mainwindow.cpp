@@ -295,6 +295,7 @@ cluster *MainWindow::findSmallestCluster()
 
 long MainWindow::getClusteringTreeLevel()
 {
+  /*
   long  clusteringTreeLevel = 0,
         currentClusterTreeLevel = 0,
         leftNodeTreeSize = 0,
@@ -318,23 +319,32 @@ long MainWindow::getClusteringTreeLevel()
     clusteringTreeLevel = clusteringTreeLevel > currentClusterTreeLevel ?
         clusteringTreeLevel : currentClusterTreeLevel;
   }
+  */
+  long clusteringTreeLevel = 0;
+  long clusterTreeLevel = 0;
+
+  for(auto c : clusters)
+  {
+    clusterTreeLevel = getClustersTreeLevel(c);
+
+    if(clusterTreeLevel > clusteringTreeLevel)
+      clusteringTreeLevel = clusterTreeLevel;
+  }
+
 
   return clusteringTreeLevel;
 }
 
-long MainWindow::getClustersTreeLevel(std::shared_ptr<cluster> c, long currentLevel)
+long MainWindow::getClustersTreeLevel(std::shared_ptr<cluster> c)
 {
-  long clusterTreeLevel = 0;
+  // If it's an object it's level is 1
+  if(!c->hasBothNodes())
+    return 0;
 
-  if(!c->hasBothNodes()) return currentLevel + 1;
+  long leftClusterTreeLevel = getClustersTreeLevel(c->leftNode);
+  long rightClusterTreeLevel = getClustersTreeLevel(c->rightNode);
 
-  long leftNodeTreeSize = getClustersTreeLevel(c->leftNode, currentLevel + 1),
-       rightNodeTreeSize = getClustersTreeLevel(c->rightNode, currentLevel + 1);
-
-  clusterTreeLevel = rightNodeTreeSize > leftNodeTreeSize ?
-        rightNodeTreeSize : leftNodeTreeSize;
-
-  return clusterTreeLevel + currentLevel;
+  return qMax(leftClusterTreeLevel, rightClusterTreeLevel) + 1;
 }
 
 int MainWindow::getBiggestRepresentativeLength()
