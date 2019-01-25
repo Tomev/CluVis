@@ -1516,7 +1516,7 @@ QVector<double> groupingThread::sortClusterSizesNonincreasingly()
   return sortedSizes;
 }
 
-long groupingThread::getGroupingTime()
+double groupingThread::getGroupingTime()
 {
   return _groupingTime;
 }

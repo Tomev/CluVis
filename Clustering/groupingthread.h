@@ -77,7 +77,7 @@ private:
 
     groupingDataPreparator* grpDataPrep;
 
-    long _groupingTime = 0;
+    double _groupingTime = 0;
 
     bool wasGroupingCanceled;
     bool wasAverageRuleDenumeratorSet;
