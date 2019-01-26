@@ -49,7 +49,7 @@ public:
 
     std::vector<std::shared_ptr<cluster>> clusters;
 
-    long getGroupingTime();
+    double getGroupingTime();
 
 signals:
 
