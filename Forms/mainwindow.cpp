@@ -1054,7 +1054,7 @@ void MainWindow::on_pushButtonStandard_clicked()
 
     // TODO: Change for editable dir.
     // TODO: D:/ANB/ must exists for this to work. Eliminate this problem.
-    QString baseDir = "D:/Dysk Google/Rules/",
+    QString baseDir = "C:/Rules/",
             targetDir,
             kbsDirPath;
 
@@ -1065,7 +1065,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                 (
                     this,
                     tr("Select directory"),
-                    "D:/Dysk Google/Rules",
+                    "C:/Rules/",
                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
                 );
 
@@ -1292,7 +1292,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   //QString path = "D:\\Dysk Google\\Rules\\" + fileName;
 
   // Signle report
-  QString path = "C:\\CluvisInterferenceReport.csv";
+  QString path = "C:\\Rules\\CluvisInterferenceReport.csv";
 
 
   QFile file(path);
