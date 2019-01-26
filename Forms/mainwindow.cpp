@@ -1292,7 +1292,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   //QString path = "D:\\Dysk Google\\Rules\\" + fileName;
 
   // Signle report
-  QString path = "C:\\Rules\\CluvisInterferenceReport.csv";
+  QString path = "C:\\Rules\\CluVisInterferenceReport.csv";
 
 
   QFile file(path);
