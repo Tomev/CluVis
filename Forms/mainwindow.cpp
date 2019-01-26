@@ -14,6 +14,12 @@
 #include <QDesktopWidget>
 #include <QTime>
 
+static std::vector<QString> clusteringSimilarityMeasuresShotrcuts
+  = {"SL", "CL", "CoL", "AL", "B", "G"};
+
+static std::vector<QString> representativeGenerationMethodShortcuts
+  = {"Threshold", "Lower", "Upper", "Weighted"};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -1275,13 +1281,19 @@ void MainWindow::on_pushButtonInterfere_clicked()
 
   //qDebug() << "Interfering";
 
+
   QString fileName = ui->labelObjectBaseName->text();
   fileName.chop(8);
   fileName.remove(0, 3);
   QString baseName = fileName;
   fileName += ".csv";
 
-  QString path = "D:\\Dysk Google\\Rules\\" + fileName;
+  // Multiple reports
+  //QString path = "D:\\Dysk Google\\Rules\\" + fileName;
+
+  // Signle report
+  QString path = "C:\\CluvisInterferenceReport.csv";
+
 
   QFile file(path);
 
@@ -1456,9 +1468,11 @@ void MainWindow::on_pushButtonInterfere_clicked()
                << gSettings->attributesNumber << "," // Number of attributes
                << settings->objectsNumber << "," // Number of rules
                // Clustering
-               << ui->comboBoxInterClusterSimMeasure->currentText() << "," // Clustering similarity measure
+               //<< ui->comboBoxInterClusterSimMeasure->currentText() << "," // Clustering similarity measure
+               << clusteringSimilarityMeasuresShotrcuts.at(ui->comboBoxInterClusterSimMeasure->currentIndex()) // Clustering similarity measure (shortcut)
                << ui->comboBoxInterObjectSimMeasure->currentText() << "," // Object similarity measure
-               << ui->comboBoxRepresentativeCreationStrategy->currentText() << "," // Representative generation method
+               //<< ui->comboBoxRepresentativeCreationStrategy->currentText() << "," // Representative generation method
+               << representativeGenerationMethodShortcuts.at(ui->comboBoxRepresentativeCreationStrategy->currentIndex())
                << ui->spinBoxRepresentativeAttributePercent->value() << "," // Representative threshold
                << gThread->getGroupingTime() << "," // Grouping time [s]
                << findSmallestCluster()->size() << "," // Smallest cluster size
