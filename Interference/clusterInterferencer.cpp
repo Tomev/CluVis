@@ -227,7 +227,7 @@ int clusterInterferencer::interfereExhaustive()
   qDebug() << "Checking if target was achived.";
   wasTargetAchieved();
 
-  qDebug() << "Checked. Looking for most similar rule if it's stull nullptr.";
+  qDebug() << "Checked. Looking for most similar rule if it's still nullptr.";
   // Emergency finding for most similar rule
   if(mostSimilarRule == nullptr)
   {
