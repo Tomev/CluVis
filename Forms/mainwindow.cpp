@@ -15,7 +15,7 @@
 #include <QTime>
 
 static std::vector<QString> clusteringSimilarityMeasuresShotrcuts
-  = {"SL", "CL", "CoL", "AL", "B", "G"};
+  = {"SL", "CoL", "AL", "CL", "G", "B"};
 
 static std::vector<QString> representativeGenerationMethodShortcuts
   = {"Threshold", "Lower", "Upper", "Weighted"};
