@@ -1279,7 +1279,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   ruleInterferencer.generateRandomFactsBase(path, 100000);
   */
 
-  //qDebug() << "Interfering";
+  //qDebug() << "Infering";
 
 
   QString fileName = ui->labelObjectBaseName->text();
@@ -1292,7 +1292,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   //QString path = "D:\\Dysk Google\\Rules\\" + fileName;
 
   // Signle report
-  QString path = "C:\\Rules\\CluVisInterferenceReport.csv";
+  QString path = "C:\\Rules\\CluVisInferenceReport.csv";
 
 
   QFile file(path);
