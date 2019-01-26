@@ -1469,10 +1469,10 @@ void MainWindow::on_pushButtonInterfere_clicked()
                << settings->objectsNumber << "," // Number of rules
                // Clustering
                //<< ui->comboBoxInterClusterSimMeasure->currentText() << "," // Clustering similarity measure
-               << clusteringSimilarityMeasuresShotrcuts.at(ui->comboBoxInterClusterSimMeasure->currentIndex()) // Clustering similarity measure (shortcut)
+               << clusteringSimilarityMeasuresShotrcuts.at(ui->comboBoxInterClusterSimMeasure->currentIndex()) << "," // Clustering similarity measure (shortcut)
                << ui->comboBoxInterObjectSimMeasure->currentText() << "," // Object similarity measure
                //<< ui->comboBoxRepresentativeCreationStrategy->currentText() << "," // Representative generation method
-               << representativeGenerationMethodShortcuts.at(ui->comboBoxRepresentativeCreationStrategy->currentIndex())
+               << representativeGenerationMethodShortcuts.at(ui->comboBoxRepresentativeCreationStrategy->currentIndex()) << ","
                << ui->spinBoxRepresentativeAttributePercent->value() << "," // Representative threshold
                << gThread->getGroupingTime() << "," // Grouping time [s]
                << findSmallestCluster()->size() << "," // Smallest cluster size
