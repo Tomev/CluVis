@@ -1463,6 +1463,14 @@ void MainWindow::on_pushButtonInterfere_clicked()
       {
         QTextStream stream(&file);
 
+        bool canTargetBeAchieved = false;
+
+        if((ruleInterferencer.target.size() > 0))
+          canTargetBeAchieved = ruleInterferencer.targetAchiveable;
+        else
+          canTargetBeAchieved =
+              ruleInterferencer.initiallyFireableRuleIndexes.size() > 0;
+
         stream // Base
                << baseName << "," // Knowledge base name
                << gSettings->attributesNumber << "," // Number of attributes
@@ -1494,7 +1502,8 @@ void MainWindow::on_pushButtonInterfere_clicked()
                << ruleInterferencer.getInitialNumberOfFacts() << "," // Number of initial facts
                << ruleInterferencer.initiallyFireableRuleIndexes.size() << "," // Number of rules that could initially be fired
                << (ruleInterferencer.target.size() > 0) << "," // Was interference target set
-               << ruleInterferencer.targetAchiveable << "," // Was interference target initially confirmable
+               //<< ruleInterferencer.targetAchiveable << "," // Was interference target initially confirmable
+               << canTargetBeAchieved << ","
                << ruleInterferencer
                     .getNumberOfIterations() << "," // Number of interference iterations
                << ruleInterferencer
