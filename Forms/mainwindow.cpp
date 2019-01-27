@@ -1377,6 +1377,15 @@ void MainWindow::on_pushButtonInterfere_clicked()
       {
         QTextStream stream(&file);
 
+        bool canTargetBeAchieved = false;
+
+        if(classicInterferencer.wasTargetSet())
+          canTargetBeAchieved =
+            classicInterferencer.wasInterferenceTargetInitiallyConfirmable();
+        else
+          canTargetBeAchieved =
+            classicInterferencer.getNumberOfRulesThatCouldInitiallyBeFired() > 0;
+
         stream // Base
                << baseName << "," // Knowledge base name
                << gSettings->attributesNumber << "," // Number of attributes
