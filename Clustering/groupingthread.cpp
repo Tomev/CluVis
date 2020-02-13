@@ -86,44 +86,29 @@ void groupingThread::initializeDataPreparator()
 
 void groupingThread::groupObjects()
 {   
+    //qDebug() << "Grouping.";
+
     clock_t start = clock();
 
     _groupingTime = 0;
+    _lastHighestSimilarity = 1;
+    nextClusterID = 0;
+    _groupingTestReport = "";
 
     // Clear zero representative cluster data
     grpSettings->zeroRepresentativeClusterOccurence = -1;
     grpSettings->zeroRepresentativesNumber = 0;
-
-    //emit passLogMsg(tr("log.gatheringAttributesData"));
-
     grpDataPrep->fillAttributesData(&attributes);
-
-    // Clusters are initialized here, so they wont be deleted after
-    // prep method finishes.
-    //emit passLogMsg(tr("log.placingObjectsInClusters"));
-
     grpDataPrep->clusterObjects(&clusters, &attributes);
-
-    //qDebug() << "Objects clustered.";
-
     grpDataPrep->fillAttributesValues(&attributes, &clusters);
 
-    //qDebug() << "Attributes data filled.";
-
-    //emit passLogMsg(tr("log.creatingSimMatrix"));
-
     fillSimMatrix(settings->objectsNumber);
-
-    //qDebug() << "Sim matrix filled.";
-
-    //emit passLogMsg(tr("log.groupingProcessStarted"));
-
-    //groupingProgress->show();
 
     stepNumber = 0;
     inequityIndex = 0;
     updateInequityIndex(1, 1);
 
+    /*
     for(int i = 0; i < settings->objectsNumber - settings->stopCondition; ++i)
     {
         if(grpSettings->findBestClustering)
@@ -148,14 +133,28 @@ void groupingThread::groupObjects()
             }
         }
 
+        qDebug() << "Joining.";
         joinMostSimilarClusters();
-
-        //qDebug() << "Clusters joined.";
-
+        qDebug() << "Updating.";
         updateSimMatrix();
+        qDebug() << "Step finished.";
+    }
 
-        //qDebug() << "Step number: " << stepNumber;
-        //qDebug() << "Inequity Index: " << inequityIndex;
+    qDebug() << "Finished.";
+    */
+
+    int clustersNumber = settings->objectsNumber;
+
+    while(_lastHighestSimilarity > 1e-5){
+        //qDebug() << "Joining.";
+        joinMostSimilarClusters();
+        //qDebug() << "Joined.";
+        if(_lastHighestSimilarity > 1e-5){
+            //qDebug() << "Updating matrix.";
+            --clustersNumber;
+            updateSimMatrix();
+            //qDebug() << "Updated";
+        }
     }
 
     if(!grpSettings->findBestClustering)
@@ -164,29 +163,11 @@ void groupingThread::groupObjects()
         countMDBI(simMatrix.size());
     }
 
-    /*
-    emit passLogMsg(
-        QString(tr("log.clustersNumber"))
-        .arg(QString::number(settings->stopCondition))
-    );
-
-    emit passLogMsg(
-        QString(tr("log.mdiPointer"))
-        .arg(QString::number(MDI))
-    );
-
-    emit passLogMsg(
-        QString(tr("log.mdbiPointer"))
-        .arg(QString::number(MDBI))
-    );
-
-    //emit passLogMsg(tr("log.groupingFinished"));
-    //emit passLogMsg(tr("log.sendingResultatntStructure"));
-    */
-
+    settings->stopCondition = clustersNumber;
     settings->clusters->clear();
 
-    for(int i = 0; i < settings->stopCondition; ++i)
+    //for(int i = 0; i < settings->stopCondition; ++i)
+    for(int i = 0; i < clustersNumber; ++i)
       settings->clusters->push_back(clusters[i]);
 
     _groupingTime += (clock() - start) / (double) CLOCKS_PER_SEC;
@@ -194,15 +175,11 @@ void groupingThread::groupObjects()
 
 void groupingThread::fillSimMatrix(int simMatrixSize)
 {
-    //creatingSimMatrixProgress->show();
-
     simMatrix.clear();
 
     for(int i = 0; i < simMatrixSize; ++i)
     {
-        //creatingSimMatrixProgress->setValue(i);
-
-        //QApplication::processEvents();
+        //qDebug() << "New i";
 
         simMatrix.push_back(simData(new clusterSimilarityData));
 
@@ -216,11 +193,10 @@ void groupingThread::fillSimMatrix(int simMatrixSize)
             {
                 qreal simValue = getClustersSimilarityValue(clusters[i].get(), clusters[j].get());
                 simMatrix.at(i)->push_back(qreal_ptr(new qreal(simValue)));
+                //qDebug() << simValue;
             }
         }
     }
-
-    //creatingSimMatrixProgress->close();
 }
 
 void groupingThread::updateSimMatrix()
@@ -273,7 +249,7 @@ void groupingThread::updateSimMatrix()
     //qDebug() << "Column filled.";
 
     //Then, the row is filled.
-    for(unsigned int i = (newClusterIdx + 1); i <= (simMatrix.size() - 1) ; ++i)
+    for(unsigned int i = (newClusterIdx + 1); i < simMatrix.size(); ++i)
     {
         qreal simValue = getClustersSimilarityValue(clusters[newClusterIdx].get(), clusters[i].get());
         simMatrix.at(i)->insert(simMatrix.at(i)->begin()+newClusterIdx, qreal_ptr(new qreal(simValue)));
@@ -304,10 +280,10 @@ qreal groupingThread::getClustersSimilarityValue(cluster *c1, cluster *c2)
         case GenieGiniId:
         case GenieBonferroniId:
             return qMax(getClustersSimilarityValue(c1->leftNode.get(),c2),
-                        getClustersSimilarityValue(c1->rightNode.get(),c2)) / attributes.size();
+                        getClustersSimilarityValue(c1->rightNode.get(),c2));
         case CompleteLinkId:
             return qMin(getClustersSimilarityValue(c1->leftNode.get(),c2),
-                        getClustersSimilarityValue(c1->rightNode.get(),c2)) / attributes.size();
+                        getClustersSimilarityValue(c1->rightNode.get(),c2));
         default:
             return -1;
     }
@@ -323,8 +299,6 @@ qreal groupingThread::getClustersAverageLinkValue(cluster *c1, cluster *c2)
 
     denumerator = c1->size() * c2->size();
 
-    #pragma omp parallel for default(none) private(i) \
-      reduction(+ : result) num_threads(THREADSNUM)
     for(QList<cluster*>::iterator i = c1Objects.begin();
         i != c1Objects.end(); ++i)
     {
@@ -382,8 +356,6 @@ qreal groupingThread::getObjectsGowersSimValue(cluster *c1, cluster *c2)
     commonAttributes = c1Attributes.keys().toSet().intersect(c2Attributes.keys().toSet());
 
     // For each common attribute
-    #pragma omp parallel for default(none) reduction(+ : result) \
-      num_threads(THREADSNUM)
     foreach(const QString attribute, commonAttributes)
     {
         // Check if it's symbolic
@@ -411,6 +383,8 @@ qreal groupingThread::getGowersSimilarityMeasureNumericAttributesSimilarity
 {
     numericAttributeData* atrData = static_cast<numericAttributeData*>(attributes.value(attribute));
 
+    if(atrData->areMinMaxEqual()) return 1;
+
     qreal   similarityValue = 1.0,
             c1NaiveAverage = getAttributesNaiveAverageValue(c1Attributes.value(attribute)),
             c2NaiveAverage = getAttributesNaiveAverageValue(c2Attributes.value(attribute));
@@ -425,8 +399,6 @@ qreal groupingThread::getAttributesNaiveAverageValue(QStringList* values)
     qreal naiveAverage = 0.0;
 
     // For each value in list of values
-    #pragma omp parallel for default(none) reduction(+ : naiveAverage) \
-    num_threads(THREADSNUM)
     foreach(const QString value, *values)
     {
         // Add value to naive average
@@ -1025,12 +997,19 @@ void groupingThread::joinMostSimilarClusters()
 
     findClustersToJoin(&i, &j);
 
+    //qDebug() << i << " " << j;
+
+    if(_lastHighestSimilarity < 1e-5)
+    {
+      //qDebug() << _lastHighestSimilarity;
+      return;
+    }
+
     updateInequityIndex(clusters[i]->size(), clusters[j]->size());
 
     clusters[j] = joinClusters(clusters[i], clusters[j]);
 
-    //TODO: Consider deleting / smart_ptr.
-    std::swap(clusters[i], clusters[simMatrix.size()-1]);
+    clusters.erase(clusters.begin() + i, clusters.begin() + i + 1);
 
     // This is used in updating matrix.
     newClusterIdx = j;
@@ -1058,7 +1037,6 @@ void groupingThread::findClustersToJoin(int *i, int *j)
   }
 
   findHighestSimilarityIndexes(i, j);
-
 }
 
 void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ)
@@ -1070,35 +1048,20 @@ void groupingThread::findHighestSimilarityIndexes(int *targetI, int *targetJ)
 
   qreal highestSim = -1;
 
-  #pragma omp parallel num_threads(THREADSNUM) shared(targetI, targetJ, highestSim)
+  for(unsigned int i = 0; i < simMatrix.size(); ++i)
   {
-    int private_i = 0, private_j = 0;
-    qreal private_highestSim = -1;
-
-    #pragma omp for nowait
-    for(unsigned int i = 0; i < simMatrix.size(); ++i)
+    for(unsigned int j = 0; j < i; ++j)
     {
-        for(unsigned int j = 0; j < i; ++j)
-        {
-            if(*(simMatrix.at(i)->at(j)) > private_highestSim)
-            {
-              private_i = i;
-              private_j = j;
-              private_highestSim = *(simMatrix.at(i)->at(j));
-            }
-        }
-     }
-
-    #pragma critical
-    {
-      if(private_highestSim > highestSim)
+      if(*(simMatrix.at(i)->at(j)) > highestSim)
       {
-        *targetI = private_i;
-        *targetJ = private_j;
-        highestSim = private_highestSim;
+        *targetI = i;
+        *targetJ = j;
+        highestSim = *(simMatrix.at(i)->at(j));
       }
     }
   }
+
+  _lastHighestSimilarity = highestSim;
 }
 
 void groupingThread::findHighestSimilarityIndicesWithSmallestCluster(int *targetI, int *targetJ)
@@ -1143,13 +1106,14 @@ void groupingThread::findHighestSimilarityIndicesWithSmallestCluster(int *target
     }
   }
 
+  _lastHighestSimilarity = highestSim;
   //qDebug() << "Finding highest smallest end.";
 }
 
 std::shared_ptr<cluster> groupingThread::joinClusters(std::shared_ptr<cluster> c1, std::shared_ptr<cluster> c2)
 {
     QStringList atrNames;
-    ruleCluster* newGrp = new ruleCluster(++nextClusterID);
+    ruleCluster* newGrp = new ruleCluster(nextClusterID++);
 
 
     newGrp->leftNode = c1;
@@ -1191,6 +1155,17 @@ std::shared_ptr<cluster> groupingThread::joinClusters(std::shared_ptr<cluster> c
     }
 
     newGrp->compactness = countClustersCompactness(newGrp);
+
+    _groupingTestReport += newGrp->name() + " { "
+                            + newGrp->leftNode->name() + ", "
+                            + newGrp->rightNode->name() + "}, "
+                            + newGrp->representative() + "\n";
+
+    qDebug() << newGrp->name() << " { "
+                                << newGrp->leftNode->name() << ", "
+                                << newGrp->rightNode->name() << "}, "
+                                << newGrp->representative()
+                                << _lastHighestSimilarity << "\n";
 
     return std::shared_ptr<cluster>(newGrp);
 }

@@ -71,5 +71,5 @@ FORMS    +=     Forms/about.ui \
                 Forms/clusterinfo_rsesrules.ui \
                 Forms/mainwindow.ui
 
-TRANSLATIONS += polish.ts\
-                english.ts
+TRANSLATIONS = polish.ts\
+               english.ts

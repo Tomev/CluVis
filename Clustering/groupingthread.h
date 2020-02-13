@@ -51,6 +51,8 @@ public:
 
     double getGroupingTime();
 
+    QString _groupingTestReport = "";
+
 signals:
 
     void passLogMsg(QString);
@@ -61,6 +63,8 @@ protected:
     double bonferroniIndex = 0;
     double giniIndex = 0;
     long stepNumber = 0;
+    double _lastHighestSimilarity = 1;
+
 
     int updateInequityIndex(long c1Size, long c2Size);
       double updateGiniIndex(long c1Size, long c2Size);

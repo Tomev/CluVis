@@ -491,6 +491,7 @@ struct cluster
         QString getNumericAttributesAverage(QString atrName)
         {
             qreal result = 0;
+            int numberOfObjectsWithGivenAttribute = 0;
             QList<cluster*> objects = this->getObjects();
 
             // For each object within cluster
@@ -502,6 +503,7 @@ struct cluster
                    // If so add it's average value to the result
 
                    qreal averageValue = 0.0;
+                   ++numberOfObjectsWithGivenAttribute;
 
                    foreach(const QString value, *(object->attributesValues.value(atrName)))
                    {
@@ -510,27 +512,9 @@ struct cluster
 
                    result += averageValue / object->attributesValues.value(atrName)->size();
                 }
-                else
-                {
-                    // If not add 'average' value of this attribute
-                    numericAttributeData* atrData = (numericAttributeData*)(this->attributes.value(atrName));
-
-                    // Check if min and max are equal
-                    if(atrData->areMinMaxEqual())
-                    {
-                        // If so add max or min and continue
-                        result += atrData->maxValue.toDouble();
-                    }
-                    else
-                    {
-                        // Otherwise add 'naive average' value of this attribute
-                        result += (atrData->maxValue.toDouble() - atrData->minValue.toDouble())/2.0;
-                    }
-                }
             }
 
-            //
-            result /= objects.size();
+            result /= numberOfObjectsWithGivenAttribute;
 
             return QString::number(result);
         }

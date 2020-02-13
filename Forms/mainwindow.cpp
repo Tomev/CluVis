@@ -301,31 +301,6 @@ cluster *MainWindow::findSmallestCluster()
 
 long MainWindow::getClusteringTreeLevel()
 {
-  /*
-  long  clusteringTreeLevel = 0,
-        currentClusterTreeLevel = 0,
-        leftNodeTreeSize = 0,
-        rightNodeTreeSize = 0;
-
-  for(std::shared_ptr<cluster> c : clusters)
-  {
-    if(!c->hasBothNodes())
-    {
-      currentClusterTreeLevel = 0;
-    }
-    else
-    {
-      leftNodeTreeSize = getClustersTreeLevel(c->leftNode, clusteringTreeLevel);
-      rightNodeTreeSize = getClustersTreeLevel(c->rightNode, clusteringTreeLevel);
-
-      currentClusterTreeLevel = rightNodeTreeSize > leftNodeTreeSize ?
-          rightNodeTreeSize : leftNodeTreeSize;
-    }
-
-    clusteringTreeLevel = clusteringTreeLevel > currentClusterTreeLevel ?
-        clusteringTreeLevel : currentClusterTreeLevel;
-  }
-  */
   long clusteringTreeLevel = 0;
   long clusterTreeLevel = 0;
 
@@ -549,11 +524,11 @@ void MainWindow::translate(int lang)
     switch(lang)
     {
         case polish:
-            transName += "/language/polish.qm";
+            transName += "/polish.qm";
             break;
         case english:
         default:
-            transName += "/language/english.qm";
+            transName += "/english.qm";
     }
 
     if(!translator->load(transName))
@@ -594,7 +569,6 @@ void MainWindow::on_pushButtonGroup_clicked()
     addLogMessage(tr("log.visualizationAvailable"));
     // Można przystąpić do wizualizacji.
 
-    areObjectsClustered = true;
     ui->labelIsBaseGrouped->setText(tr("bold.grouped"));
 
     if(areObjectsClustered)
@@ -819,6 +793,7 @@ void MainWindow::groupObjects()
 
     ui->pushButtonVisualize->setEnabled(true);
     ui->pushButtonGroup->setEnabled(true);
+    areObjectsClustered = true;
 
     addLogMessage(tr("log.buttonsUnlocked"));
 }
@@ -1054,7 +1029,7 @@ void MainWindow::on_pushButtonStandard_clicked()
 
     // TODO: Change for editable dir.
     // TODO: D:/ANB/ must exists for this to work. Eliminate this problem.
-    QString baseDir = "C:/Rules/",
+    QString baseDir = "D:/Dysk Google/Rules/2020/Rules/",
             targetDir,
             kbsDirPath;
 
@@ -1065,7 +1040,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                 (
                     this,
                     tr("Select directory"),
-                    "C:/Rules/",
+                    "D:/Dysk Google/Rules/2020/Rules/",
                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
                 );
 
@@ -1091,10 +1066,9 @@ void MainWindow::on_pushButtonStandard_clicked()
         // Set targetDir to point at current KB folder
         targetDir = baseDir + kbNames.at(kbi).split(".rul").at(0);
 
-        QString factBasePath = targetDir + ".fct";
-
-        ruleInterferencer.loadFactsFromPath(factBasePath);
-        classicInterferencer.loadFactsFromPath(factBasePath.toStdString());
+        //QString factBasePath = targetDir + ".fct";
+        //ruleInterferencer.loadFactsFromPath(factBasePath);
+        //classicInterferencer.loadFactsFromPath(factBasePath.toStdString());
 
         // Check if folder with the same name  as KB doesn't exist.
         QDir kbFolder(targetDir);
@@ -1104,7 +1078,7 @@ void MainWindow::on_pushButtonStandard_clicked()
             // If so create folder with name same as KB name.
             qDebug() << "creating folder " + targetDir;
             qDebug() << "creating commented out";
-            //kbFolder.mkdir(targetDir);
+            kbFolder.mkdir(targetDir);
         }
         else
         {
@@ -1177,7 +1151,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                   // Check if rcs is threshold oriented or not
                   if(rcs == 0 || rcs == 3)
                   {
-                    thresholds = {30, 25, 50, 75};
+                    thresholds = {25, 50, 75};
                   }
                   else
                     thresholds = {0};
@@ -1207,11 +1181,54 @@ void MainWindow::on_pushButtonStandard_clicked()
                              << ui->spinBoxRepresentativeAttributePercent->value();
 
                     groupObjects();
+                    on_pushButtonVisualize_clicked();
 
-                    on_pushButtonInterfere_clicked();
+                    /*
+                    ui->comboBoxInterClusterSimMeasure->setCurrentIndex(csm);
+                    ui->comboBoxRepresentativeCreationStrategy->setCurrentIndex(rcs);
+                    ui->spinBoxRepresentativeAttributePercent->setValue(tres);
+                    */
 
-                    desiredClustersNumber -= rulesNumberOnePercent;
+                    QString picturePath = targetDir + "/" +
+                                       ui->comboBoxInterClusterSimMeasure->currentText() + ", " +
+                                       ui->comboBoxRepresentativeCreationStrategy->currentText() + ", " +
+                                       QString::number(ui->spinBoxRepresentativeAttributePercent->value()) + ".png";
 
+                    QString reportPath = targetDir + "/" +
+                        ui->comboBoxInterClusterSimMeasure->currentText() + ", " +
+                        ui->comboBoxRepresentativeCreationStrategy->currentText() + ", " +
+                        QString::number(ui->spinBoxRepresentativeAttributePercent->value()) + ".txt";
+
+                    QFile reportFile(reportPath);
+
+                    if(reportFile.open(QIODevice::WriteOnly | QIODevice::Text))
+                    {
+                             // We're going to streaming text to the file
+                             QTextStream stream(&reportFile);
+
+                             stream << gThread->_groupingTestReport;
+
+                             reportFile.close();
+                    }
+
+
+                    /*
+                    qDebug() << ui->comboBoxInterClusterSimMeasure->currentText() << ", "
+                             << ui->comboBoxRepresentativeCreationStrategy->currentText() << ", "
+                             << ui->spinBoxRepresentativeAttributePercent->value();
+                    */
+
+                    ui->tabWidget->setCurrentIndex(1);
+
+                    saveVisualization(picturePath);
+
+                    ui->tabWidget->setCurrentIndex(0);
+
+                    //on_pushButtonInterfere_clicked();
+
+                    //desiredClustersNumber -= rulesNumberOnePercent;
+
+                    /*
                     while(desiredClustersNumber > 0)
                     {
                       qDebug() << "Continuing grouping to "
@@ -1234,6 +1251,9 @@ void MainWindow::on_pushButtonStandard_clicked()
 
                       desiredClustersNumber -= rulesNumberOnePercent;
                     }
+                    */
+
+                    //qDebug() << gThread->_groupingTestReport;
 
                     //qDebug() << "Next measure.";
                   }
