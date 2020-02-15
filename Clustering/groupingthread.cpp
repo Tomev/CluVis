@@ -94,6 +94,7 @@ void groupingThread::groupObjects()
     _lastHighestSimilarity = 1;
     nextClusterID = 0;
     _groupingTestReport = "";
+    _similarityMatrixEvolution = "";
 
     // Clear zero representative cluster data
     grpSettings->zeroRepresentativeClusterOccurence = -1;
@@ -146,6 +147,7 @@ void groupingThread::groupObjects()
     int clustersNumber = settings->objectsNumber;
 
     while(_lastHighestSimilarity > 1e-5){
+        saveCurrentSimilarityMatrix();
         //qDebug() << "Joining.";
         joinMostSimilarClusters();
         //qDebug() << "Joined.";
@@ -162,6 +164,8 @@ void groupingThread::groupObjects()
         countMDI(simMatrix.size());
         countMDBI(simMatrix.size());
     }
+
+    qDebug() << _similarityMatrixEvolution;
 
     settings->stopCondition = clustersNumber;
     settings->clusters->clear();
@@ -256,6 +260,24 @@ void groupingThread::updateSimMatrix()
     }
 
     //qDebug() << "Row filled.";
+}
+
+void groupingThread::saveCurrentSimilarityMatrix()
+{
+  _similarityMatrixEvolution += "\\;";
+  for(int i = 0; i < simMatrix.size(); ++i){
+      _similarityMatrixEvolution += clusters[i]->name() + ";";
+  }
+  _similarityMatrixEvolution += "\n";
+  for(int i = 0; i < simMatrix.size(); ++i){
+    _similarityMatrixEvolution += clusters[i]->name() + ";";
+    for(int j = 0; j < simMatrix.at(i)->size(); ++j){
+      _similarityMatrixEvolution += QString::number(*(simMatrix.at(i)->at(j))) + ";";
+    }
+    _similarityMatrixEvolution += "\n";
+  }
+
+  _similarityMatrixEvolution += "\n";
 }
 
 //TODO: Consides placing similarity counting in another class.
@@ -670,8 +692,6 @@ qreal groupingThread::getObjectsGoodall1SimValue(cluster* c1, cluster* c2)
   commonAttributes = c1Attributes.keys().toSet().intersect(c2Attributes.keys().toSet());
 
   // For each common attribute
-  #pragma omp parallel for default(none) reduction(+ : result) \
-  num_threads(THREADSNUM)
   foreach(const QString attribute, commonAttributes)
   {
       // Check if it's symbolic

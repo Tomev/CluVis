@@ -82,6 +82,7 @@ private:
     groupingDataPreparator* grpDataPrep;
 
     double _groupingTime = 0;
+    QString _similarityMatrixEvolution = "";
 
     bool wasGroupingCanceled;
     bool wasAverageRuleDenumeratorSet;
@@ -108,6 +109,7 @@ private:
             void deleteClusterSimilarityData(unsigned int clusterId);
         void updateSimMatrix();
 
+        void saveCurrentSimilarityMatrix();
 
             qreal getClustersAverageLinkValue(cluster* c1, cluster* c2);
             qreal getObjectsSimValue(cluster* c1, cluster* c2);

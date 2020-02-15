@@ -193,7 +193,7 @@
               </size>
              </property>
              <property name="currentIndex">
-              <number>2</number>
+              <number>3</number>
              </property>
              <item>
               <property name="text">
@@ -576,7 +576,7 @@
               <number>100</number>
              </property>
              <property name="value">
-              <number>30</number>
+              <number>75</number>
              </property>
             </widget>
            </item>
