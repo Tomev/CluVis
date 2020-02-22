@@ -365,7 +365,7 @@ std::string clusterCoverageInferer::getInterferenceType()
  */
 void clusterCoverageInferer::setInterferenceType(int newInterferentionType)
 {
-  if(newInterferentionType == GREEDY) _greedyInference = true;
+  if(newInterferentionType == CC_GREEDY) _greedyInference = true;
   else _greedyInference = false;
 }
 
@@ -418,4 +418,36 @@ int clusterCoverageInferer::getNumberOfNewFacts()
     numberOfNewFacts += attributesValues.size();
 
   return numberOfNewFacts;
+}
+
+/** clusterCoverageInferer::getNumberOfInitialFacts
+ * @brief Getter for number of initial facts.
+ * @return Number of initial facts.
+ */
+int clusterCoverageInferer::getNumberOfInitialFacts()
+{
+    long numberOfInitialFacts = 0;
+
+    for(QSet<QString> attributesValues : initialFacts)
+      numberOfInitialFacts += attributesValues.size();
+
+    return numberOfInitialFacts;
+}
+
+/** clusterCoverageInferer::getNumberOfIterations
+ * @brief Getter for number of iterations.
+ * @return Number of iterations.
+ */
+int clusterCoverageInferer::getNumberOfIterations()
+{
+    return _iterationsNumber;
+}
+
+/** clusterCoverageInferer::numberOfRulesFired
+ * @brief Getter for number of rules fired.
+ * @return Number of rules fired.
+ */
+int clusterCoverageInferer::numberOfRulesFired()
+{
+   return _numberOfFiredRules;
 }

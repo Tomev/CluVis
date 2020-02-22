@@ -1068,6 +1068,7 @@ void MainWindow::on_pushButtonStandard_clicked()
 
         QString factBasePath = targetDir + ".fct";
         //ruleInterferencer.loadFactsFromPath(factBasePath);
+        coverageInferer.loadFactsFromPath(factBasePath);
         classicInterferencer.loadFactsFromPath(factBasePath.toStdString());
 
         // Check if folder with the same name  as KB doesn't exist.
@@ -1441,13 +1442,12 @@ void MainWindow::on_pushButtonInterfere_clicked()
     }
   }
 
-  /*
-  gSettings->interClusterSimMeasureID = CentroidLinkId;
+  //gSettings->interClusterSimMeasureID = CentroidLinkId;
 
-  ruleInterferencer.setGroupingThread(this->gThread);
+  //ruleInterferencer.setGroupingThread(this->gThread);
   std::vector<int> clusterInterferenceTypes;
-  clusterInterferenceTypes.push_back(GREEDY);
-  clusterInterferenceTypes.push_back(EXHAUSTIVE);
+  clusterInterferenceTypes.push_back(CC_GREEDY);
+  clusterInterferenceTypes.push_back(CC_EXHAUSTIVE);
 
   // Run interference
   for(int factPercent : factsPercents)
@@ -1456,14 +1456,18 @@ void MainWindow::on_pushButtonInterfere_clicked()
     {
       qDebug() << "Running interference " << type << ".";
 
-      ruleInterferencer.setInterferenceType(type);
+      //ruleInterferencer.setInterferenceType(type);
+      coverageInferer.setInterferenceType(type);
 
-      ruleInterferencer.factsBasePercent = factPercent;
+      //ruleInterferencer.factsBasePercent = factPercent;
+      coverageInferer.factsBasePercent = factPercent;
 
-      ruleInterferencer.interfere();
+      //ruleInterferencer.interfere();
+      coverageInferer.infere(gThread->clusters);
 
       //qDebug() << "Generating report.";
 
+      /*
       // For rule interferencer
       if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
       {
@@ -1529,13 +1533,55 @@ void MainWindow::on_pushButtonInterfere_clicked()
                << QString::fromStdString(ruleInterferencer.whyWasntTargetConfirmed()) << "," // Why wasn't interference target confirmed
                << ruleInterferencer.getInterferenceTime() << "\n" ; // Interference time [s]
       }
+      */
+
+      // For coverage inferer
+      if(file.open(QIODevice::ReadWrite  | QIODevice::Append))
+      {
+        QTextStream stream(&file);
+
+        stream // Base
+               << baseName << "," // Knowledge base name
+               << gSettings->attributesNumber << "," // Number of attributes
+               << settings->objectsNumber << "," // Number of rules
+               // Clustering
+               << clusteringSimilarityMeasuresShotrcuts.at(ui->comboBoxInterClusterSimMeasure->currentIndex()) << "," // Clustering similarity measure (shortcut)
+               << ui->comboBoxInterObjectSimMeasure->currentText() << "," // Object similarity measure
+               << representativeGenerationMethodShortcuts.at(ui->comboBoxRepresentativeCreationStrategy->currentIndex()) << ","
+               << ui->spinBoxRepresentativeAttributePercent->value() << "," // Representative threshold
+               << gThread->getGroupingTime() << "," // Grouping time [s]
+               << findSmallestCluster()->size() << "," // Smallest cluster size
+               << findBiggestCluster()->size() << "," // Biggest cluster size
+               << countUngroupedObjects() << "," // Number of outliers
+               << getSmallestRepresentativeLength() << "," // Smallest representative len
+               << getAverageRepresentativeLength() << "," // Average rep. len.
+               << getBiggestRepresentativeLength() << "," // Biggest rep. len.
+               << gSettings->zeroRepresentativesNumber << "," // Zero rep. num.
+               << gSettings->giniIndex << "," // Gini
+               << gSettings->bonferroniIndex << "," // Bonferroni
+               << settings->stopCondition << "," // Number of clusters
+               // Interference
+               << QString::fromStdString(
+                    coverageInferer.getInterferenceType()
+                  ) << "," // Interference type
+               << factPercent << "," // Facts base percent
+               << coverageInferer.getNumberOfInitialFacts() << "," // Number of initial facts
+               << classicInterferencer // INTENTIONALLY USE CLASSICAL
+                  .getNumberOfRulesThatCouldInitiallyBeFired() << "," // Number of rules that could initially be fired
+               << coverageInferer
+                    .getNumberOfIterations() << "," // Number of interference iterations
+               << coverageInferer
+                    .numberOfRulesFired() << "," // Number of rules that were fired
+               << coverageInferer
+                    .getNumberOfNewFacts() << "," // Number of new facts
+               << coverageInferer.zeroRepresentativeOccured << "," // Was zero rep. met
+               << coverageInferer._numberOfComparisons << "," // Number of clusters searched
+               << coverageInferer.getInterferenceTime() << "\n" ; // Interference time [s]
+      }
 
       file.close();
     }
   }
-
-  */
-
   qDebug() << "End interfering.";
 
 }

@@ -16,6 +16,7 @@
 
 #include "../Interference/clusterInterferencer.h"
 #include "../Interference/classicalInterferencer.h"
+#include "../Interference/clusterCoverageInferer.h"
 
 enum languagesId
 {
@@ -89,6 +90,7 @@ private slots:
 
 private:
     clusterInterferencer ruleInterferencer;
+    clusterCoverageInferer coverageInferer;
     classicalInterferencer classicInterferencer;
 
     QTranslator* translator;

@@ -6,7 +6,6 @@
 #include <QStringList>
 #include <QMessageBox>
 #include <algorithm>
-#include <omp.h>
 
 #include <QDebug>
 

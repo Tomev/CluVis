@@ -8,10 +8,18 @@ class clusterCoverageInferer : public interferencer
   public:
     clusterCoverageInferer();
 
+    int _numberOfComparisons = 0;
+
     int loadFactsFromPath(QString path);
-
     void infere(std::vector<std::shared_ptr<cluster> > clusters);
-
+    std::string getInterferenceType();
+    void setInterferenceType(int newInterferentionType);
+    double getInterferenceTime();
+    void getInitialFacts();
+    int getNumberOfNewFacts();
+    int getNumberOfInitialFacts();
+    int getNumberOfIterations();
+    int numberOfRulesFired();
 
   protected:
     double _inferenceTime = -1.0;
@@ -19,7 +27,7 @@ class clusterCoverageInferer : public interferencer
     double _threshold = 1e-5;
 
     int _iterationsNumber = 0;
-    int _numberOfComparisons = 0;
+
     int _numberOfFiredRules = 0;
     int _initialNumberOfFacts = 0;
 
@@ -44,24 +52,12 @@ class clusterCoverageInferer : public interferencer
     int getNumberOfAvailableSubclusters(const std::shared_ptr<cluster> &c);
     std::vector<cluster_ptr> getAvailableSubclusters(
             const std::shared_ptr<cluster> &c);
-
-
     void tryToFire(const std::shared_ptr<cluster> &rule);
-
-    std::string getInterferenceType() = 0;
-    void setInterferenceType(int newInterferentionType) = 0;
-    double getInterferenceTime() = 0;
-    void getInitialFacts();
-    int getNumberOfNewFacts();
-
-
-
-
 };
 
 enum coverageInfererType{
-  GREEDY = 0,
-  EXHAUSTIVE = 1
+  CC_GREEDY = 0,
+  CC_EXHAUSTIVE = 1
 };
 
 #endif // CLUSTERCOVERAGEINFERER_H
