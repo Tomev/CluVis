@@ -76,26 +76,6 @@ double clusterInterferencer::getInterferenceTime()
   return interferenceTime;
 }
 
-std::string clusterInterferencer::whyWasntTargetConfirmed()
-{
-  if(wasTargetAchieved()) return "";
-
-  std::string failureReasons = "";
-
-  failureReasons +=
-      wasRuleFired() ? "" : "rule wasnt fired; ";
-
-  failureReasons +=
-      target.keys().size() < 1 ? "target not set; " : "";
-
-  failureReasons +=
-      zeroRepresentativeOccured ? "zero representative occurence; " : "";
-
-  failureReasons = failureReasons.empty() ? "other case" : failureReasons;
-
-  return failureReasons;
-}
-
 int clusterInterferencer::interfereGreedy()
 {
   //qDebug() << "Greedy stuff.";
@@ -121,7 +101,7 @@ int clusterInterferencer::interfereGreedy()
 
   //qDebug() << "Creating fact rule.";
 
-  // Cluster facts so implemented similarity measures can be used.
+  // Cluster facts so that implemented similarity measures can be used.
   ruleCluster factRule = createFactRule();
 
   //qDebug() << "Finding most similar rule.";
@@ -169,7 +149,6 @@ int clusterInterferencer::interfereExhaustive()
   fillFacts(factsBasePercent);
 
   zeroRepresentativeOccured = false;
-  zeroRepresentativeOccurenceStep = 0;
   currentStep = 0;
   numberOfClustersSearched = 0;
   numberOfRulesFired = 0;
@@ -177,7 +156,7 @@ int clusterInterferencer::interfereExhaustive()
 
   fireableRules.clear();
 
-  qDebug() << "Filling avi rules.";
+  qDebug() << "Filling available rules.";
 
   fillAvailableRuleIndexes();
   initiallyFireableRuleIndexes = availableRuleIndexes;
@@ -186,7 +165,6 @@ int clusterInterferencer::interfereExhaustive()
 
   qDebug() << "Can target be achieved.";
 
-  canTargetBeAchieved();
   rulesFiredDuringInterference.clear();
 
   bool canAnyRuleBeFired = true;
@@ -195,7 +173,7 @@ int clusterInterferencer::interfereExhaustive()
 
   mostSimilarRule = nullptr;
 
-  while(canAnyRuleBeFired && !wasTargetAchieved())
+  while(canAnyRuleBeFired)
   {
     ++numberOfIterations;
     ++currentStep;

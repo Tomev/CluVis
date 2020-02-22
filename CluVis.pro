@@ -17,6 +17,7 @@ TEMPLATE = app
 SOURCES +=      Forms/about.cpp \
                 Forms/clusterinfo_rsesrules.cpp \
                 Forms/mainwindow.cpp \
+                Interference/clusterCoverageInferer.cpp \
                 Visualization/visualizationthread.cpp \
                 Visualization/visualizationsettings_general.cpp \
                 Visualization/customgraphicellipseobject.cpp \
@@ -40,6 +41,7 @@ SOURCES +=      Forms/about.cpp \
 HEADERS  +=     Forms/about.h \
                 Forms/clusterinfo_rsesrules.h \
                 Forms/mainwindow.h \
+                Interference/clusterCoverageInferer.h \
                 Visualization/customgraphicsrectobject.h \
                 Visualization/visualizationthread.h \
                 Visualization/visualizationsettings_general.h \
