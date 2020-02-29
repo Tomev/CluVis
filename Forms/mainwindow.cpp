@@ -2,6 +2,7 @@
 #include "about.h"
 #include "ui_mainwindow.h"
 #include "Validators/rsesrulebasevalidator.h"
+#include "appConfigFile.h"
 
 #include <string>
 #include <iostream>
@@ -108,11 +109,11 @@ QString MainWindow::getOpenPath()
 {
     // TR TODO: Create settings file to store user settings.
 
-    QString customOpenPath = "D:\\Dysk Google\\Rules";
-    QString defaultOpenPath = "C:\\";
+    QString qs_customOpenPath = QString::fromStdString(customOpenPath);
+    QString qs_defaultOpenPath = QString::fromStdString(defaultOpenPath);
 
-    if(QDir(customOpenPath).exists()) return customOpenPath;
-    else return defaultOpenPath;
+    if(QDir(qs_customOpenPath).exists()) return qs_customOpenPath;
+    else return qs_defaultOpenPath;
 }
 
 void MainWindow::loadObjectsBase(QFileInfo OB)
@@ -205,7 +206,7 @@ void MainWindow::on_actionSaveVisualization_triggered()
 {
     QFileDialog FD;
 
-    QString savePath = "C:/";
+    QString savePath = QString::fromStdString(defaultOpenPath);
 
     QString filePath = FD.getSaveFileName(
         this,
@@ -251,7 +252,7 @@ void MainWindow::saveVisualization(QString path)
 QString MainWindow::getFilePath()
 {
     QFileDialog FD;
-    QString savePath = "C:\\ANB\\";
+    QString savePath = QString::fromStdString(saveReportFolder);
 
     QString filePath = FD.getSaveFileName(
         this,
@@ -276,9 +277,7 @@ QString MainWindow::getFilePath()
 
 QString MainWindow::getReportDirPath()
 {
-    QString path = "C:\\CluVis_Reports\\";
-
-    return path;
+    return QString::fromStdString(reportDirPath);
 }
 
 void MainWindow::createPath(QString path)
@@ -1027,9 +1026,7 @@ void MainWindow::on_pushButtonStandard_clicked()
 {
     clock_t start = clock();
 
-    // TODO: Change for editable dir.
-    // TODO: D:/ANB/ must exists for this to work. Eliminate this problem.
-    QString baseDir = "D:/Dysk Google/RBW/2020/Rules/",
+    QString baseDir = QString::fromStdString(rulesDirPath),
             targetDir,
             kbsDirPath;
 
@@ -1040,7 +1037,7 @@ void MainWindow::on_pushButtonStandard_clicked()
                 (
                     this,
                     tr("Select directory"),
-                    "D:/Dysk Google/RBW/2020/Rules/",
+                    QString::fromStdString(rulesDirPath),
                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks
                 );
 
@@ -1313,7 +1310,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
   //QString path = "D:\\Dysk Google\\RBW\\" + fileName;
 
   // Signle report
-  QString path = "D:\\Dysk Google\\RBW\\CluVisInferenceReport.csv";
+  QString path = QString::fromStdString(reportFilePath);
 
   QFile file(path);
 

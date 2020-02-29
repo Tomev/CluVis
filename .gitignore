@@ -1,6 +1,9 @@
-#Katalogi do ignorowania
+# Ignore following dirs
 Logs/
 
-#Ignoruj plik usera
+# Ignore user files
 CluVis.pro.user*
+
+# Ignore appConfigFile.h (sample file is provided)
+appConfigFile.h
 

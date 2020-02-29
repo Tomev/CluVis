@@ -1,0 +1,14 @@
+#ifndef APPCONFIGFILE_H
+#define APPCONFIGFILE_H
+
+#include <string>
+
+std::string customOpenPath = "D:\\Dysk Google\\Rules";
+std::string defaultOpenPath = "C:\\";
+std::string reportFilePath = "D:\\Dysk Google\\RBW\\CluVisInferenceReport.csv";
+std::string saveReportFolder = "C:\\ANB\\";
+std::string reportDirPath = "C:\\CluVis_Reports\\";
+std::string rulesDirPath = "D:/Dysk Google/RBW/2020/Rules/";
+
+
+#endif // APPCONFIGFILE_H

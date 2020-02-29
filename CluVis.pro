@@ -58,6 +58,7 @@ HEADERS  +=     Forms/about.h \
                 Clustering/groupingsettings.h \
                 Clustering/groupingsettings_detailed.h \
                 Clustering/groupingsettings_rsesrules.h \
+                appConfigFile.h \
                 generalsettings.h \
                 generalincludes.h \
                 Interference/interferencer.h \
