@@ -77,8 +77,10 @@ void clusterCoverageInferer::resetInferer()
 {
   _iterationsNumber = 0;
   _numberOfComparisons = 0;
+  _numberOfFiredRules = 0;
   newFacts.clear();
   zeroRepresentativeOccured = false;
+  zeroRepresentativeOccurenceNumber = 0;
   _clustersToOmit.clear();
 }
 
@@ -112,7 +114,8 @@ void clusterCoverageInferer::tryToFireMostAccurateRule(
       findIndexOfClusterMostProbableToContainFireableRule(clusters);
 
   if(clusterIndex == -1 ||
-     countNumberOfUnfiredRulesInCluster(clusters[clusterIndex]) < 1) return;
+     countNumberOfUnfiredRulesInCluster(clusters[clusterIndex]) < 1)
+      return;
 
   auto rule = findRuleToFireInCluster(clusters[clusterIndex]);
 
@@ -188,8 +191,16 @@ double clusterCoverageInferer::findClusterCoverageValue(
   ++_numberOfComparisons;
   double coverage = 0;
   int numberOfRepresentativesDescriptors = 0;
-  for(auto attribute :
-      c->getAttributesForSimilarityCount(CentroidLinkId).keys()){
+
+  auto attributes = c->getAttributesForSimilarityCount(CentroidLinkId).keys();
+
+  if(attributes.size() == 0){
+      zeroRepresentativeOccured = true;
+      ++zeroRepresentativeOccurenceNumber;
+      return 0;
+  }
+
+  for(auto attribute : attributes ){
 
     if(!facts.keys().contains(attribute)){
         numberOfRepresentativesDescriptors +=
@@ -280,10 +291,19 @@ int clusterCoverageInferer::countNumberOfUnfiredRulesInCluster(
 cluster_ptr clusterCoverageInferer::findRuleToFireInCluster(
         const std::shared_ptr<cluster> &c)
 {
+  if(!c->hasBothNodes())
+      return c;
+
   auto availableSubclusters = getAvailableSubclusters(c);
 
   if(availableSubclusters.size() == 1)
+  {
+    if(availableSubclusters[0]->size() == 1){
+        _clustersToOmit.append(c->name());
+        return availableSubclusters[0];
+    }
     return findRuleToFireInCluster(availableSubclusters[0]);
+  }
 
   // It either have 1 or 2 available subclusters, thus this scenarion focuses
   // on 2 subclusters
@@ -345,6 +365,7 @@ void clusterCoverageInferer::tryToFire(const std::shared_ptr<cluster> &rule)
     }
 
     _wasRuleFiredThisIteration = true;
+    ++_numberOfFiredRules;
     _clustersToOmit.append(rule->name());
 }
 

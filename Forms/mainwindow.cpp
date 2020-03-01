@@ -1462,7 +1462,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
       //ruleInterferencer.interfere();
       coverageInferer.infere(gThread->clusters);
 
-      //qDebug() << "Generating report.";
+      qDebug() << "Generating report.";
 
       /*
       // For rule interferencer
