@@ -38,7 +38,13 @@ class classicalInterferencer
     int getNumberOfRulesThatCouldInitiallyBeFired();
     bool wasTargetSet();
     bool isTargetAchiveable();
+
+    // Old method
     bool wasTargetAchieved(std::unordered_map<std::string, std::unordered_set<std::string>>* consideredFacts);
+
+    // New method
+    std::string targetAchieved();
+
     std::string getRulesThatCouldInitiallyBeFired();
     int getNumberOfRulesFired();
     int getNumberOfIterations();

@@ -1,4 +1,6 @@
 #include "clusterCoverageInferer.h"
+#include <chrono>
+#include <thread>
 
 /** clusterCoverageInferer::clusterCoverageInferer
  * @brief Basic constructor.
@@ -49,6 +51,8 @@ int clusterCoverageInferer::loadFactsFromPath(QString path)
 void clusterCoverageInferer::infere(
     std::vector<std::shared_ptr<cluster>> clusters)
 {
+  using namespace std::chrono;
+
   // First, reset the inferer.
   resetInferer();
 
@@ -59,7 +63,7 @@ void clusterCoverageInferer::infere(
   if(!canInferenceBePerformed(clusters)) return;
 
   // And then start infering
-  clock_t start = clock();
+  high_resolution_clock::time_point start = high_resolution_clock::now();
 
   do {
     ++_iterationsNumber;
@@ -67,7 +71,11 @@ void clusterCoverageInferer::infere(
     tryToFireMostAccurateRule(clusters);
   } while(!_greedyInference && _wasRuleFiredThisIteration);
 
-  _inferenceTime = (clock() - start) / (double) CLOCKS_PER_SEC;
+  //std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  high_resolution_clock::time_point end = high_resolution_clock::now();
+  duration<double> timeSpan = duration_cast<duration<double>>(end - start);
+  _inferenceTime = timeSpan.count();
 }
 
 /** clusterCoverageInferer::resetInferer
@@ -470,5 +478,12 @@ int clusterCoverageInferer::getNumberOfIterations()
  */
 int clusterCoverageInferer::numberOfRulesFired()
 {
-   return _numberOfFiredRules;
+    return _numberOfFiredRules;
+}
+
+std::string clusterCoverageInferer::wasTargetAchieved()
+{
+    if(_numberOfFiredRules > 0)
+        return "True";
+    return "False";
 }

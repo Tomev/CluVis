@@ -1355,6 +1355,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
              << "Number of new facts;"
              << "Was zero representative met;"
              << "Number of clusters searched;"
+             << "Was target reached;"
              << "Interference time [s]\n";
     }
 
@@ -1432,6 +1433,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
                << "Not applicable" << ";" // Was zero rep. met
                << classicInterferencer
                     .getNumberOfStructuresSearched() << ";" // Number of clusters searched
+               << QString::fromStdString(classicInterferencer.targetAchieved()) << ";" // Was target Achieved
                << classicInterferencer.getInterferenceTime() << "\n" ; // Interference time [s]
       }
 
@@ -1573,6 +1575,7 @@ void MainWindow::on_pushButtonInterfere_clicked()
                     .getNumberOfNewFacts() << ";" // Number of new facts
                << coverageInferer.zeroRepresentativeOccured << ";" // Was zero rep. met
                << coverageInferer._numberOfComparisons << ";" // Number of clusters searched
+               << QString::fromStdString(coverageInferer.wasTargetAchieved()) << ";" // Was target achieved
                << coverageInferer.getInterferenceTime() << "\n" ; // Interference time [s]
       }
 

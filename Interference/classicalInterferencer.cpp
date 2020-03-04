@@ -4,6 +4,7 @@
 #include <fstream>
 #include <ctime>
 #include <math.h>
+#include <chrono>
 
 enum ruleFiringErrors
 {
@@ -31,6 +32,8 @@ classicalInterferencer::classicalInterferencer()
 
 int classicalInterferencer::interfere()
 {
+  using namespace std::chrono;
+
   std::vector<rule> workingRules = rules;
   bool wasRuleFired = true;
   //fillFacts();
@@ -41,7 +44,7 @@ int classicalInterferencer::interfere()
   numberOfIterations = 0;
   newFacts.clear();
 
-  clock_t start = clock();
+  high_resolution_clock::time_point start = high_resolution_clock::now();
 
   while(wasRuleFired)
   {
@@ -62,7 +65,9 @@ int classicalInterferencer::interfere()
     }
   }
 
-  interferenceTime = (clock() - start) / (double) CLOCKS_PER_SEC;
+  high_resolution_clock::time_point end = high_resolution_clock::now();
+  duration<double> timeSpan = duration_cast<duration<double>>(end - start);
+  interferenceTime = timeSpan.count();
 
   return newFacts.size();
 }
@@ -363,6 +368,13 @@ bool classicalInterferencer::wasTargetAchieved(
   }
 
   return true;
+}
+
+std::string classicalInterferencer::targetAchieved()
+{
+    if(numberOfRulesFired > 0)
+        return "True";
+    return "False";
 }
 
 /** classicalInterferencer::getRulesThatCouldInitiallyBeFired

@@ -20,6 +20,7 @@ class clusterCoverageInferer : public interferencer
     int getNumberOfInitialFacts();
     int getNumberOfIterations();
     int numberOfRulesFired();
+    std::string wasTargetAchieved();
 
   protected:
     double _inferenceTime = -1.0;
